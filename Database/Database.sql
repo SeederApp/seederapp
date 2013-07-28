@@ -2,11 +2,13 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
+CREATE SCHEMA IF NOT EXISTS `seeder` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `seeder` ;
 
 -- -----------------------------------------------------
--- Table `_seeder`.`Developer`
+-- Table `seeder`.`Developer`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`Developer` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`Developer` (
   `idDeveloper` INT NOT NULL AUTO_INCREMENT ,
   `vendorId` INT NULL ,
   `twitter` VARCHAR(250) NULL ,
@@ -18,9 +20,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`User`
+-- Table `seeder`.`User`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`User` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`User` (
   `idUser` INT NOT NULL AUTO_INCREMENT ,
   `idDeveloper` INT NOT NULL ,
   `firstName` VARCHAR(45) NULL ,
@@ -38,16 +40,16 @@ CREATE  TABLE IF NOT EXISTS `_seeder`.`User` (
   INDEX `fk_User_Developer1_idx` (`idDeveloper` ASC) ,
   CONSTRAINT `fk_User_Developer1`
     FOREIGN KEY (`idDeveloper` )
-    REFERENCES `_seeder`.`Developer` (`idDeveloper` )
+    REFERENCES `seeder`.`Developer` (`idDeveloper` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`Comment`
+-- Table `seeder`.`Comment`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`Comment` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`Comment` (
   `idComment` INT NOT NULL AUTO_INCREMENT ,
   `date` DATETIME NULL ,
   `content` VARCHAR(250) NULL ,
@@ -56,30 +58,30 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`User_Comment`
+-- Table `seeder`.`User_Comment`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`User_Comment` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`User_Comment` (
   `idComment` INT NOT NULL ,
   `idUser` INT NOT NULL ,
   INDEX `fk_User_Comment_Comment1_idx` (`idComment` ASC) ,
   INDEX `fk_User_Comment_User1_idx` (`idUser` ASC) ,
   CONSTRAINT `fk_User_Comment_Comment1`
     FOREIGN KEY (`idComment` )
-    REFERENCES `_seeder`.`Comment` (`idComment` )
+    REFERENCES `seeder`.`Comment` (`idComment` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_User_Comment_User1`
     FOREIGN KEY (`idUser` )
-    REFERENCES `_seeder`.`User` (`idUser` )
+    REFERENCES `seeder`.`User` (`idUser` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`Category`
+-- Table `seeder`.`Category`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`Category` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`Category` (
   `idCategory` INT NOT NULL AUTO_INCREMENT ,
   `categoryType` VARCHAR(45) NULL ,
   `name` VARCHAR(45) NULL ,
@@ -88,9 +90,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`Idea`
+-- Table `seeder`.`Idea`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`Idea` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`Idea` (
   `idIdea` INT NOT NULL AUTO_INCREMENT ,
   `idUser` INT NOT NULL ,
   `idCategory` INT NOT NULL ,
@@ -105,42 +107,42 @@ CREATE  TABLE IF NOT EXISTS `_seeder`.`Idea` (
   INDEX `fk_Idea_Category1_idx` (`idCategory` ASC) ,
   CONSTRAINT `fk_Idea_User1`
     FOREIGN KEY (`idUser` )
-    REFERENCES `_seeder`.`User` (`idUser` )
+    REFERENCES `seeder`.`User` (`idUser` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Idea_Category1`
     FOREIGN KEY (`idCategory` )
-    REFERENCES `_seeder`.`Category` (`idCategory` )
+    REFERENCES `seeder`.`Category` (`idCategory` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`Idea_Comment`
+-- Table `seeder`.`Idea_Comment`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`Idea_Comment` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`Idea_Comment` (
   `idIdea` INT NOT NULL ,
   `idComment` INT NOT NULL ,
   INDEX `fk_Idea_Comment_Idea1_idx` (`idIdea` ASC) ,
   INDEX `fk_Idea_Comment_Comment1_idx` (`idComment` ASC) ,
   CONSTRAINT `fk_Idea_Comment_Idea1`
     FOREIGN KEY (`idIdea` )
-    REFERENCES `_seeder`.`Idea` (`idIdea` )
+    REFERENCES `seeder`.`Idea` (`idIdea` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Idea_Comment_Comment1`
     FOREIGN KEY (`idComment` )
-    REFERENCES `_seeder`.`Comment` (`idComment` )
+    REFERENCES `seeder`.`Comment` (`idComment` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `_seeder`.`Developer_Idea`
+-- Table `seeder`.`Developer_Idea`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `_seeder`.`Developer_Idea` (
+CREATE  TABLE IF NOT EXISTS `seeder`.`Developer_Idea` (
   `idIdea` INT NOT NULL ,
   `idDeveloper` INT NOT NULL ,
   `progress` INT NULL ,
@@ -149,16 +151,17 @@ CREATE  TABLE IF NOT EXISTS `_seeder`.`Developer_Idea` (
   INDEX `fk_Developer_Idea_Developer1_idx` (`idDeveloper` ASC) ,
   CONSTRAINT `fk_Developer_Idea_Idea1`
     FOREIGN KEY (`idIdea` )
-    REFERENCES `_seeder`.`Idea` (`idIdea` )
+    REFERENCES `seeder`.`Idea` (`idIdea` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Developer_Idea_Developer1`
     FOREIGN KEY (`idDeveloper` )
-    REFERENCES `_seeder`.`Developer` (`idDeveloper` )
+    REFERENCES `seeder`.`Developer` (`idDeveloper` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+USE `seeder` ;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
@@ -166,38 +169,38 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `_seeder`.`Category`
+-- Data for table `seeder`.`Category`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `_seeder`;
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Books');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Finance');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Navigation & Travel');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Social');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Business');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Health & Fitness');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'News & Magazines');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Sports');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Education & Reference');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Lifestyle');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Photo & Video');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Utilities');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Entertainment');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Music & Audio');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Productivity');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Weather');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Other');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Action');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Children\'s Games');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Space');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Arcade');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Combat');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Sports');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Board Games');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Movies & TV');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Strategy');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Cards');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Puzzles');
-INSERT INTO `_seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Other');
+USE `seeder`;
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Books');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Finance');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Navigation & Travel');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Social');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Business');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Health & Fitness');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'News & Magazines');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Sports');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Education & Reference');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Lifestyle');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Photo & Video');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Utilities');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Entertainment');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Music & Audio');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Productivity');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Weather');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Apps', 'Other');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Action');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Children\'s Games');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Space');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Arcade');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Combat');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Sports');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Board Games');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Movies & TV');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Strategy');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Cards');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Puzzles');
+INSERT INTO `seeder`.`Category` (`idCategory`, `categoryType`, `name`) VALUES (NULL, 'Games', 'Other');
 
 COMMIT;
