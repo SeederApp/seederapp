@@ -22,15 +22,14 @@ class Categories_Controller
     {
         $categoriesModel = new Categories_Model;
         $command = $getVars['command'];
-        $params = $getVars['params'];
         if ($this->method == "GET") {
-          if ($params == "true"){
+          if ($_GET['values']){
             $categories = $categoriesModel->$command($_GET['values']);
            }
            else
             $categories = $categoriesModel->$command();
           }
-        else
+        else if ($this->method == "POST")
           $categories="post";
     
         print_r($categories);
