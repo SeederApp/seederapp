@@ -52,7 +52,7 @@ class Categories_Model
         $this->db->prepare
         (
             "
-            SELECT *
+            SELECT 'idCategory', 'name'
             FROM Category WHERE categoryType = 'Apps';
             "
         );
@@ -74,7 +74,7 @@ class Categories_Model
         $this->db->prepare
         (
             "
-            SELECT *
+            SELECT 'idCategory', 'name'
             FROM Category WHERE categoryType = 'Games';
             "
         );
