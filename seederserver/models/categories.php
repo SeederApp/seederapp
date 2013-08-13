@@ -42,6 +42,50 @@ class Categories_Model
         
         return $article;
     }
+
+    public function getAllApps()
+    {        
+        //connect to database
+        $this->db->connect();
+        
+        //prepare query
+        $this->db->prepare
+        (
+            "
+            SELECT *
+            FROM Category WHERE categoryType = 'Apps';
+            "
+        );
+        
+        //execute query
+        $this->db->query();
+        
+        $article = $this->db->fetch('array');
+        
+        return $article;
+    }
+    
+    public function getAllGames()
+    {        
+        //connect to database
+        $this->db->connect();
+        
+        //prepare query
+        $this->db->prepare
+        (
+            "
+            SELECT *
+            FROM Category WHERE categoryType = 'Games';
+            "
+        );
+        
+        //execute query
+        $this->db->query();
+        
+        $article = $this->db->fetch('array');
+        
+        return $article;
+    }
     
     public function getCategoryById($params)
     {
