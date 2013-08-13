@@ -52,7 +52,7 @@ class Categories_Model
         $this->db->prepare
         (
             "
-            SELECT 'idCategory', 'name'
+            SELECT idCategory, name
             FROM Category WHERE categoryType = 'Apps';
             "
         );
@@ -74,7 +74,7 @@ class Categories_Model
         $this->db->prepare
         (
             "
-            SELECT 'idCategory', 'name'
+            SELECT idCategory, name
             FROM Category WHERE categoryType = 'Games';
             "
         );
@@ -98,6 +98,28 @@ class Categories_Model
             SELECT *
             FROM Category
             WHERE idCategory = ".$params['0'].";
+            "
+        );
+        
+        //execute query
+        $this->db->query();
+        
+        $article = $this->db->fetch('array');
+        
+        return $article;
+    }
+    
+    public function getCategoryByName($params)
+    {
+      //connect to database
+        $this->db->connect();
+        //prepare query
+        $this->db->prepare
+        (
+            "
+            SELECT *
+            FROM Category
+            WHERE name = ".$params['0'].";
             "
         );
         
