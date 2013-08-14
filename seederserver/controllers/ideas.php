@@ -1,15 +1,15 @@
 <?php
 
 /**
- * This file handles the retrieval and serving of categories
+ * This file handles the retrieval and serving of ideas
  */
-class Categories_Controller
+class Ideas_Controller
 {
     /**
      * This template variable will hold the 'view' portion of the MVC for this 
      * controller
      */
-    public $template = 'categories';
+    public $template = 'ideas';
     private $method;
 
     function __construct($method) {
@@ -21,18 +21,18 @@ class Categories_Controller
      */
     public function main(array $getVars)
     {
-        $categoriesModel = new Categories_Model;
+        $ideasModel = new Ideas_Model;
         $command = $getVars['command'];
         if ($this->method == "GET") {
           if ($_GET['values']){
-            $categories = $categoriesModel->$command($_GET['values']);
+            $ideas = $ideasModel->$command($_GET['values']);
            }
            else
-            $categories = $categoriesModel->$command();
+            $ideas = $ideasModel->$command();
           }
         else if ($this->method == "POST")
-          $categories="post";
+          $ideas="post";
     
-        print_r($categories);
+        print_r($ideas);
     }
 }
