@@ -28,24 +28,17 @@ class Mysql_Driver extends Database_Library
     /**
      * Create new connection to database
      */ 
-    public function connect()
-    {
-        $services_json = json_decode(getenv("VCAP_SERVICES"),true);
-        $mysql_config = $services_json["mysql-5.1"][0]["credentials"];
-        //connection parameters
-        $username = $mysql_config["username"];
-        $password = $mysql_config["password"];
-        $hostname = $mysql_config["hostname"];
-        $port = $mysql_config["port"];
-        $this->db = $mysql_config["name"]; 
-        //create new mysql connection
-        $this->connection = mysql_connect("$hostname:$port", $username, $password);
-        if (!$this->connection) {
-          die('Could not connect: ' . mysql_error());
-          return FALSE;
-        }
-        else
-          return TRUE;
+   public function connect()
+    {     
+      $host="127.0.0.1";
+      $port=10000;
+      $socket="";
+      $user="uOFTUsTfGuI0T";
+      $password="pM3DDWbHcxHKW";
+      $this->db="d0f0bbda4303c49268209e2ef4b26e8cb";
+      $dbname="d0f0bbda4303c49268209e2ef4b26e8cb";
+      $this->connection = mysqli_connect($host, $user, $password, $dbname, $port)
+        or die ('Could not connect to the database server' . mysqli_connect_error());
     }
 
     /**
@@ -80,8 +73,8 @@ class Mysql_Driver extends Database_Library
         if (isset($this->query))
         {
             //execute prepared query and store in result variable
-            $db_selected = mysql_select_db($this->db, $this->connection);
-            $this->result = mysql_query($this->query);
+            $db_selected = mysqli_select_db($this->connection, $this->db);
+            $this->result = mysqli_query($this->connection, $this->query);
             if($this->result === FALSE) {
               die(mysql_error()); // TODO: better error handling
             }
@@ -106,7 +99,7 @@ class Mysql_Driver extends Database_Library
                     //fetch a row as array
                     //$row = mysql_fetch_array($this->result);
                     $rows = array();
-                    while($r = mysql_fetch_array($this->result)) { 
+                    while($r = mysqli_fetch_array($this->result)) { 
                         $rows[] = array($r);
                     }
                 break;

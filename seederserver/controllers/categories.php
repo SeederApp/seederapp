@@ -23,8 +23,9 @@ class Categories_Controller
     {
         $categoriesModel = new Categories_Model;
         $command = $getVars['command'];
+        $values = isset($_GET['values']) ? $_GET['values'] : null;
         if ($this->method == "GET") {
-          if ($_GET['values']){
+          if (isset($values)){
             $categories = $categoriesModel->$command($_GET['values']);
            }
            else
