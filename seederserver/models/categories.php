@@ -79,7 +79,7 @@ class Categories_Model {
 		//Return data
 		return $article;
 	}
-	
+
 	public function getCategoryByName($params) {
 		//Connect to database
 		$this->db->connect();
