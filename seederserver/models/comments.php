@@ -20,7 +20,7 @@ class Comments_Model {
 	 */
 	public function addComment($params, $hash) {
 		//Authenticate user
-		$userHash = $this->getHash($params[0]);
+		$userHash = $this->getHashByEmail($params[0]);
 		$decodedHash = json_decode($userHash, true);
 		
 		//Check if the sent client-side hash is different than the one in the database

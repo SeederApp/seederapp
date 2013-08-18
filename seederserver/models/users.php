@@ -74,31 +74,81 @@ class Users_Model {
 
 	/*
 	 * @params[0] email
-	 * @params[0] firstName
-	 * @params[0] lastName
-	 * @params[0] gender
-	 * @params[0] salt
-	 * @params[0] hash
-	 * @params[0] photoURL
-	 * @params[0] coins
 	 * @hash hash sent by the client
 	 */
+	private function authenticateUser($hash, $email) {	
+		$userHash = $this->getHashByEmail($email);
+		$userHashDecoded = json_decode($userHash, true);
+		if ($userHashDecoded != null) {
+			if ($userHashDecoded[0][0][0] != $hash) {
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/*
+	 * @params[0] email
+	 * @params[1] firstName
+	 * @params[2] lastName
+	 * @params[3] gender
+	 * @params[4] salt
+	 * @params[5] hash
+	 * @params[6] photoURL
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
 	public function addUser($params, $hash) {
+		//Check if user exists
+		if (validateEmail($params[0])){
+			return "User already exists";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+				
+		//Prepare query
+		$this->db->prepare("INSERT INTO USER (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
+	
+	/*
+	 * @params[0] email
+	 * @params[1] firstName
+	 * @params[2] lastName
+	 * @params[3] gender
+	 * @params[4] salt
+	 * @params[5] hash
+	 * @params[6] photoURL
+	 * @params[7] vendorId
+	 * @params[8] twitter
+	 * @params[9] facebook
+	 * @params[10] linkedin
+	 * @params[11] github	 
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function addDeveloper($params, $hash) {
+		//Check if user exists
+		if (validateEmail($params[0])){
+			return "User already exists";
+		}
 		
 		//Connect to database
 		$this->db->connect();
 		
-		//Prepare query
-		$this->db->prepare("INSERT INTO USER (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '".$params[7]."');");
+		//Prepare query for inserting Developer info
+		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, lindedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
 		
-		//Execute query and return "true" or "false"
-		return $this->db->query();
-		
-		//Prepare query
-		$this->db->prepare("INSERT INTO USER (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '".$params[7]."');");
-		
-		//Execute query and return "true" or "false"
-		return $this->db->query();
+		if ($this->db->query()){		
+			//Prepare query for inserting User info
+			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->insert_id."');");
+			return $this->db->query();
+		}
 	}
 
 
@@ -108,12 +158,8 @@ class Users_Model {
 	 */
 	public function deleteUser($params, $hash) {
 		//Authenticate user
-		$userHash = $this->getHashByEmail($params[0]);
-		$decodedHash = json_decode($userHash, true);
-		
-		//Check if the sent client-side hash is different than the one in the database
-		if ($decodedHash[0][0][0] != $hash){
-			return;
+		if (!autheticateUser($params[0], $hash)){
+			return "Invalid user or password";
 		}
 		
 		//Connect to database
@@ -198,12 +244,8 @@ class Users_Model {
 	 */
 	public function getUserById($params, $hash) {
 		//Authenticate user
-		$userHash = $this->getHashById($params[0]);
-		$decodedHash = json_decode($userHash, true);
-		
-		//Check if the sent client-side hash is different than the one in the database
-		if ($decodedHash[0][0][0] != $hash){
-			return;
+		if (!$this->autheticateUser($params[0], $hash)){
+			return "Invalid user or password";
 		}
 		
 		//Connect to database
@@ -228,12 +270,8 @@ class Users_Model {
 	 */
 	public function getUserByEmail($params, $hash) {
 		//Authenticate user
-		$userHash = $this->getHashByEmail($params[0]);
-		$decodedHash = json_decode($userHash, true);
-		
-		//Check if the sent client-side hash is different than the one in the database
-		if ($decodedHash[0][0][0] != $hash){
-			return;
+		if (!$this->autheticateUser($params[0], $hash)){
+			return "Invalid user or password";
 		}
 		
 		//Connect to database
@@ -258,12 +296,8 @@ class Users_Model {
 	 */
 	public function getDeveloperById($params, $hash) {
 		//Authenticate user
-		$userHash = $this->getHashById($params[0]);
-		$decodedHash = json_decode($userHash, true);
-		
-		//Check if the sent client-side hash is different than the one in the database
-		if ($decodedHash[0][0][0] != $hash){
-			return;
+		if (!$this->autheticateUser($params[0], $hash)){
+			return "Invalid user or password";
 		}
 		
 		//Connect to database
@@ -288,12 +322,8 @@ class Users_Model {
 	 */
 	public function getDeveloperByEmail($params, $hash) {
 		//Authenticate user
-		$userHash = $this->getHashByEmail($params[0]);
-		$decodedHash = json_decode($userHash, true);
-		
-		//Check if the sent client-side hash is different than the one in the database
-		if ($decodedHash[0][0][0] != $hash){
-			return;
+		if (!$this->autheticateUser($params[0], $hash)){
+			return "Invalid user or password";
 		}
 		
 		//Connect to database
