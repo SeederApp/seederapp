@@ -76,7 +76,7 @@ class Users_Model {
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
-	private function authenticateUser($hash, $email) {	
+	private function authenticateUser($email, $hash) {
 		$userHash = $this->getHashByEmail($email);
 		$userHashDecoded = json_decode($userHash, true);
 		if ($userHashDecoded != null) {
@@ -158,7 +158,7 @@ class Users_Model {
 	 */
 	public function deleteUser($params, $hash) {
 		//Authenticate user
-		if (!autheticateUser($params[0], $hash)){
+		if (!authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
 		
@@ -244,7 +244,7 @@ class Users_Model {
 	 */
 	public function getUserById($params, $hash) {
 		//Authenticate user
-		if (!$this->autheticateUser($params[0], $hash)){
+		if (!authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
 		
@@ -270,7 +270,7 @@ class Users_Model {
 	 */
 	public function getUserByEmail($params, $hash) {
 		//Authenticate user
-		if (!$this->autheticateUser($params[0], $hash)){
+		if (!authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
 		
@@ -296,7 +296,7 @@ class Users_Model {
 	 */
 	public function getDeveloperById($params, $hash) {
 		//Authenticate user
-		if (!$this->autheticateUser($params[0], $hash)){
+		if (!authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
 		
@@ -322,7 +322,7 @@ class Users_Model {
 	 */
 	public function getDeveloperByEmail($params, $hash) {
 		//Authenticate user
-		if (!$this->autheticateUser($params[0], $hash)){
+		if (!authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
 		
