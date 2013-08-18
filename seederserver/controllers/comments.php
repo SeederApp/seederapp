@@ -13,15 +13,15 @@ class Comments_Controller {
 	function __construct($method) {
 		$this->method = $method;
 	}
-    
-    /**
-     * @param array $getVars the GET variables posted to index.php
-     */
+
+	/**
+	 * @param array $getVars the GET variables posted to index.php
+	 */
 	public function main(array $getVars) {
 		$commentsModel = new Comments_Model;
 		$command = $getVars['command'];
 		$values = isset($_GET['values']) ? $_GET['values'] : null;
-        if ($this->method == "GET") {
+		if ($this->method == "GET") {
 			if (isset($values)){
 				$comments = $commentsModel->$command($_GET['values']);
 			}
@@ -29,7 +29,7 @@ class Comments_Controller {
 				$comments = $commentsModel->$command();
 			}
 		}
-        else if ($this->method == "POST"){
+		else if ($this->method == "POST"){
 			$comments="post";
 		}
 		print_r($comments);

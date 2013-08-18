@@ -13,15 +13,15 @@ class Categories_Controller {
 	function __construct($method) {
 		$this->method = $method;
 	}
-    
-    /**
-     * @param array $getVars the GET variables posted to index.php
-     */
+
+	/**
+	 * @param array $getVars the GET variables posted to index.php
+	 */
 	public function main(array $getVars) {
 		$categoriesModel = new Categories_Model;
 		$command = $getVars['command'];
 		$values = isset($_GET['values']) ? $_GET['values'] : null;
-        if ($this->method == "GET") {
+		if ($this->method == "GET") {
 			if (isset($values)){
 				$categories = $categoriesModel->$command($_GET['values']);
 			}
@@ -29,7 +29,7 @@ class Categories_Controller {
 				$categories = $categoriesModel->$command();
 			}
 		}
-        else if ($this->method == "POST"){
+		else if ($this->method == "POST"){
 			$categories="post";
 		}
 		print_r($categories);
