@@ -7,6 +7,6 @@ abstract class Database_Library {
 	abstract protected function disconnect();
 	abstract protected function prepare($query);
 	abstract protected function query();
-	abstract protected function fetch($type = 'object');      
+	abstract protected function fetch($type = 'object');
 }
 ?>
