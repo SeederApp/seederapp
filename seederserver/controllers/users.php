@@ -1,13 +1,13 @@
 <?php
 /**
- * This file handles the retrieval and serving of ideas
+ * This file handles the retrieval and serving of users
  */
-class Ideas_Controller {
+class Users_Controller {
 	/**
 	 * This template variable will hold the 'view' portion of the MVC 
 	 * for this controller
 	 */
-	public $template = 'ideas';
+	public $template = 'users';
 	private $method;
 
 	function __construct($method) {
@@ -18,21 +18,21 @@ class Ideas_Controller {
      * @param array $getVars the GET variables posted to index.php
      */
 	public function main(array $getVars) {
-		$ideasModel = new Ideas_Model;
+		$usersModel = new Users_Model;
 		$command = $getVars['command'];
 		$values = isset($_GET['values']) ? $_GET['values'] : null;
         if ($this->method == "GET") {
 			if (isset($values)){
-				$ideas = $ideasModel->$command($_GET['values']);
+				$users = $usersModel->$command($_GET['values']);
 			}
 			else {
-				$ideas = $ideasModel->$command();
+				$users = $usersModel->$command();
 			}
 		}
         else if ($this->method == "POST"){
-			$ideas="post";
+			$users="post";
 		}
-		print_r($ideas);
+		print_r($users);
 	}
 }
 ?>
