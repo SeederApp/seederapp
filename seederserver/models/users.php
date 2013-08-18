@@ -12,47 +12,39 @@ class Users_Model {
 		$this->db = new Mysql_Driver;
 	}
   
-   public function getSalt ($userEmail) 
-    {
-      //connect to database
-      $this->db->connect();
-      //prepare query
-      $this->db->prepare
-      (
-        "
-        SELECT salt 
-        FROM User
-        WHERE email = '".$userEmail."';
-        "
-      );
-      //execute query
-      $this->db->query();        
-      
-      $article = $this->db->fetch('array');        
-
-      return $article;
-    }  
+	public function getSalt($userEmail) {
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT salt FROM User WHERE email = '".$userEmail."';");
+		
+		//Execute query
+		$this->db->query();        
+		
+		//Fetch query
+		$article = $this->db->fetch('array');        
+		
+		//Return data
+		return $article;
+	}  
     
-    private function getHash ($userEmail) 
-    {
-      //connect to database
-      $this->db->connect();
-      //prepare query
-      $this->db->prepare
-      (
-        "
-        SELECT hash 
-        FROM User
-        WHERE email = '".$userEmail."';
-        "
-      );
-      //execute query
-      $this->db->query();        
-      
-      $article = $this->db->fetch('array');        
-
-      return $article;
-    }  
+	private function getHash($userEmail) {
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT hash FROM User WHERE email = '".$userEmail."';");
+		
+		//Execute query
+		$this->db->query();        
+		
+		//Fetch query
+		$article = $this->db->fetch('array');        
+		
+		//Return data
+		return $article;
+	}
   
 	public function getUserById($params) {
 		//Connect to database
@@ -73,12 +65,13 @@ class Users_Model {
 	
 	public function getUserByEmail($params, $hash) {
 		$userHash = $this->getHash($params[0]);
-    $decodedHash = json_decode($userHash, true);
+		$decodedHash = json_decode($userHash, true);
+		
+		if ($decodedHash[0][0][0] != $hash){
+			return;
+		}
     
-    if ($decodedHash[0][0][0] != $hash)
-      return;
-    
-    //Connect to database
+    	//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
@@ -94,7 +87,24 @@ class Users_Model {
 		return $article;
 	}
 	
-		public function getDeveloperByEmail($params) {
+	public function getDeveloperById($params) {
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT User.email, User.firstName, User.lastName, User.gender, User.photoURL, User.coins, Developer.* FROM User JOIN Developer WHERE User.idUser = Developer.idUser AND User.idUser = ".$params['0'].";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+	
+	public function getDeveloperByEmail($params) {
 		//Connect to database
 		$this->db->connect();
 		
