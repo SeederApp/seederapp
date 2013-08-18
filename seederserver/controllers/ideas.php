@@ -18,20 +18,24 @@ class Ideas_Controller {
 	 * @param array $getVars the GET variables posted to index.php
 	 */
 	public function main(array $getVars) {
-		$ideasModel = new Ideas_Model;
+	//hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
+		$ideasModel = new Users_Model;
 		$command = $getVars['command'];
+		$hash = isset($getVars['hash']) ? $getVars['hash'] : null;
 		$values = isset($_GET['values']) ? $_GET['values'] : null;
-		if ($this->method == "GET") {
-			if (isset($values)){
-				$ideas = $ideasModel->$command($_GET['values']);
-			}
-			else {
-				$ideas = $ideasModel->$command();
-			}
+
+	if ($this->method == "GET") {
+		if (isset($values) && isset($hash)){
+			$ideas = $ideasModel->$command($values, $hash);
 		}
-		else if ($this->method == "POST"){
-			$ideas="post";
+		else if (isset($values)) {
+			$ideas = $ideasModel->$command($values);
 		}
+	else
+		$ideas = $ideasModel->$command();
+	}
+	else if ($this->method == "POST")
+		$ideas="post";
 		print_r($ideas);
 	}
 }

@@ -18,7 +18,7 @@ class Users_Controller {
 	 * @param array $getVars the GET variables posted to index.php
 	 */
 	public function main(array $getVars) {
-    //hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
+	//hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 		$usersModel = new Users_Model;
 		$command = $getVars['command'];
 		$hash = isset($getVars['hash']) ? $getVars['hash'] : null;
