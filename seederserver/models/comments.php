@@ -31,6 +31,26 @@ class Comments_Model {
 		//Return data
 		return $article;
 	}
+  
+  /*
+	 * @email email
+	 */
+	private function getIdByEmail($email) {
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT idUser FROM User WHERE email = '".$email."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
 	/*
 	 * @params[0] email
@@ -61,7 +81,10 @@ class Comments_Model {
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
-		
+		$userIdDecoded = json_decode($this->getIdByEmail($params[0]), true);
+    $userId = $userIdDecoded[0][0][0];
+    if ($userId != $params[1])
+      return false;
 		//Connect to database
 		$this->db->connect();
 		
