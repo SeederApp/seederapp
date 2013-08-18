@@ -91,7 +91,11 @@ class Mysql_Driver extends Database_Library {
 						$rows[] = array($r);
 					}
 					break;
-					
+				
+        case 'boolean':
+          $row = $this->result->fetch();
+          break;
+        
 				case 'object':
 					//Fall through...
 					
@@ -111,6 +115,13 @@ class Mysql_Driver extends Database_Library {
 	 */
 	public function escape($data) {
 		return $this->connection->real_escape_string($data);
+	}
+  
+   /**
+	 * Fetch id of last query
+	 */
+	public function fetchId() {
+		return $this->connection->insert_id;
 	}
 }
 ?>

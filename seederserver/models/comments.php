@@ -69,14 +69,15 @@ class Comments_Model {
 		$this->db->prepare("INSERT INTO Comment (date, content) VALUES (now(), '".$params[3]."');");
 		
 		//Execute query and return "true" or "false"
-		if ($this->db->query()){
+		if ($this->db->query() == 1){
 			//Prepare query
-			$this->db->prepare("INSERT INTO Idea_Comment (idIdea, idComment) VALUES ('".$params[2]."', '".$this->db->insert_id."');");
-			
+      $idComment = $this->db->fetchId();
+			$this->db->prepare("INSERT INTO Idea_Comment (idIdea, idComment) VALUES ('".$params[2]."', '".$idComment."');");
+		
 			//Execute query and return "true" or "false"
-			if ($this->db->query()){
+			if ($this->db->query() == 1){
 				//Prepare query
-				$this->db->prepare("INSERT INTO User_Comment (idUser, idComment) VALUES ('".$params[1]."', '".$this->db->insert_id."');");
+				$this->db->prepare("INSERT INTO User_Comment (idUser, idComment) VALUES ('".$params[1]."', '".$idComment."');");
 				
 				//Return "true" or "false"
 				return $this->db->query();
