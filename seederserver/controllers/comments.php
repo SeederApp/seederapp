@@ -18,21 +18,25 @@ class Comments_Controller {
 	 * @param array $getVars the GET variables posted to index.php
 	 */
 	public function main(array $getVars) {
-		$commentsModel = new Comments_Model;
+	//hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
+		$commentsModel = new Users_Model;
 		$command = $getVars['command'];
+		$hash = isset($getVars['hash']) ? $getVars['hash'] : null;
 		$values = isset($_GET['values']) ? $_GET['values'] : null;
-		if ($this->method == "GET") {
-			if (isset($values)){
-				$comments = $commentsModel->$command($_GET['values']);
-			}
-			else {
-				$comments = $commentsModel->$command();
-			}
+
+	if ($this->method == "GET") {
+		if (isset($values) && isset($hash)){
+			$ideas = $commentsModel->$command($values, $hash);
 		}
-		else if ($this->method == "POST"){
-			$comments="post";
+		else if (isset($values)) {
+			$ideas = $commentsModel->$command($values);
 		}
-		print_r($comments);
+	else
+		$ideas = $commentsModel->$command();
+	}
+	else if ($this->method == "POST")
+		$ideas="post";
+		print_r($ideas);
 	}
 }
 ?>

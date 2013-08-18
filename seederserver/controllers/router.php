@@ -7,7 +7,7 @@
 		$suffix = strrev($suffix);
 	
 		//Select the folder where class should be located based on suffix
-		switch (strtolower($suffix)) {    
+		switch (strtolower($suffix)) {
 			case 'model':
 				$folder = '/models/';
 				break;
@@ -19,29 +19,29 @@
 				$folder = '/libraries/drivers/';
 				break;
 		}
-	
+
 		//Compose file name
 		$file = SERVER_ROOT . $folder . strtolower($filename) . '.php';
 		
 		//Fetch file
 		if (file_exists($file)) {
 			//Get file
-			include_once($file);        
+			include_once($file);
 		} else {
 			//File does not exist!
 			die("File '$filename' containing class '$className' not found in '$folder'.");    
 		}
 	}
-	
+
 	//Fetch the passed request
 	$request = $_SERVER['QUERY_STRING'];
-	
+
 	//Parse the page request and other GET variables
 	$parsed = explode('&' , $request);
-	
+
 	//The page is the first element
 	$page = array_shift($parsed);
-	
+
 	//The rest of the array are get statements, parse them out
 	$getVars = array();
 	foreach ($parsed as $argument) {
@@ -52,7 +52,7 @@
 
 	//Compute the path to the file
 	$target = SERVER_ROOT . '/controllers/' . $page . '.php';
-	
+
 	//Get target
 	if (file_exists($target)) {
 		include_once($target);
@@ -73,7 +73,7 @@
 		//Can not find the file in 'controllers'! 
 		die('page does not exist!');
 	}
-	
+
 	//Once we have the controller instantiated, execute the default function and
 	//pass any GET variables to the main method
 	$controller->main($getVars);
