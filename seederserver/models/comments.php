@@ -12,46 +12,12 @@ class Comments_Model {
 		$this->db = new Mysql_Driver;
 	}
 
-	public function getCommentsByIdIdea() {
-		//Connect to database
-		$this->db->connect();
-		
-		//Prepare query
-		$this->db->prepare("SELECT * FROM Comment;");
-		
-		//Execute query
-		$this->db->query();
-		
-		//Fetch data
-		$article = $this->db->fetch('array');
-		
-		//Return data
-		return $article;
-	}
-
 	public function getCommentsByIdIdea($params) {
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Comment WHERE idComment = ".$params['0'].";");
-		
-		//Execute query
-		$this->db->query();
-		
-		//Fetch data
-		$article = $this->db->fetch('array');
-		
-		//Return data
-		return $article;
-	}
-	
-	public function getCommentByName($params) {
-		//Connect to database
-		$this->db->connect();
-		
-		//Prepare query
-		$this->db->prepare("SELECT * FROM Comment WHERE name = ".$params['0'].";");
+		$this->db->prepare("SELECT Comment.* FROM Comment JOIN Idea_Comment WHERE Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = ".$params['0'].";");
 		
 		//Execute query
 		$this->db->query();

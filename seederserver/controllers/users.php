@@ -22,7 +22,7 @@ class Users_Controller {
 		$usersModel = new Users_Model;
 		$command = $getVars['command'];
     $hash = isset($getVars['hash']) ? $getVars['hash'] : null;
-    $values = isset($getVars['values']) ? $getVars['values'] : null;
+    $values = isset($_GET['values']) ? $_GET['values'] : null;
 
     if ($this->method == "GET") {
       if (isset($values) && isset($hash)){
