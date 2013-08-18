@@ -19,7 +19,7 @@ class Ideas_Controller {
 	 */
 	public function main(array $getVars) {
 	//hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
-		$ideasModel = new Users_Model;
+		$ideasModel = new Ideas_Model;
 		$command = $getVars['command'];
 		$hash = isset($getVars['hash']) ? $getVars['hash'] : null;
 		$values = isset($_GET['values']) ? $_GET['values'] : null;

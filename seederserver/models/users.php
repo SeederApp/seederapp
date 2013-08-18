@@ -102,7 +102,7 @@ class Users_Model {
 	 */
 	public function addUser($params, $hash) {
 		//Check if user exists
-		if (validateEmail($params[0])){
+		if (!validateEmail($params[0])){
 			return "User already exists";
 		}
 		
@@ -110,12 +110,43 @@ class Users_Model {
 		$this->db->connect();
 				
 		//Prepare query
-		$this->db->prepare("INSERT INTO USER (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
+		$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
 	}
-	
+
+	/*
+	 * @params[0] email
+	 * @params[1] firstName
+	 * @params[2] lastName
+	 * @params[3] gender
+	 * @params[4] salt
+	 * @params[5] hash
+	 * @params[6] photoURL
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function updateUser($params, $hash) {
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+UPDATE table_name
+SET column1=value1,column2=value2,...
+WHERE some_column=some_value;
+
+		//Prepare query
+		$this->db->prepare("UPDATE User (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
+
 	/*
 	 * @params[0] email
 	 * @params[1] firstName
@@ -134,7 +165,7 @@ class Users_Model {
 	 */
 	public function addDeveloper($params, $hash) {
 		//Check if user exists
-		if (validateEmail($params[0])){
+		if (!validateEmail($params[0])){
 			return "User already exists";
 		}
 		
@@ -150,7 +181,6 @@ class Users_Model {
 			return $this->db->query();
 		}
 	}
-
 
 	/*
 	 * @params[0] email
