@@ -15,7 +15,7 @@ class Users_Model{
 	/*
 	 * @email email
 	 */
-	private function validateEmail($email) {
+	private function validateEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -138,9 +138,9 @@ class Users_Model{
 	 * @params[5] hash
 	 * @params[6] photoURL
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-   * index.php?users&command=addUser&values[]=test@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds
+	 * index.php?users&command=addUser&values[]=test@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds
 	 */
-	public function addUser($params) {
+	public function addUser($params){
 		//Check if user exists
 		$existsDecoded = json_decode($this->validateEmail($params[0]), true);
 		$exists = $existsDecoded[0][0][0];
@@ -163,6 +163,31 @@ class Users_Model{
 	 * @params[1] firstName
 	 * @params[2] lastName
 	 * @params[3] gender
+	 * @params[4] photoURL
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function updateUser($params){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
+
+	/*
+	 * @params[0] email
+	 * @params[1] firstName
+	 * @params[2] lastName
+	 * @params[3] gender
 	 * @params[4] salt
 	 * @params[5] hash
 	 * @params[6] photoURL
@@ -172,7 +197,7 @@ class Users_Model{
 	 * @params[10] linkedin
 	 * @params[11] github	 
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-   * http://localhost/index.php?users&command=addDeveloper&values[]=dev2@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds&values[]=222&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github
+	 * http://localhost/index.php?users&command=addDeveloper&values[]=dev2@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds&values[]=222&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github
 	 */
 	public function addDeveloper($params){
 		//Check if user exists
@@ -264,7 +289,7 @@ class Users_Model{
 	/*
 	 * @params[0] email
 	 */
-	public function isBanned($params) {
+	public function isBanned($params){
 		//Connect to database
 		$this->db->connect();
 		
