@@ -12,6 +12,26 @@ class Users_Model {
 		$this->db = new Mysql_Driver;
 	}
 
+  /*
+	 * @email email
+	 */
+	public function validateEmail($email) {
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT count(1) FROM User WHERE email = '".$email."';");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch query
+		$article = $this->db->fetch('array');
+	//	var_dump($article);
+		//Return data
+		return $article;
+	}
+  
 	/*
 	 * @email email
 	 */
@@ -117,12 +137,14 @@ class Users_Model {
 	 * @params[4] salt
 	 * @params[5] hash
 	 * @params[6] photoURL
-	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-	public function addUser($params, $hash) {
+   
+	public function addUser($params) {
 		//Check if user exists
-		if (validateEmail($params[0])){
+    $existsDecoded = json_decode($this->validateEmail($params[0]), true);
+    $exists = $existsDecoded[0][0][0];
+		if ($exists != 0){
 			return "User already exists";
 		}
 		
@@ -130,7 +152,7 @@ class Users_Model {
 		$this->db->connect();
 				
 		//Prepare query
-		$this->db->prepare("INSERT INTO USER (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
+		$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
