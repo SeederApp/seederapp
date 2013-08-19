@@ -138,6 +138,7 @@ class Users_Model{
 	 * @params[5] hash
 	 * @params[6] photoURL
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+   * index.php?users&command=addUser&values[]=test@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds
 	 */
 	public function addUser($params) {
 		//Check if user exists
@@ -171,6 +172,7 @@ class Users_Model{
 	 * @params[10] linkedin
 	 * @params[11] github	 
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+   * http://localhost/index.php?users&command=addDeveloper&values[]=dev2@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds&values[]=222&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github
 	 */
 	public function addDeveloper($params){
 		//Check if user exists
