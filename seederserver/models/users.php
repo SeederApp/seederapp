@@ -184,7 +184,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query for inserting Developer info
-		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, lindedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
+		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, linkedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
 		
 		if ($this->db->query() == 1){
 			//Prepare query for inserting User info
@@ -192,7 +192,6 @@ class Users_Model{
 			return $this->db->query();
 		}
 	}
-
 
 	/*
 	 * @params[0] email
