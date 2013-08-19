@@ -254,6 +254,7 @@ class Users_Model{
 	 * @params[9] github
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+   * http://localhost/index.php?users&command=updateDeveloper&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&values[]=1111&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function updateDeveloper($params, $hash){
 		//Authenticate user
