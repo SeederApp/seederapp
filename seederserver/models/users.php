@@ -304,6 +304,27 @@ class Users_Model{
 
 	/*
 	 * @params[0] email
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function setIsAdmin($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("UPDATE User SET isAdmin = '1' WHERE email = '".$params[0]."';");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
+
+	/*
+	 * @params[0] email
 	 */
 	public function isDeveloper($params){
 		//Connect to database
