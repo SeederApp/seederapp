@@ -166,7 +166,7 @@ class Users_Model{
 	 * @params[4] photoURL
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-   * http://localhost/index.php?users&command=updateUser&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
+	 * http://localhost/index.php?users&command=updateUser&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function updateUser($params, $hash){
 		//Authenticate user
@@ -190,6 +190,11 @@ class Users_Model{
 	 * @params[2] lastName
 	 * @params[3] gender
 	 * @params[4] photoURL
+	 * @params[5] vendorId
+	 * @params[6] twitter
+	 * @params[7] facebook
+	 * @params[8] linkedin
+	 * @params[9] github
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
@@ -203,18 +208,13 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query for inserting Developer info
-		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, linkedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
+		$this->db->prepare("UPDATE Developer vendorId = '".$params[5]."', twitter = '".$params[6]."', facebook = '".$params[7]."', linkedin = '".$params[8]."', github = '".$params[9]."' WHERE email = '".$params[0]."';");
 		
 		if ($this->db->query() == 1){
 			//Prepare query for inserting User info
-			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->fetchId()."');");
+			$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
 			return $this->db->query();
 		}
-		//Prepare query
-		$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
-		
-		//Execute query and return "true" or "false"
-		return $this->db->query();
 	}
 
 	/*
@@ -229,7 +229,7 @@ class Users_Model{
 	 * @params[8] twitter
 	 * @params[9] facebook
 	 * @params[10] linkedin
-	 * @params[11] github	 
+	 * @params[11] github
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 * http://localhost/index.php?users&command=addDeveloper&values[]=dev2@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds&values[]=222&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github
 	 */
