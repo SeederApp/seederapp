@@ -2,20 +2,20 @@
 /**
  * The Users Model does the back-end heavy lifting for the Users Controller
  */
-class Users_Model {
+class Users_Model{
 	/**
 	 * Holds instance of database connection
 	 */
 	private $db;
 	
-	public function __construct() {
+	public function __construct(){
 		$this->db = new Mysql_Driver;
 	}
 
 	/*
 	 * @email email
 	 */
-	public function getSalt($email) {
+	public function getSalt($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -35,7 +35,7 @@ class Users_Model {
 	/*
 	 * @idUser idUser
 	 */
-	private function getHashById($idUser) {
+	private function getHashById($idUser){
 		//Connect to database
 		$this->db->connect();
 		
@@ -55,7 +55,7 @@ class Users_Model {
 	/*
 	 * @email email
 	 */
-	private function getHashByEmail($email) {
+	private function getHashByEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -72,10 +72,10 @@ class Users_Model {
 		return $article;
 	}
 
-   /*
+	/*
 	 * @email email
 	 */
-	private function getIdByEmail($email) {
+	private function getIdByEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -91,20 +91,20 @@ class Users_Model {
 		//Return data
 		return $article;
 	}
-  
+
 	/*
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
-	private function authenticateUser($email, $hash) {
+	private function authenticateUser($email, $hash){
 		$userHash = $this->getHashByEmail($email);
 		$userHashDecoded = json_decode($userHash, true);
-		if ($userHashDecoded != null) {
-			if ($userHashDecoded[0][0][0] != $hash) {
+		if ($userHashDecoded != null){
+			if ($userHashDecoded[0][0][0] != $hash){
 				return false;
 			}
 			return true;
-		} else {
+		} else{
 			return false;
 		}
 	}
@@ -117,20 +117,19 @@ class Users_Model {
 	 * @params[4] salt
 	 * @params[5] hash
 	 * @params[6] photoURL
-	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-	public function addUser($params, $hash) {
+	public function addUser($params){
 		//Check if user exists
-		if (validateEmail($params[0])){
+		if (!validateEmail($params[0])){
 			return "User already exists";
 		}
 		
 		//Connect to database
 		$this->db->connect();
-				
+		
 		//Prepare query
-		$this->db->prepare("INSERT INTO USER (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
+		$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
@@ -149,12 +148,11 @@ class Users_Model {
 	 * @params[9] facebook
 	 * @params[10] linkedin
 	 * @params[11] github	 
-	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-	public function addDeveloper($params, $hash) {
+	public function addDeveloper($params){
 		//Check if user exists
-		if (validateEmail($params[0])){
+		if ($this->validateEmail($params[0]) == 1){
 			return "User already exists";
 		}
 		
@@ -164,9 +162,9 @@ class Users_Model {
 		//Prepare query for inserting Developer info
 		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, lindedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
 		
-		if ($this->db->query()){		
+		if ($this->db->query() == 1){
 			//Prepare query for inserting User info
-			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->insert_id."');");
+			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->fetchId()."');");
 			return $this->db->query();
 		}
 	}
@@ -176,7 +174,7 @@ class Users_Model {
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
-	public function deleteUser($params, $hash) {
+	public function deleteUser($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -201,7 +199,7 @@ class Users_Model {
 	/*
 	 * @params[0] email
 	 */
-	public function isDeveloper($params) {
+	public function isDeveloper($params){
 		//Connect to database
 		$this->db->connect();
 		
@@ -221,7 +219,7 @@ class Users_Model {
 	/*
 	 * @params[0] email
 	 */
-	public function isAdmin($params) {
+	public function isAdmin($params){
 		//Connect to database
 		$this->db->connect();
 		
@@ -262,7 +260,7 @@ class Users_Model {
 	 * @params[0] idUser
 	 * @hash hash sent by the client
 	 */
-	public function getUserById($params, $hash) {
+	public function getUserById($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -288,7 +286,7 @@ class Users_Model {
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
-	public function getUserByEmail($params, $hash) {
+	public function getUserByEmail($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -314,7 +312,7 @@ class Users_Model {
  	 * @params[0] idDeveloper
 	 * @hash hash sent by the client
 	 */
-	public function getDeveloperById($params, $hash) {
+	public function getDeveloperById($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -340,7 +338,7 @@ class Users_Model {
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
-	public function getDeveloperByEmail($params, $hash) {
+	public function getDeveloperByEmail($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";

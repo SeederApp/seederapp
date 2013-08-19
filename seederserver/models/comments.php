@@ -93,10 +93,11 @@ class Comments_Model {
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
-			//Prepare query
-      $idComment = $this->db->fetchId();
+			$idComment = $this->db->fetchId();
+			
+			//Prepare query			
 			$this->db->prepare("INSERT INTO Idea_Comment (idIdea, idComment) VALUES ('".$params[2]."', '".$idComment."');");
-		
+			
 			//Execute query and return "true" or "false"
 			if ($this->db->query() == 1){
 				//Prepare query
