@@ -189,39 +189,6 @@ class Users_Model{
 	 * @params[1] firstName
 	 * @params[2] lastName
 	 * @params[3] gender
-	 * @params[4] photoURL
-	 * @params[5] vendorId
-	 * @params[6] twitter
-	 * @params[7] facebook
-	 * @params[8] linkedin
-	 * @params[9] github
-	 * @hash hash sent by the client
-	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-	 */
-	public function updateDeveloper($params){
-		//Authenticate user
-		if (!$this->authenticateUser($params[0], $hash)){
-			return "Invalid user or password";
-		}
-		
-		//Connect to database
-		$this->db->connect();
-		
-		//Prepare query for inserting Developer info
-		$this->db->prepare("UPDATE Developer vendorId = '".$params[5]."', twitter = '".$params[6]."', facebook = '".$params[7]."', linkedin = '".$params[8]."', github = '".$params[9]."' WHERE email = '".$params[0]."';");
-		
-		if ($this->db->query() == 1){
-			//Prepare query for inserting User info
-			$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
-			return $this->db->query();
-		}
-	}
-
-	/*
-	 * @params[0] email
-	 * @params[1] firstName
-	 * @params[2] lastName
-	 * @params[3] gender
 	 * @params[4] salt
 	 * @params[5] hash
 	 * @params[6] photoURL
@@ -256,6 +223,40 @@ class Users_Model{
 
 	/*
 	 * @params[0] email
+	 * @params[1] firstName
+	 * @params[2] lastName
+	 * @params[3] gender
+	 * @params[4] photoURL
+	 * @params[5] idDeveloper
+	 * @params[6] vendorId
+	 * @params[7] twitter
+	 * @params[8] facebook
+	 * @params[9] linkedin
+	 * @params[10] github
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function updateDeveloper($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query for inserting Developer info
+		$this->db->prepare("UPDATE Developer SET vendorId = '".$params[6]."', twitter = '".$params[7]."', facebook = '".$params[8]."', linkedin = '".$params[9]."', github = '".$params[10]."' WHERE idDeveloper = '".$params[5]."';");
+		
+		if ($this->db->query() == 1){
+			//Prepare query for inserting User info
+			$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
+			return $this->db->query();
+		}
+	}
+
+	/*
+	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
 	public function deleteUser($params, $hash){
@@ -278,6 +279,27 @@ class Users_Model{
 		
 		//Return data
 		return $article;
+	}
+
+	/*
+	 * @params[0] email
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function setIsBanned($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("UPDATE User SET isBanned = '1' WHERE email = '".$params[0]."';");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
 	}
 
 	/*
