@@ -2,20 +2,20 @@
 /**
  * The Comments Model does the back-end heavy lifting for the Comments Controller
  */
-class Comments_Model {
+class Comments_Model{
 	/**
 	 * Holds instance of database connection
 	 */
 	private $db;
 	
-	public function __construct() {
+	public function __construct(){
 		$this->db = new Mysql_Driver;
 	}
 
 	/*
 	 * @email email
 	 */
-	private function getHashByEmail($email) {
+	private function getHashByEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -31,11 +31,11 @@ class Comments_Model {
 		//Return data
 		return $article;
 	}
-  
-  /*
+
+	/*
 	 * @email email
 	 */
-	private function getIdByEmail($email) {
+	private function getIdByEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -44,7 +44,7 @@ class Comments_Model {
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
@@ -56,15 +56,15 @@ class Comments_Model {
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
-	private function authenticateUser($email, $hash) {
+	private function authenticateUser($email, $hash){
 		$userHash = $this->getHashByEmail($email);
 		$userHashDecoded = json_decode($userHash, true);
-		if ($userHashDecoded != null) {
-			if ($userHashDecoded[0][0][0] != $hash) {
+		if ($userHashDecoded != null){
+			if ($userHashDecoded[0][0][0] != $hash){
 				return false;
 			}
 			return true;
-		} else {
+		} else{
 			return false;
 		}
 	}
@@ -76,15 +76,17 @@ class Comments_Model {
 	 * @params[3] content
 	 * @hash hash sent by the client
 	 */
-	public function addComment($params, $hash) {
+	public function addComment($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
 		$userIdDecoded = json_decode($this->getIdByEmail($params[0]), true);
-    $userId = $userIdDecoded[0][0][0];
-    if ($userId != $params[1])
-      return false;
+		$userId = $userIdDecoded[0][0][0];
+		if ($userId != $params[1]){
+			return false;
+		}
+		
 		//Connect to database
 		$this->db->connect();
 		
@@ -95,7 +97,7 @@ class Comments_Model {
 		if ($this->db->query() == 1){
 			$idComment = $this->db->fetchId();
 			
-			//Prepare query			
+			//Prepare query
 			$this->db->prepare("INSERT INTO Idea_Comment (idIdea, idComment) VALUES ('".$params[2]."', '".$idComment."');");
 			
 			//Execute query and return "true" or "false"
@@ -109,7 +111,7 @@ class Comments_Model {
 		}
 	}
 
-	public function getCommentsByIdIdea($params) {
+	public function getCommentsByIdIdea($params){
 		//Connect to database
 		$this->db->connect();
 		
