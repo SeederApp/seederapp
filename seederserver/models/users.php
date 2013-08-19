@@ -329,7 +329,7 @@ class Users_Model{
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-	public function setIsUnbanned($params, $hash){
+	public function setUnbanned($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
