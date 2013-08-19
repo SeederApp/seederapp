@@ -167,7 +167,7 @@ class Users_Model{
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-	public function updateUser($params){
+	public function updateUser($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -176,6 +176,39 @@ class Users_Model{
 		//Connect to database
 		$this->db->connect();
 		
+		//Prepare query
+		$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
+
+	/*
+	 * @params[0] email
+	 * @params[1] firstName
+	 * @params[2] lastName
+	 * @params[3] gender
+	 * @params[4] photoURL
+	 * @hash hash sent by the client
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function updateDeveloper($params){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query for inserting Developer info
+		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, linkedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
+		
+		if ($this->db->query() == 1){
+			//Prepare query for inserting User info
+			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->fetchId()."');");
+			return $this->db->query();
+		}
 		//Prepare query
 		$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
 		
