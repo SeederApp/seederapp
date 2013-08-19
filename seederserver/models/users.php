@@ -12,10 +12,10 @@ class Users_Model{
 		$this->db = new Mysql_Driver;
 	}
 
-  /*
+	/*
 	 * @email email
 	 */
-	public function validateEmail($email) {
+	private function validateEmail($email) {
 		//Connect to database
 		$this->db->connect();
 		
@@ -27,11 +27,11 @@ class Users_Model{
 		
 		//Fetch query
 		$article = $this->db->fetch('array');
-	//	var_dump($article);
+		
 		//Return data
 		return $article;
 	}
-  
+
 	/*
 	 * @email email
 	 */
@@ -64,7 +64,7 @@ class Users_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
@@ -139,13 +139,11 @@ class Users_Model{
 	 * @params[6] photoURL
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-
 	public function addUser($params) {
 		//Check if user exists
-    $existsDecoded = json_decode($this->validateEmail($params[0]), true);
-    $exists = $existsDecoded[0][0][0];
+		$existsDecoded = json_decode($this->validateEmail($params[0]), true);
+		$exists = $existsDecoded[0][0][0];
 		if ($exists != 0){
-
 			return "User already exists";
 		}
 		
@@ -158,7 +156,7 @@ class Users_Model{
 		//Execute query and return "true" or "false"
 		return $this->db->query();
 	}
-	
+
 	/*
 	 * @params[0] email
 	 * @params[1] firstName
@@ -176,7 +174,9 @@ class Users_Model{
 	 */
 	public function addDeveloper($params){
 		//Check if user exists
-		if ($this->validateEmail($params[0]) == 1){
+		$existsDecoded = json_decode($this->validateEmail($params[0]), true);
+		$exists = $existsDecoded[0][0][0];
+		if ($exists != 0){
 			return "User already exists";
 		}
 		
