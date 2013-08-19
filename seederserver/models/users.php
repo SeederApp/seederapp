@@ -111,6 +111,26 @@ class Users_Model{
 		//Return data
 		return $article;
 	}
+  
+  /*
+	 * @email email
+	 */
+	private function getDeveloperIdByEmail($email){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT idDeveloper FROM User WHERE email = '".$email."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
 	/*
 	 * @params[0] email
@@ -227,12 +247,11 @@ class Users_Model{
 	 * @params[2] lastName
 	 * @params[3] gender
 	 * @params[4] photoURL
-	 * @params[5] idDeveloper
-	 * @params[6] vendorId
-	 * @params[7] twitter
-	 * @params[8] facebook
-	 * @params[9] linkedin
-	 * @params[10] github
+	 * @params[5] vendorId
+	 * @params[6] twitter
+	 * @params[7] facebook
+	 * @params[8] linkedin
+	 * @params[9] github
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
@@ -241,12 +260,13 @@ class Users_Model{
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
-		
+		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
+    $developerId = $developerIdDecoded[0][0][0];
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query for inserting Developer info
-		$this->db->prepare("UPDATE Developer SET vendorId = '".$params[6]."', twitter = '".$params[7]."', facebook = '".$params[8]."', linkedin = '".$params[9]."', github = '".$params[10]."' WHERE idDeveloper = '".$params[5]."';");
+		$this->db->prepare("UPDATE Developer SET vendorId = '".$params[5]."', twitter = '".$params[6]."', facebook = '".$params[7]."', linkedin = '".$params[8]."', github = '".$params[9]."' WHERE idDeveloper = '".$developerId."';");
 		
 		if ($this->db->query() == 1){
 			//Prepare query for inserting User info
