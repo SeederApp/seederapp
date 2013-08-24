@@ -83,14 +83,37 @@ class Ideas_Model{
 			return "Invalid user or password";
 		}
 		
+		//Get coins
+		$coinsDecoded = json_decode($this->getUserCoinsByEmail($params[0]), true);
+		$coins = $coinsDecoded[0][0][0];
+		
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("INSERT INTO Idea () VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."');");
+		if (0 < $coins){
+			
+			//Update User Coins
+			$this->db->prepare("UPDATE User SET coins = ".--$coins." WHERE email = '".$params[0]."';");
+			
+			//Execute query and return "true" or "false"
+			if ($this->db->query() == 1){
+				
+				//Get user id by email
+				$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+				$userId = $userIdDecoded[0][0][0];
+				
+				//Prepare query
+				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date) VALUES (".$userId.", ".$params[1].", '".$params[2]."', '".$params[3]."', now());");
 		
-		//Execute query and return "true" or "false"
-		return $this->db->query();
+				//Execute query and return "true" or "false"
+				return $this->db->query();
+			} else {
+				return "Fail to update user's coins number";
+			}
+		} else {
+			return "User does not have enough coins to vote";
+		}
 	}
 
 	/*
@@ -189,9 +212,6 @@ class Ideas_Model{
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
-		
-		$coinsDecoded = json_decode($this->getUserCoinsByEmail($params[0]), true);
-		$coins = $coinsDecoded[0][0][0];
 		
 		//Connect to database
 		$this->db->connect();
