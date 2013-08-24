@@ -236,6 +236,7 @@ class Ideas_Model{
 	 * @params[1] idIdea
 	 * @hash hash sent by the client
 	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+   * http://localhost/index.php?ideas&command=voteOnIdea&values[]=robert@seederapp.com&values[]=1&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function voteOnIdea($params, $hash){
 		//Authenticate user
