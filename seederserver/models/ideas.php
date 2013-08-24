@@ -167,7 +167,7 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-	
+
 	/*
 	 * @email email
 	 */
@@ -191,12 +191,36 @@ class Ideas_Model{
 	/*
 	 * @idIdea idIdea
 	 */
-	private function getVotesByIdIdea($idIdea){
+	public function getVotesByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
 		$this->db->prepare("SELECT votes FROM Idea WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @idIdea idIdea
+	 */
+	public function validateVoteByEmail($email, $idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Get user id by email
+		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+		$userId = $userIdDecoded[0][0][0];
+		
+		//Prepare query
+		$this->db->prepare("SELECT count(1) FROM VotedIdea WHERE idUser = ".$idUser." AND idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
@@ -223,12 +247,19 @@ class Ideas_Model{
 		//Connect to database
 		$this->db->connect();
 		
+		//Check if vote exists on this idea regarding user
+		$voteExistsDecoded = json_decode($this->validateVoteByEmail($params[0], $params[1]), true);
+		$voteExists = $voteExistsDecoded[0][0][0];
+		if ($voteExists != 0){
+			return "User already voted on this idea";
+		}
+		
 		//Update number of votes
 		$votesDecoded = json_decode($this->getVotesByIdIdea($params[1]), true);
 		$votes = $votesDecoded[0][0][0];
 		
 		//Prepare query
-		$this->db->prepare("UPDATE Idea SET votes = '".$votes."' WHERE idIdea = '".$params[1]."');");
+		$this->db->prepare("UPDATE Idea SET votes = '".$votes."' WHERE idIdea = ".$params[1].");");
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
