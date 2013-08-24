@@ -216,18 +216,17 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Get user id by email
-		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
 		$userId = $userIdDecoded[0][0][0];
-		
+
 		//Prepare query
-		$this->db->prepare("SELECT count(1) FROM VotedIdea WHERE idUser = ".$idUser." AND idIdea = ".$idIdea.";");
+		$this->db->prepare("SELECT count(1) FROM VotedIdeas WHERE idUser = ".$userId." AND idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
 	
 		//Fetch query
 		$article = $this->db->fetch('array');
-		
 		//Return data
 		return $article;
 	}
@@ -244,22 +243,22 @@ class Ideas_Model{
 			return "Invalid user or password";
 		}
 		
-		//Connect to database
-		$this->db->connect();
-		
 		//Check if vote exists on this idea regarding user
 		$voteExistsDecoded = json_decode($this->validateVoteByEmail($params[0], $params[1]), true);
 		$voteExists = $voteExistsDecoded[0][0][0];
 		if ($voteExists != 0){
 			return "User already voted on this idea";
 		}
-		
+    
 		//Update number of votes
 		$votesDecoded = json_decode($this->getVotesByIdIdea($params[1]), true);
 		$votes = $votesDecoded[0][0][0];
-		
+     
+    //Connect to database
+		$this->db->connect();
+    
 		//Prepare query
-		$this->db->prepare("UPDATE Idea SET votes = '".$votes."' WHERE idIdea = ".$params[1].");");
+		$this->db->prepare("UPDATE Idea SET votes = ".++$votes." WHERE idIdea = ".$params[1].";");
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
@@ -267,7 +266,7 @@ class Ideas_Model{
 			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 			$userId = $userIdDecoded[0][0][0];
 			
-			$this->db->prepare("INSERT INTO VotedIdeas (idIdea, idUser) VALUES ('".$params[1]."', '".$userId."');");
+			$this->db->prepare("INSERT INTO VotedIdeas (idIdea, idUser) VALUES (".$params[1].", ".$userId.");");
 			
 			//Execute query and return "true" or "false"
 			return $this->db->query();
