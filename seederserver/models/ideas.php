@@ -274,8 +274,10 @@ class Ideas_Model{
 		//Prepare query
 		if ((100 == $params[2]) && (null != $params[2]) && (null != $params[3])){
 			$this->db->prepare("UPDATE Developer_Idea SET progress = '".$params[2]."', appId = '".$params[3]."' WHERE idDeveloper = '".$developerId."' AND idIdea = '".$params[1]."';");
-		} else if ((100 > $params[2]) && (0 < $params[2])){
+		} else if ((100 > $params[2]) && (0 <= $params[2])){
 			$this->db->prepare("UPDATE Developer_Idea SET progress = '".$params[2]."' WHERE idDeveloper = '".$developerId."' AND idIdea = '".$params[1]."';");
+		} else {
+			return 0;
 		}
 		
 		//Execute query and return "true" or "false"
