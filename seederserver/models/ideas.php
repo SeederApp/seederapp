@@ -98,18 +98,25 @@ class Ideas_Model{
 			
 			//Execute query and return "true" or "false"
 			if ($this->db->query() == 1){
-				
 				//Get user id by email
 				$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 				$userId = $userIdDecoded[0][0][0];
 				
-				//Prepare query
-				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date) VALUES (".$userId.", ".$params[1].", '".$params[2]."', '".$params[3]."', now());");
-		
+				//Prepare query. Idea automatically receives one vote from the user
+				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date, votes, voteDate) VALUES (".$userId.", ".$params[1].", '".$params[2]."', '".$params[3]."', now(), 1, now());");
+				
 				//Execute query and return "true" or "false"
-				return $this->db->query();
+				if ($this->db->query() == 1){
+					//Prepare query
+					$this->db->prepare("INSERT INTO VotedIdea (idUser, idIdea) VALUES (".$userId.", ".$this->db->fetchId().");");
+					
+					//Execute query and return "true" or "false"
+					return $this->db->query();
+				} else {
+					return "Failure to insert idea";
+				}
 			} else {
-				return "Fail to update user's coins number";
+				return "Failure to update user's coins number";
 			}
 		} else {
 			return "User does not have enough coins to vote";
@@ -216,38 +223,25 @@ class Ideas_Model{
 		//Connect to database
 		$this->db->connect();
 		
+		//Update number of votes
+		$votesDecoded = json_decode($this->getVotesByIdIdea($params[1]), true);
+		$votes = $votesDecoded[0][0][0];
+		
 		//Prepare query
-		if (0 < $coins){
-			//Update User Coins
-			$this->db->prepare("UPDATE User SET coins = '".--$coins."' WHERE email = '".$params[0]."';");
+		$this->db->prepare("UPDATE Idea SET votes = '".$votes."' WHERE idIdea = '".$params[1]."');");
+		
+		//Execute query and return "true" or "false"
+		if ($this->db->query() == 1){
+			//Insert Voted_Idea record
+			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+			$userId = $userIdDecoded[0][0][0];
+			
+			$this->db->prepare("INSERT INTO VotedIdeas (idIdea, idUser) VALUES ('".$params[1]."', '".$userId."');");
 			
 			//Execute query and return "true" or "false"
-			if ($this->db->query() == 1){
-				
-				//Update number of votes
-				$votesDecoded = json_decode($this->getVotesByIdIdea($params[1]), true);
-				$votes = $votesDecoded[0][0][0];
-				
-				$this->db->prepare("UPDATE Idea SET votes = '".$votes."' WHERE idIdea = '".$params[1]."');");
-				
-				//Execute query and return "true" or "false"
-				if ($this->db->query() == 1){
-					//Insert Voted_Idea record
-					$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
-					$userId = $userIdDecoded[0][0][0];
-					
-					$this->db->prepare("INSERT INTO VotedIdeas (idIdea, idUser) VALUES ('".$params[1]."', '".$userId."');");
-					
-					//Execute query and return "true" or "false"
-					return $this->db->query();
-				} else {
-					return "Fail to update the number of votes";
-				}
-			} else {
-				return "Fail to update user's coins number";
-			}
+			return $this->db->query();
 		} else {
-			return "User does not have enough coins to vote";
+			return "Fail to update the number of votes";
 		}
 	}
 
@@ -282,7 +276,6 @@ class Ideas_Model{
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
-		
 	}
 
 	public function getAllIdeas(){
