@@ -110,7 +110,8 @@ class Comments_Model{
 			}
 		}
 	}
-
+  
+  //http://localhost/index.php?comments&command=getCommentsByIdIdea&values[]=1
 	public function getCommentsByIdIdea($params){
 		//Connect to database
 		$this->db->connect();
