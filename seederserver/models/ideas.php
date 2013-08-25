@@ -208,6 +208,27 @@ class Ideas_Model{
 		return $article;
 	}
 
+
+	/*
+	 * @idIdea idIdea
+	 */
+	public function getReportsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT votes FROM Idea WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
 	/*
 	 * @email email
 	 * @idIdea idIdea
@@ -246,34 +267,34 @@ class Ideas_Model{
 		}
 		
 		//Check if vote exists on this idea regarding user
-		$voteExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
-		$voteExists = $voteExistsDecoded[0][0][0];
-		if ($voteExists != 0){
+		$reportExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
+		$reportExists = $voteExistsDecoded[0][0][0];
+		if ($reportExists != 0){
 			return "User already reported this idea";
 		}
 		
 		//Update number of votes
-		$votesDecoded = json_decode($this->getVotesByIdIdea($params[1]), true);
-		$votes = $votesDecoded[0][0][0];
+		$reportDecoded = json_decode($this->getReportsByIdIdea($params[1]), true);
+		$reports = $votesDecoded[0][0][0];
 		
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("UPDATE Idea SET votes = ".++$votes." WHERE idIdea = ".$params[1].";");
+		$this->db->prepare("UPDATE Idea SET reportNumber = ".++$reports." WHERE idIdea = ".$params[1].";");
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
-			//Insert Voted_Idea record
+			//Insert ReportIdeas record
 			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 			$userId = $userIdDecoded[0][0][0];
 			
-			$this->db->prepare("INSERT INTO VotedIdeas (idIdea, idUser) VALUES (".$params[1].", ".$userId.");");
+			$this->db->prepare("INSERT INTO ReportIdeas (idIdea, idUser) VALUES (".$params[1].", ".$userId.");");
 			
 			//Execute query and return "true" or "false"
 			return $this->db->query();
 		} else {
-			return "Fail to update the number of votes";
+			return "Failure to update votes number";
 		}
 	}
 
@@ -333,7 +354,7 @@ class Ideas_Model{
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
-			//Insert Voted_Idea record
+			//Insert votedIdea record
 			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 			$userId = $userIdDecoded[0][0][0];
 			
@@ -342,7 +363,7 @@ class Ideas_Model{
 			//Execute query and return "true" or "false"
 			return $this->db->query();
 		} else {
-			return "Fail to update the number of votes";
+			return "Failure to update votes number";
 		}
 	}
 
@@ -353,7 +374,7 @@ class Ideas_Model{
 	 * return "true" for successfully inserted, or "false" when an inserting error occurs
 	 * http://localhost/index.php?ideas&command=unvoteOnIdea&values[]=robert@seederapp.com&values[]=1&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
-	public function unvoteOnIdea($params, $hash){
+	public function removeVoteOnIdea($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -387,7 +408,7 @@ class Ideas_Model{
 			//Execute query and return "true" or "false"
 			return $this->db->query();
 		} else {
-			return "Fail to update the number of votes";
+			return "Failure to update votes number";
 		}
 	}
 
