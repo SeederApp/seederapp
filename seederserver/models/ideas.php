@@ -162,7 +162,7 @@ class Ideas_Model{
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
-		
+		/*
 		//Check if the idea exists, and that it was publish by the user
 		$ideaDecoded = json_decode($this->validateIdeaByEmail($params[0], $params[1]), true);
 		$ideaExists = $coinsDecoded[0][0][0];
@@ -177,12 +177,13 @@ class Ideas_Model{
 		$this->removeReportsByIdIdea($params[1]);
 		
 		//Remove all developer associations by deleting Developer_Idea records
-		$this->removeDeveloperAssociationsByIdIdea($params[1]);
-		
+		$this->removeDeveloperAssociationsByIdIdea($params[1]);*/
 		
 		$commentIdsDecoded = json_decode($this->getAllcommentIdsByIdIdea($params[1]), true);
 		$commentIds = $commentIdsDecoded[0][0];
+		return $commentIds;
 		
+		/*
 		//Connect to database
 		$this->db->connect();
 		
@@ -216,15 +217,15 @@ class Ideas_Model{
 			}
 		} else {
 			return "User does not have enough coins to vote";
-		}
+		}*/
 	}
 
-	public function getCommentsByIdIdea($idIdea){
+	private function getAllCommentIdsByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Comment.idComment FROM Comment JOIN Idea_Comment WHERE Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = '".$params[0]."';");
+		$this->db->prepare("SELECT Comment.idComment FROM Comment WHERE Idea_Comment.idIdea = '".$idIdea."';");
 		
 		//Execute query
 		$this->db->query();
