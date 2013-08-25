@@ -162,7 +162,7 @@ class Ideas_Model{
 		
 		//Check if the idea exists, and that it was publish by the user
 		$ideaDecoded = json_decode($this->validateIdeaByEmail($params[0], $params[1]), true);
-		$ideaExists = $coinsDecoded[0][0][0];
+		$ideaExists = $ideaDecoded[0][0][0];
 		if ($ideaExists == 0){
 			return "Idea does not exist, or user did not publish this idea";
 		}
@@ -178,16 +178,17 @@ class Ideas_Model{
 		
 		//Get all comment ids
 		$commentIdsDecoded = json_decode($this->getAllCommentIdsByIdIdea($params[1]), true);
-		$commentIds = $commentIdsDecoded[0][0];
 		$totalLength = count($commentIdsDecoded);
+		//Delete all Idea_Commment records by the idIdea
+		$this->removeIdeaCommentByIdIdea($params[1]);
+		
 		for ($i = 0; $i < $totalLength; $i++){
 			//Delete from Comment the records with the idComments
 			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0]);
 			//Delete from User_Comments the records with the idComments
 			$this->removeUserCommentByIdComment($commentIdsDecoded[$i][0]);
 		}
-		//Delete all Idea_Commment records by the idIdea
-		$this->removeIdeaCommentByIdIdea($params[1]);
+		
 		
 		//Get coins
 		$coinsDecoded = json_decode($this->getUserCoinsByEmail($params[0]), true);
@@ -255,6 +256,20 @@ class Ideas_Model{
 		
 		//Prepare query
 		$this->db->prepare("DELETE FROM User_Comment WHERE idComment = ".$idComment.";");
+		
+		//Execute query
+		$this->db->query();
+	}
+	
+	/*
+	 * @idComment idComment
+	 */
+	private function removeIdeaCommentByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Idea_Comment WHERE idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
