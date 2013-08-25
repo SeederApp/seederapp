@@ -393,34 +393,34 @@ class Ideas_Model{
 	 * http://localhost/index.php?ideas&command=reportIdea&values[]=robert@seederapp.com&values[]=1&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function reportIdea($params, $hash){
-		//Authenticate user
-		if (!$this->authenticateUser($params[0], $hash)){
-			return "Invalid user or password";
-		}
-		
-		//Check if vote exists on this idea regarding user
-		$reportExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
-		$reportExists = $voteExistsDecoded[0][0][0];
-		if ($reportExists != 0){
-			return "User already reported this idea";
-		}
-		
-		//Update number of votes
-		$reportDecoded = json_decode($this->getReportsByIdIdea($params[1]), true);
-		$reports = $votesDecoded[0][0][0];
-		
-		//Connect to database
-		$this->db->connect();
-		
-		//Prepare query
-		$this->db->prepare("UPDATE Idea SET reportNumber = ".++$reports." WHERE idIdea = ".$params[1].";");
-		
+	//Authenticate user
+	if (!$this->authenticateUser($params[0], $hash)){
+		return "Invalid user or password";
+	}
+	
+	//Check if vote exists on this idea regarding user
+	$reportExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
+	$reportExists = $voteExistsDecoded[0][0][0];
+	if ($reportExists != 0){
+		return "User already reported this idea";
+	}
+	
+	//Update number of votes
+	$reportDecoded = json_decode($this->getReportsByIdIdea($params[1]), true);
+	$reports = $votesDecoded[0][0][0];
+	
+	//Connect to database
+	$this->db->connect();
+	
+	//Prepare query
+	$this->db->prepare("UPDATE Idea SET reportNumber = ".++$reports." WHERE idIdea = ".$params[1].";");
+	
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
+			
 			//Insert ReportIdeas record
 			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 			$userId = $userIdDecoded[0][0][0];
-			
 			$this->db->prepare("INSERT INTO ReportIdeas (idIdea, idUser) VALUES (".$params[1].", ".$userId.");");
 			
 			//Execute query and return "true" or "false"
