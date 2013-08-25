@@ -147,9 +147,6 @@ class Ideas_Model{
 		return $article;
 	}
 
-	//Delete Idea_Commment getting all idComments
-	//Delete from Comment the records with the idComments
-	//Delete from User_Comments the records with the idComments
 	//User gets a coin back
 	/*
 	 * @params[0] email
@@ -162,7 +159,7 @@ class Ideas_Model{
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
 		}
-		/*
+		
 		//Check if the idea exists, and that it was publish by the user
 		$ideaDecoded = json_decode($this->validateIdeaByEmail($params[0], $params[1]), true);
 		$ideaExists = $coinsDecoded[0][0][0];
@@ -170,54 +167,52 @@ class Ideas_Model{
 			return "Idea does not exist, or user did not publish this idea";
 		}
 		
-		//Remove votes
+		//Remove all votes for the idea
 		$this->removeVotesByIdIdea($params[1]);
 		
-		//Remove reports
+		//Remove all reports for the idea
 		$this->removeReportsByIdIdea($params[1]);
 		
 		//Remove all developer associations by deleting Developer_Idea records
-		$this->removeDeveloperAssociationsByIdIdea($params[1]);*/
+		$this->removeDeveloperAssociationsByIdIdea($params[1]);
 		
-		$commentIdsDecoded = json_decode($this->getAllcommentIdsByIdIdea($params[1]), true);
+		//Get all comment ids
+		$commentIdsDecoded = json_decode($this->getAllCommentIdsByIdIdea($params[1]), true);
 		$commentIds = $commentIdsDecoded[0][0];
-		return $commentIds;
+		$totalLength = count($commentIdsDecoded);
+		for ($i = 0; $i < $totalLength; $i++){
+			//Delete from Comment the records with the idComments
+			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0]);
+			//Delete from User_Comments the records with the idComments
+			$this->removeUserCommentByIdComment($commentIdsDecoded[$i][0]);
+		}
+		//Delete all Idea_Commment records by the idIdea
+		$this->removeIdeaCommentByIdIdea($params[1]);
 		
-		/*
+		//Get coins
+		$coinsDecoded = json_decode($this->getUserCoinsByEmail($params[0]), true);
+		$coins = $coinsDecoded[0][0][0];
+		
 		//Connect to database
 		$this->db->connect();
 		
-		//Prepare query
-		if (0 < $coins){
+		//Update User Coins
+		$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = '".$params[0]."';");
 			
-			//Update User Coins
-			$this->db->prepare("UPDATE User SET coins = ".--$coins." WHERE email = '".$params[0]."';");
+		//Execute query and return "true" or "false"
+		if ($this->db->query() == 1){
+			//Get user id by email
+			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+			$userId = $userIdDecoded[0][0][0];
+			
+			//Prepare query
+			$this->db->prepare("DELETE FROM Idea WHERE idUser = ".$userId." AND idIdea = ".$params[1].";");
 			
 			//Execute query and return "true" or "false"
-			if ($this->db->query() == 1){
-				//Get user id by email
-				$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
-				$userId = $userIdDecoded[0][0][0];
-				
-				//Prepare query. Idea automatically receives one vote from the user
-				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date, votes, voteDate) VALUES (".$userId.", ".$params[1].", '".$params[2]."', '".$params[3]."', now(), 1, now());");
-				
-				//Execute query and return "true" or "false"
-				if ($this->db->query() == 1){
-					//Prepare query
-					$this->db->prepare("INSERT INTO VotedIdea (idUser, idIdea) VALUES (".$userId.", ".$this->db->fetchId().");");
-					
-					//Execute query and return "true" or "false"
-					return $this->db->query();
-				} else {
-					return "Failure to insert idea";
-				}
-			} else {
-				return "Failure to update user's coins number";
-			}
+			return $this->db->query();
 		} else {
-			return "User does not have enough coins to vote";
-		}*/
+			return "Failure to update user's coins number";
+		}
 	}
 
 	private function getAllCommentIdsByIdIdea($idIdea){
@@ -225,7 +220,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Comment.idComment FROM Comment WHERE Idea_Comment.idIdea = '".$idIdea."';");
+		$this->db->prepare("SELECT idComment FROM Idea_Comment WHERE idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
@@ -235,6 +230,34 @@ class Ideas_Model{
 		
 		//Return data
 		return $article;
+	}
+
+	/*
+	 * @idComment idComment
+	 */
+	private function removeCommentsByIdComment($idComment){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Comment WHERE idComment = ".$idComment.";");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
+	 * @idComment idComment
+	 */
+	private function removeUserCommentByIdComment($idComment){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM User_Comment WHERE idComment = ".$idComment.";");
+		
+		//Execute query
+		$this->db->query();
 	}
 
 	/*
