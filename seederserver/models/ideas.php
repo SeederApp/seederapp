@@ -183,10 +183,10 @@ class Ideas_Model{
 		$this->removeIdeaCommentByIdIdea($params[1]);
 		
 		for ($i = 0; $i < $totalLength; $i++){
+      //Delete from User_Comments the records with the idComments
+			$this->removeUserCommentByIdComment($commentIdsDecoded[$i][0][0]);
 			//Delete from Comment the records with the idComments
-			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0]);
-			//Delete from User_Comments the records with the idComments
-			$this->removeUserCommentByIdComment($commentIdsDecoded[$i][0]);
+			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0][0]);	
 		}
 		
 		

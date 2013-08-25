@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="css/style.css">
 <script>
 function loadXMLDoc()
 {
@@ -25,6 +26,7 @@ function loadXMLDoc()
         span2 = document.createElement("span");
         span2.appendChild (document.createTextNode(obj[i][0]['description']));
         div = document.createElement("div");
+        div.setAttribute("id", "ideaDiv");
         div.appendChild(span);
         div.appendChild(br);
         div.appendChild(span2);
