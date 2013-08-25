@@ -122,6 +122,99 @@ class Ideas_Model{
 			return "User does not have enough coins to vote";
 		}
 	}
+	
+	/*
+	 * @email email
+	 * @idIdea idIdea
+	 */
+	public function validateIdeaByEmail($email, $idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Get user id by email
+		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
+		$userId = $userIdDecoded[0][0][0];
+
+		//Prepare query
+		$this->db->prepare("SELECT count(1) FROM Idea WHERE idUser = ".$userId." AND idIdea = ".$idIdea.";");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		//Return data
+		return $article;
+	}
+	//Check if the idea exists and was publish by the user
+	//Check if it has votes and delete from VotedIdeas
+	//Check if it has votes and delete fromReportedIdeas
+	//Delete Idea_Commment getting all idComments
+	//Delete from Comment the records with the idComments
+	//Delete from User_Comments the records with the idComments
+	//Delete from Developer_Idea records with idIdea if exists.
+	//User gets a coin back
+	/*
+	 * @params[0] email
+	 * @params[1] idIdea
+	 * @hash hash sent by the client
+	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function removeIdea($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Check if the idea exists, and that it was publish by the user
+		$ideaDecoded = json_decode($this->validateIdeaByEmail($params[0], $params[1]), true);
+		$ideaExists = $coinsDecoded[0][0][0];
+		if ($ideaExists == 0){
+			return "Idea does not exist, or user did not publish this idea";
+		}
+		
+		//Check if it has votes and delete from VotedIdeas
+		$ideaDecoded = json_decode($this->removeVotesIdeaByEmail($params[0], $params[1]), true);
+		$ideaExists = $coinsDecoded[0][0][0];
+		if ($ideaExists == 0){
+			return "Idea does not exist, or user did not publish this idea";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		if (0 < $coins){
+			
+			//Update User Coins
+			$this->db->prepare("UPDATE User SET coins = ".--$coins." WHERE email = '".$params[0]."';");
+			
+			//Execute query and return "true" or "false"
+			if ($this->db->query() == 1){
+				//Get user id by email
+				$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+				$userId = $userIdDecoded[0][0][0];
+				
+				//Prepare query. Idea automatically receives one vote from the user
+				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date, votes, voteDate) VALUES (".$userId.", ".$params[1].", '".$params[2]."', '".$params[3]."', now(), 1, now());");
+				
+				//Execute query and return "true" or "false"
+				if ($this->db->query() == 1){
+					//Prepare query
+					$this->db->prepare("INSERT INTO VotedIdea (idUser, idIdea) VALUES (".$userId.", ".$this->db->fetchId().");");
+					
+					//Execute query and return "true" or "false"
+					return $this->db->query();
+				} else {
+					return "Failure to insert idea";
+				}
+			} else {
+				return "Failure to update user's coins number";
+			}
+		} else {
+			return "User does not have enough coins to vote";
+		}
+	}
 
 	/*
 	 * @params[0] email
@@ -207,7 +300,46 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
+	
+	/*
+	 * @idIdea idIdea
+	 */
+	public function removeVotesByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM VotedIdeas WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
+	/*
+	 * @idIdea idIdea
+	 */
+	private function removeReportsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM ReportedIdeas WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
 	/*
 	 * @idIdea idIdea
