@@ -146,13 +146,10 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-	//Check if the idea exists and was publish by the user
-	//Check if it has votes and delete from VotedIdeas
-	//Check if it has votes and delete fromReportedIdeas
+
 	//Delete Idea_Commment getting all idComments
 	//Delete from Comment the records with the idComments
 	//Delete from User_Comments the records with the idComments
-	//Delete from Developer_Idea records with idIdea if exists.
 	//User gets a coin back
 	/*
 	 * @params[0] email
@@ -173,12 +170,18 @@ class Ideas_Model{
 			return "Idea does not exist, or user did not publish this idea";
 		}
 		
-		//Check if it has votes and delete from VotedIdeas
-		$ideaDecoded = json_decode($this->removeVotesIdeaByEmail($params[0], $params[1]), true);
-		$ideaExists = $coinsDecoded[0][0][0];
-		if ($ideaExists == 0){
-			return "Idea does not exist, or user did not publish this idea";
-		}
+		//Remove votes
+		$this->removeVotesByIdIdea($params[1]);
+		
+		//Remove reports
+		$this->removeReportsByIdIdea($params[1]);
+		
+		//Remove all developer associations by deleting Developer_Idea records
+		$this->removeDeveloperAssociationsByIdIdea($params[1]);
+		
+		
+		$commentIdsDecoded = json_decode($this->getAllcommentIdsByIdIdea($params[1]), true);
+		$commentIds = $commentIdsDecoded[0][0];
 		
 		//Connect to database
 		$this->db->connect();
@@ -214,6 +217,23 @@ class Ideas_Model{
 		} else {
 			return "User does not have enough coins to vote";
 		}
+	}
+
+	public function getCommentsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT Comment.idComment FROM Comment JOIN Idea_Comment WHERE Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = '".$params[0]."';");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
 	}
 
 	/*
@@ -304,21 +324,15 @@ class Ideas_Model{
 	/*
 	 * @idIdea idIdea
 	 */
-	public function removeVotesByIdIdea($params){
+	private function removeVotesByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("DELETE FROM VotedIdeas WHERE idIdea = '".$params[1]."';");
+		$this->db->prepare("DELETE FROM VotedIdeas WHERE idIdea = '".$idIdea."';");
 		
 		//Execute query
 		$this->db->query();
-	
-		//Fetch query
-		$article = $this->db->fetch('array');
-		
-		//Return data
-		return $article;
 	}
 
 	/*
@@ -333,12 +347,20 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
-		//Fetch query
-		$article = $this->db->fetch('array');
+	}
+
+	/*
+	 * @idIdea idIdea
+	 */
+	private function removeDeveloperAssociationsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
 		
-		//Return data
-		return $article;
+		//Prepare query
+		$this->db->prepare("DELETE FROM Developer_Idea WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
 	}
 
 	/*
@@ -393,28 +415,28 @@ class Ideas_Model{
 	 * http://localhost/index.php?ideas&command=reportIdea&values[]=robert@seederapp.com&values[]=1&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function reportIdea($params, $hash){
-	//Authenticate user
-	if (!$this->authenticateUser($params[0], $hash)){
-		return "Invalid user or password";
-	}
-	
-	//Check if vote exists on this idea regarding user
-	$reportExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
-	$reportExists = $voteExistsDecoded[0][0][0];
-	if ($reportExists != 0){
-		return "User already reported this idea";
-	}
-	
-	//Update number of votes
-	$reportDecoded = json_decode($this->getReportsByIdIdea($params[1]), true);
-	$reports = $votesDecoded[0][0][0];
-	
-	//Connect to database
-	$this->db->connect();
-	
-	//Prepare query
-	$this->db->prepare("UPDATE Idea SET reportNumber = ".++$reports." WHERE idIdea = ".$params[1].";");
-	
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Check if vote exists on this idea regarding user
+		$reportExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
+		$reportExists = $voteExistsDecoded[0][0][0];
+		if ($reportExists != 0){
+			return "User already reported this idea";
+		}
+		
+		//Update number of votes
+		$reportDecoded = json_decode($this->getReportsByIdIdea($params[1]), true);
+		$reports = $votesDecoded[0][0][0];
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("UPDATE Idea SET reportNumber = ".++$reports." WHERE idIdea = ".$params[1].";");
+		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
 			
