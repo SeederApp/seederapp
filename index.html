@@ -1,12 +1,45 @@
-<!DOCTYPE html> 
-<html> 
-    <head> 
-        <meta http-equiv="Content-Type" 
-              content="text/html; charset=UTF-8"> 
-        <title>Seeder</title> 
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    </head> 
-    <body> 
-        <p>Hello World!</p> 
-    </body> 
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function loadXMLDoc()
+{
+  var xmlhttp;
+  if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+  }
+  else
+  {// code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      obj = JSON.parse(xmlhttp.responseText);
+      for (var i=0; i<obj.length; i++) {
+        span = document.createElement("span");
+        br = document.createElement("br");
+        span.appendChild (document.createTextNode(obj[i][0]['title']));
+        span2 = document.createElement("span");
+        span2.appendChild (document.createTextNode(obj[i][0]['description']));
+        div = document.createElement("div");
+        div.appendChild(span);
+        div.appendChild(br);
+        div.appendChild(span2);
+        document.body.appendChild(div);
+      }
+      console.log(obj);
+    }
+  };
+xmlhttp.open("GET","http://localhost/index.php?ideas&command=getAllIdeas",true);
+xmlhttp.send();
+}
+</script>
+</head>
+<body onload="loadXMLDoc()">
+<div id="myDiv"></div>
+
+</body>
 </html>
