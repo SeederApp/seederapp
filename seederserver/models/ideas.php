@@ -304,12 +304,12 @@ class Ideas_Model{
 	/*
 	 * @idIdea idIdea
 	 */
-	public function removeVotesByIdIdea($idIdea){
+	public function removeVotesByIdIdea($params){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("DELETE FROM VotedIdeas WHERE idIdea = '".$idIdea."';");
+		$this->db->prepare("DELETE FROM VotedIdeas WHERE idIdea = '".$params[1]."';");
 		
 		//Execute query
 		$this->db->query();
