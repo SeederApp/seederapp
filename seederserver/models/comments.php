@@ -117,7 +117,7 @@ class Comments_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Comment.* FROM Comment JOIN Idea_Comment WHERE Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = '".$params[0]."';");
+		$this->db->prepare("SELECT Comment.* FROM Comment JOIN Idea_Comment WHERE Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = '".$params[0]."' ORDED BY Comment.date;");
 		
 		//Execute query
 		$this->db->query();

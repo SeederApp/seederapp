@@ -299,6 +299,31 @@ class Ideas_Model{
 		//Execute query and return "true" or "false"
 		return $this->db->query();
 	}
+	
+	/*
+	 * @params[0] email
+	 * @params[1] idIdea
+	 * @hash hash sent by the client
+	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+	 */
+	public function untakeIdea($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
+		$developerId = $developerIdDecoded[0][0][0];
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Developer_Idea WHERE idDeveloper = ".$developerId." AND idIdea = ".$params[1].";");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
 
 	/*
 	 * @email email

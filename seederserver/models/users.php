@@ -281,6 +281,10 @@ class Users_Model{
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
+	//Delete taken ideas
+	//Delete user's ideas
+	//Delete user's comments
+	//Delete user account
 	public function deleteUser($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
