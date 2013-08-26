@@ -122,7 +122,7 @@ class Ideas_Model{
 			return "User does not have enough coins to vote";
 		}
 	}
-	
+
 	/*
 	 * @email email
 	 * @idIdea idIdea
@@ -134,25 +134,25 @@ class Ideas_Model{
 		//Get user id by email
 		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
 		$userId = $userIdDecoded[0][0][0];
-
+		
 		//Prepare query
 		$this->db->prepare("SELECT count(1) FROM Idea WHERE idUser = ".$userId." AND idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
+		
 		//Return data
 		return $article;
 	}
 
-	//User gets a coin back
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
 	 * @hash hash sent by the client
-	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+	 * return "true" for successfully removed, or "false" when a removing error occurs
 	 */
 	public function removeIdea($params, $hash){
 		//Authenticate user
@@ -183,12 +183,11 @@ class Ideas_Model{
 		$this->removeIdeaCommentByIdIdea($params[1]);
 		
 		for ($i = 0; $i < $totalLength; $i++){
-      //Delete from User_Comments the records with the idComments
+			//Delete from User_Comments the records with the idComments
 			$this->removeUserCommentByIdComment($commentIdsDecoded[$i][0][0]);
 			//Delete from Comment the records with the idComments
 			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0][0]);	
 		}
-		
 		
 		//Get coins
 		$coinsDecoded = json_decode($this->getUserCoinsByEmail($params[0]), true);
@@ -197,7 +196,7 @@ class Ideas_Model{
 		//Connect to database
 		$this->db->connect();
 		
-		//Update User Coins
+		//Update User Coins, so user gets a coin back
 		$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = '".$params[0]."';");
 			
 		//Execute query and return "true" or "false"
@@ -384,7 +383,7 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-	
+
 	/*
 	 * @idIdea idIdea
 	 */

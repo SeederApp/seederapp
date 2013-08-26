@@ -110,8 +110,67 @@ class Comments_Model{
 			}
 		}
 	}
-  
-  //http://localhost/index.php?comments&command=getCommentsByIdIdea&values[]=1
+
+	/*
+	 * @email email
+	 * @idComment idComment
+	 */
+	public function validateCommentByEmail($email, $idComment){
+		//Connect to database
+		$this->db->connect();
+		
+		//Get user id by email
+		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
+		$userId = $userIdDecoded[0][0][0];
+		
+		//Prepare query
+		$this->db->prepare("SELECT count(1) FROM Idea WHERE idUser = ".$userId." AND idIdea = ".$idComment.";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @params[0] email
+	 * @params[1] idComment
+	 * @hash hash sent by the client
+	 */
+	public function removeCommentsByIdComment($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		
+		//Check if the comment exists, and that it was publish by the user
+		$commentDecoded = json_decode($this->validateCommentByEmail($params[0], $params[1]), true);
+		$commentExists = $commentDecoded[0][0][0];
+		if ($ideaExists == 0){
+			return "Comment does not exist, or user did not publish this comment";
+		}
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Comment WHERE idComment = ".$params[1].";");
+		
+		//Execute query and return "true" or "false"
+		if ($this->db->query() == 1){
+			//Comment was successfully removed
+			return true;
+		} else {
+			//Failure to remove comment
+			return false;
+		}
+	}
+
+	//http://localhost/index.php?comments&command=getCommentsByIdIdea&values[]=1
 	public function getCommentsByIdIdea($params){
 		//Connect to database
 		$this->db->connect();

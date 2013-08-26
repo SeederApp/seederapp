@@ -285,7 +285,7 @@ class Users_Model{
 	//Delete user's ideas
 	//Delete user's comments
 	//Delete user account
-	public function deleteUser($params, $hash){
+	public function removeUserAccount($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -305,6 +305,182 @@ class Users_Model{
 		
 		//Return data
 		return $article;
+	}
+
+	/*
+	 * @idIdea idIdea
+	 */
+	private function removeVotesByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM VotedIdeas WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
+	 * @idIdea idIdea
+	 */
+	private function removeReportsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM ReportedIdeas WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
+	 * @idIdea idIdea
+	 */
+	private function removeDeveloperAssociationsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Developer_Idea WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	private function getAllCommentIdsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT idComment FROM Idea_Comment WHERE idIdea = ".$idIdea.";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @idComment idComment
+	 */
+	private function removeIdeaCommentByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Idea_Comment WHERE idIdea = ".$idIdea.";");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
+	 * @idComment idComment
+	 */
+	private function removeUserCommentByIdComment($idComment){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM User_Comment WHERE idComment = ".$idComment.";");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
+	 * @idComment idComment
+	 */
+	private function removeCommentsByIdComment($idComment){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Comment WHERE idComment = ".$idComment.";");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
+	 * @email email
+	 */
+	private function getUserCoinsByEmail($email){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT coins FROM User WHERE email = '".$email."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @email email
+	 * @idIdea idIdea
+	 * return "true" for successfully removed, or "false" when a removing error occurs
+	 */
+	private function removeUserIdeas($email, $idIdea){
+		//Remove all votes for the idea
+		$this->removeVotesByIdIdea($idIdea);
+		
+		//Remove all reports for the idea
+		$this->removeReportsByIdIdea($idIdea);
+		
+		//Remove all developer associations by deleting Developer_Idea records
+		$this->removeDeveloperAssociationsByIdIdea($idIdea);
+		
+		//Get all comment ids
+		$commentIdsDecoded = json_decode($this->getAllCommentIdsByIdIdea($idIdea), true);
+		$totalLength = count($commentIdsDecoded);
+		
+		//Delete all Idea_Commment records by the idIdea
+		$this->removeIdeaCommentByIdIdea($idIdea);
+		
+		for ($i = 0; $i < $totalLength; $i++){
+			//Delete from User_Comments the records with the idComments
+			$this->removeUserCommentByIdComment($commentIdsDecoded[$i][0][0]);
+			//Delete from Comment the records with the idComments
+			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0][0]);
+		}
+		
+		//Get coins
+		$coinsDecoded = json_decode($this->getUserCoinsByEmail($email), true);
+		$coins = $coinsDecoded[0][0][0];
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Update User Coins, so user gets a coin back
+		$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = '".$email."';");
+		
+		//Execute query and return "true" or "false"
+		if ($this->db->query() == 1){
+			//Get user id by email
+			$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
+			$userId = $userIdDecoded[0][0][0];
+			
+			//Prepare query
+			$this->db->prepare("DELETE FROM Idea WHERE idUser = ".$userId." AND idIdea = ".$idIdea.";");
+			
+			//Execute query and return "true" or "false"
+			return $this->db->query();
+		} else {
+			return "Failure to update user's coins number";
+		}
 	}
 
 	/*
