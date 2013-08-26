@@ -671,5 +671,29 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
+	/*
+	 * @params[0] email
+	 */
+	//Get ideas taken by developer
+	public function getIdeasTakenByEmail($params){
+		
+		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
+		$userId = $userIdDecoded[0][0][0];
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT * FROM Idea WHERE idUser = ".$userId.";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 }
 ?>
