@@ -313,6 +313,71 @@ class Users_Model{
 	}
 
 	/*
+	 * @params[0] email
+	 * @hash hash sent by the client
+	 */
+	public function removeDeveloper($params, $hash){
+		//Authenticate user
+		if (!$this->authenticateUser($params[0], $hash)){
+			return "Invalid user or password";
+		}
+		//Get idUser by email
+		$idUserDecoded = json_decode($this->getUserIdByEmail($email), true);
+		$idUser = $idUserDecoded[0][0][0];
+		
+		//Get idDeveloper by email
+		$idDeveloperDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
+		$idDeveloper = $idDeveloperDecoded[0][0][0];
+		
+		//Remove Developer_Idea records
+		$this->removeAllTakenIdeas($idDeveloper);
+		
+		//Remove developer's comments
+		$this->removeAllUserComments($idUser);
+		
+		//Remove developer's ideas
+		$this->removeAllUserIdeas($idUser);
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Developer WHERE idDeveloper = ".$idDeveloper.";");
+		
+		//Execute query
+		if ($this->db->query() == 1){
+			//Prepare query
+			$this->db->prepare("DELETE FROM User WHERE idUser = ".$idUser.";");
+			
+			//Execute query and return "true" or "false"
+			if ($this->db->query() == 1){
+				//User was successfully removed
+				return true;
+			} else {
+				//Failure to remove from User table
+				return false;
+			}
+		} else {
+			//Failure to remove from Developer table
+			return false;
+		}
+	}
+
+	/*
+	 * @idDeveloper idDeveloper
+	 */
+	private function removeAllTakenIdeas($idDeveloper){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM Developer_Idea WHERE idDeveloper = ".$idDeveloper.";");
+		
+		//Execute query
+		$this->db->query();
+	}
+
+	/*
 	 * @idIdea idIdea
 	 */
 	private function removeVotesByIdIdea($idIdea){
