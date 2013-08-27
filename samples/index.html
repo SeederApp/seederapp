@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My First WebWorks App</title>
+    <link rel="stylesheet" type="text/css" href="css/bbui.css"/>
+    <script type="text/javascript" src="js/bbui.js"></script>
+
+    <script type="text/javascript" src="js/webworks-1.0.4.11.js"></script>
+    <!--<script src="local:///chrome/webworks.js"></script>-->
+
+    <script>
+        var webworksreadyFired = false;
+        var app = {};
+        app.ready = function () {
+            // ensure that we init() only once even if webworksready fires multiple times
+            if (webworksreadyFired) return;
+            webworksreadyFired = true;
+            bb.init();
+        };
+        window.addEventListener('load', function () {
+            document.addEventListener('webworksready', app.ready);
+        }, false);
+    </script>
+</head>
+<body onload="bb.pushScreen('screen1.html', 'mainScreen')">
+</body>
+</html>
