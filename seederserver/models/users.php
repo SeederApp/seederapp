@@ -287,7 +287,7 @@ class Users_Model{
 			return "Invalid user or password";
 		}
 		//Get idUser by email
-		$idUserDecoded = json_decode($this->getUserIdByEmail($email), true);
+		$idUserDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 		$idUser = $idUserDecoded[0][0][0];
 		
 		//Delete user's comments
@@ -296,6 +296,9 @@ class Users_Model{
 		//Delete user's ideas
 		$this->removeAllUserIdeas($idUser);
 		
+    //Delete user's reports
+    $this->removeAllUserReports($idUser);
+    
 		//Connect to database
 		$this->db->connect();
 		
@@ -487,7 +490,7 @@ class Users_Model{
 	/*
 	 * @idUser idUser
 	 */
-	private function removeIdeaCommentByIdIdea($idUser){
+	private function removeUserCommentByIdUser($idUser){
 		//Connect to database
 		$this->db->connect();
 		
@@ -655,7 +658,6 @@ class Users_Model{
 
 	/*
 	 * @idUser idUser
-	 * @hash hash sent by the client
 	 * return "true" for successfully removed, or "false" when a removing error occurs
 	 */
 	private function removeAllUserComments($idUser){
@@ -672,6 +674,22 @@ class Users_Model{
 			//Delete from Comment the records with the idComments
 			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0][0]);
 		}
+	}
+  
+  /*
+	 * @idUser idUser
+	 * return "true" for successfully removed, or "false" when a removing error occurs
+	 */
+	private function removeAllUserReports($idUser){
+
+		//Delete all ReportedIdea records by the idUser
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("DELETE FROM ReportedIdeas WHERE idUser = '".$idUser."';");
+    
+    return $this->db->query();
 	}
 
 	/*

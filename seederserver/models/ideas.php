@@ -305,7 +305,7 @@ class Ideas_Model{
 	 * @hash hash sent by the client
 	 * return "true" for successfully inserted, or "false" when an inserting error occurs
 	 */
-	public function untakeIdea($params, $hash){
+	public function releaseIdea($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";

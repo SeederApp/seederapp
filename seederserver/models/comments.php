@@ -110,6 +110,26 @@ class Comments_Model{
 			}
 		}
 	}
+  
+  /*
+	 * @email email
+	 */
+	private function getUserIdByEmail($email){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT idUser FROM User WHERE email = '".$email."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
 	/*
 	 * @email email
@@ -122,9 +142,8 @@ class Comments_Model{
 		//Get user id by email
 		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
 		$userId = $userIdDecoded[0][0][0];
-		
 		//Prepare query
-		$this->db->prepare("SELECT count(1) FROM Idea WHERE idUser = ".$userId." AND idIdea = ".$idComment.";");
+		$this->db->prepare("SELECT count(1) FROM User_Comment WHERE idUser = ".$userId." AND idComment = ".$idComment.";");
 		
 		//Execute query
 		$this->db->query();
@@ -140,8 +159,9 @@ class Comments_Model{
 	 * @params[0] email
 	 * @params[1] idComment
 	 * @hash hash sent by the client
+   * http://localhost/index.php?comments&command=removeCommentByIdComment&values[]=robert@seederapp.com&values[]=4&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
-	public function removeCommentsByIdComment($params, $hash){
+	public function removeCommentByIdComment($params, $hash){
 		//Authenticate user
 		if (!$this->authenticateUser($params[0], $hash)){
 			return "Invalid user or password";
@@ -150,7 +170,7 @@ class Comments_Model{
 		//Check if the comment exists, and that it was publish by the user
 		$commentDecoded = json_decode($this->validateCommentByEmail($params[0], $params[1]), true);
 		$commentExists = $commentDecoded[0][0][0];
-		if ($ideaExists == 0){
+		if ($commentExists == 0){
 			return "Comment does not exist, or user did not publish this comment";
 		}
 		
@@ -158,6 +178,11 @@ class Comments_Model{
 		$this->db->connect();
 		
 		//Prepare query
+    $this->db->prepare("DELETE FROM User_Comment WHERE idComment = ".$params[1].";");
+    if ($this->db->query() != 1){
+			return false;
+		}
+    
 		$this->db->prepare("DELETE FROM Comment WHERE idComment = ".$params[1].";");
 		
 		//Execute query and return "true" or "false"
