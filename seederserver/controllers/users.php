@@ -1,13 +1,13 @@
 <?php
 /**
- * This file handles the retrieval and serving of ideas
+ * This file handles the retrieval and serving of users
  */
-class Ideas_Controller {
+class Users_Controller {
 	/**
 	 * This template variable will hold the 'view' portion of the MVC 
 	 * for this controller
 	 */
-	public $template = 'ideas';
+	public $template = 'users';
 	private $method;
 
 	function __construct($method) {
@@ -19,20 +19,20 @@ class Ideas_Controller {
 	 */
 	public function main(array $getVars) {
 	//hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
-		$ideasModel = new Ideas_Model;
+		$usersModel = new Users_Model;
 		$command = $getVars['command'];
 		$hash = isset($getVars['hash']) ? $getVars['hash'] : null;
 		$values = isset($_GET['values']) ? $_GET['values'] : null;
 
 	if ($this->method == "GET") {
 		if (isset($values) && isset($hash)){
-			$ideas = $ideasModel->$command($values, $hash);
+			$ideas = $usersModel->$command($values, $hash);
 		}
 		else if (isset($values)) {
-			$ideas = $ideasModel->$command($values);
+			$ideas = $usersModel->$command($values);
 		}
 	else
-		$ideas = $ideasModel->$command();
+		$ideas = $usersModel->$command();
 	}
 	else if ($this->method == "POST")
 		$ideas="post";

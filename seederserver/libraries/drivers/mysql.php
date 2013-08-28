@@ -1,36 +1,34 @@
 <?php
 /**
- * The MySQL Improved driver extends the Database_Library to provide 
+ * The MySQL Improved driver extends the Database_Library to provide
  * interaction with a MySQL database
  */
-class Mysql_Driver extends Database_Library
-{
-    /**
-     * Connection holds MySQLi resource
-     */
-    private $connection;
+class Mysql_Driver extends Database_Library {
+	/**
+	 * Connection holds MySQLi resource
+	 */
+	private $connection;
 
-    /**
-     * Query to perform
-     */
-    private $query;
+	/**
+	 * Query to perform
+	 */
+	private $query;
 
-    /**
-     * Result holds data retrieved from server
-     */
-    private $result;
+	/**
+	 * Result holds data retrieved from server
+	 */
+	private $result;
 
-     /**
-     * Db holds name of database to connect to
-     */
-    private $db;
-    
-    /**
-     * Create new connection to database
-     */ 
-    public function connect()
-    {
-        $services_json = json_decode(getenv("VCAP_SERVICES"),true);
+	 /**
+	 * Db holds name of database to connect to
+	 */
+	private $db;
+
+	/**
+	 * Create new connection to database
+	 */
+	public function connect() {
+	   $services_json = json_decode(getenv("VCAP_SERVICES"),true);
         $mysql_config = $services_json["mysql-5.1"][0]["credentials"];
         //connection parameters
         $username = $mysql_config["username"];
@@ -46,40 +44,34 @@ class Mysql_Driver extends Database_Library
         }
         else
           return TRUE;
-    }
+	}
 
-    /**
-     * Break connection to database
-     */
-    public function disconnect()
-    {
-        //clean up connection!
-        $this->connection->close();    
-    
-        return TRUE;
-    }
+	/**
+	 * Break connection to database
+	 */
+	public function disconnect() {
+		//Clean up connection!
+		$this->connection->close();
+		
+		return TRUE;
+	}
 
-    /**
-     * Prepare query to execute
-     * 
-     * @param $query
-     */
-    public function prepare($query)
-    {
-        //store query in query variable
-        $this->query = $query;    
-    
-        return TRUE;
-    }
+	/**
+	 * Prepare query to execute
+	 * @param $query
+	 */
+	public function prepare($query) {
+		//Store query in query variable
+		$this->query = $query;
+		return TRUE;
+	}
 
-    /**
-     * Execute a prepared query
-     */
-    public function query()
-    {
-        if (isset($this->query))
-        {
-            //execute prepared query and store in result variable
+	/**
+	 * Execute a prepared query
+	 */
+	public function query() {
+		if (isset($this->query)) {
+			 //execute prepared query and store in result variable
             $db_selected = mysql_select_db($this->db, $this->connection);
             $this->result = mysql_query($this->query);
             if($this->result === FALSE) {
@@ -87,22 +79,17 @@ class Mysql_Driver extends Database_Library
             }
             return TRUE;
         }
-    
-        return FALSE;        
-    }
+		return FALSE;
+	}
 
-    /**
-     * Fetch a row from the query result
-     * 
-     * @param $type
-     */
-    public function fetch($type = 'object')
-    {
-        if (isset($this->result))
-        {
-            switch ($type)
-            {
-                case 'array':
+	/**
+	 * Fetch a row from the query result
+	 * @param $type
+	 */
+	public function fetch($type = 'object') {
+		if (isset($this->result)) {
+			switch ($type) {
+				 case 'array':
                     //fetch a row as array
                     //$row = mysql_fetch_array($this->result);
                     $rows = array();
@@ -110,32 +97,37 @@ class Mysql_Driver extends Database_Library
                         $rows[] = array($r);
                     }
                 break;
-            
-                case 'object':
-            
-                //fall through...
-            
-                default:
-                
-                    //fetch a row as object
-                    $row = $this->result->fetch_object();    
-                    
-                break;
-            }
+				
+        case 'boolean':
+          $row = $this->result->fetch();
+          break;
         
-            return json_encode($rows);
-        }
-    
-        return FALSE;
-    }
-    
-     /**
-     * Sanitize data to be used in a query
-     * 
-     * @param $data
-     */
-    public function escape($data)
-    {
-        return $this->connection->real_escape_string($data);
-    }
+				case 'object':
+					//Fall through...
+					
+				default:
+					//Fetch a row as object
+					$row = $this->result->fetch_object();
+					break;
+			}
+			return json_encode($rows);
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Sanitize data to be used in a query
+	 * @param $data to be sanitized
+	 */
+	public function escape($data) {
+		return $this->connection->real_escape_string($data);
+	}
+  
+   /**
+	 * Fetch id of last query
+	 */
+	public function fetchId() {
+		return $this->connection->insert_id;
+	}
 }
+?>
