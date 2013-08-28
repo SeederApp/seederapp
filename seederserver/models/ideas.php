@@ -708,7 +708,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea WHERE idUser = ".$userId.";");
+		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Developer_Idea WHERE Idea.idIdea = Developer_Idea.idIdea AND Idea.idUser = ".$userId.";");
 		
 		//Execute query
 		$this->db->query();
