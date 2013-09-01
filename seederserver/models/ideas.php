@@ -33,6 +33,41 @@ class Ideas_Model{
 	}
 
 	/*
+	 * @idIdea idIdea
+	 * @votes votes
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an updating error occurs
+	 */
+	private function generateVoteCoins($email, $idIdea, $votes){
+		//Get generated coins by idIdea
+		$generatedCoinsDecoded = json_decode($this->getGeneratedCoinsByIdIdea($idIdea), true);
+		$generatedCoins = $generatedCoinsDecoded[0][0][0];
+		
+		if ((($generatedCoins * 10) + 10) == $votes){
+			//Connect to database
+			$this->db->connect();
+			
+			//Update idea generatedCoins
+			$this->db->prepare("UPDATE Idea SET generatedCoins = ".++$generatedCoins." WHERE idIdea = ".$idIdea.";");
+			
+			//Execute query and return "true" or "false"
+			if ($this->db->query() == 1){
+				//Get coins
+				$coinsDecoded = json_decode($this->getUserCoinsByEmail($email), true);
+				$coins = $coinsDecoded[0][0][0];
+				
+				//Connect to database
+				$this->db->connect();
+				
+				//Update User Coins, so user gets an extra coin because vote number
+				$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = ".$email.";");
+				
+				//Execute query and return "true" or "false"
+				$this->db->query();
+			}
+		}
+	}
+
+	/*
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
@@ -367,6 +402,26 @@ class Ideas_Model{
 	/*
 	 * @idIdea idIdea
 	 */
+	public function getGeneratedCoinsByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT generatedCoins FROM Idea WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @idIdea idIdea
+	 */
 	public function getVotesByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
@@ -562,6 +617,8 @@ class Ideas_Model{
 		//Update number of votes
 		$votesDecoded = json_decode($this->getVotesByIdIdea($params[1]), true);
 		$votes = $votesDecoded[0][0][0];
+		
+		$this->generateVoteCoins($params[0], $params[1], $votes);
 		
 		//Connect to database
 		$this->db->connect();
