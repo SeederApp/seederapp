@@ -752,6 +752,7 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
+
 	/*
 	 * @params[0] email
 	 */
@@ -766,6 +767,27 @@ class Ideas_Model{
 		
 		//Prepare query
 		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Developer_Idea WHERE Idea.idIdea = Developer_Idea.idIdea AND Idea.idUser = ".$userId.";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @params[0] idCategory
+	 */
+	//Get ideas by id Category
+	public function getIdeasByIdCategory($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT * FROM Idea WHERE Idea.idCategory = ".$param[0].";");
 		
 		//Execute query
 		$this->db->query();
