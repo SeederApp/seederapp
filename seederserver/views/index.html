@@ -17,6 +17,12 @@
 
     <!-- Init -->
     <script type="text/javascript">
+	var date1 = new Date("2013-08-15");
+	var date2 = new Date("2013-08-16");
+	var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+	alert(diffDays);
+	
     window.addEventListener('load', function() {
         document.addEventListener('webworksready', function(e) {         
             bb.init({
