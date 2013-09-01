@@ -51,6 +51,26 @@ class Users_Model{
 		//Return data
 		return $article;
 	}
+	
+		/*
+	 * @email email
+	 */
+	public function getSaltByEmail($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT salt FROM User WHERE email = '".$params[0]."';");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
 	/*
 	 * @idUser idUser
