@@ -1,12 +1,18 @@
-<!DOCTYPE html> 
-<html> 
-    <head> 
-        <meta http-equiv="Content-Type" 
-              content="text/html; charset=UTF-8"> 
-        <title>Seeder</title> 
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    </head> 
-    <body> 
-        <p>Hello World!</p> 
-    </body> 
-</html>
+ <html>
+      <head>
+          <link  rel="stylesheet" type="text/css" href="css/bbui.css"></link>
+          <script type="text/javascript" src="js/bbui.js"></script>
+          <script type="text/javascript" src="local:///chrome/webworks.js"></script>
+          <script type="text/javascript">
+          window.addEventListener('load',function() {
+              document.addEventListener('webworksready', function(e) {
+                  bb.init({controlsDark: true});
+                  // Open our first screen
+                  bb.pushScreen('login.html', 'login');
+              }, false);
+          }, false);
+          </script>
+      </head>
+      <body>
+      </body>
+  </html>
