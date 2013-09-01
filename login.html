@@ -1,8 +1,40 @@
 <!DOCTYPE html>
-<div style="background-color: #181818;" data-bb-type="screen" data-bb-effect="fade" data-bb-scroll-effect="off">
-	<div data-bb-type="title" data-bb-caption="Login" ></div>
-    <div id="content">
-        <input type="text" value="Email"/>
-		<input type="password" value="Password"/>
-    </div>
+<div data-bb-type="screen" style="background-color: #181818" data-bb-effect="fade" data-bb-scroll-effect="off">
+	<script src="js/sha1.js"></script>
+	<script type="text/javascript">
+	window.onload(function () {
+		
+	});
+	function authenticateUser () {
+		password = document.getElementById("password").value;
+		email = document.getElementById("email").value;
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		}
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				alert(xmlhttp.responseText);
+			}
+		}
+		xmlhttp.open("GET","http://seederserver.aws.af.cm/index.php?users&command=getSalt&values[]=" +email,true);
+		xmlhttp.send();
+		
+		hash = Sha1.hash(password);
+		
+	}
+	</script> 
+	<div data-bb-type="round-panel" width="100%"> 
+		<div style="background-image:url('images/icon.png'); background-repeat: no-repeat; background-position: bottom; height: 25%; margin-bottom: 20px"></div>
+			<div style="margin-bottom:30px;">
+				<input id="email" type="text" placeholder="Email"/>
+				<input id="password" type="password" placeholder="Password"/>
+			</div>
+			<div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 20px 0; background-color: blue" onclick="authenticateUser()">Login</div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0;">Register</div>
+			</div>
+	</div>
 </div>
