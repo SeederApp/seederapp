@@ -133,6 +133,75 @@ class Users_Model{
 	}
 
 	/*
+	 * @email email
+	 */
+	private function getLastLoggedInByEmail($email){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT lastLoggedIn FROM User WHERE email = '".$email."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @email[0] email
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an updating error occurs
+	 */
+	private function generateLoginCoins($email){
+		//Get lastLoggedIn
+		$lastLoggedInDecoded = json_decode($this->getLastLoggedInByEmail($email), true);
+		$lastLoggedIn = $lastLoggedInDecoded[0][0][0];
+		
+		$oldDate = (explode(' ', $lastLoggedIn, 1));
+		
+		$currentDate = time();
+		
+		$dateDiff = floor((abs($currentDate - $oldDate))/(60*60*24));
+		
+		if ($dateDiff >= 1){
+		
+			//Get coins
+			$coinsDecoded = json_decode($this->getUserCoinsByEmail($email), true);
+			$coins = $coinsDecoded[0][0][0];
+			
+			//Connect to database
+			$this->db->connect();
+			
+			//Update User Coins, so user gets a coin back
+			$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = ".$email.";");
+			
+			//Execute query and return "true" or "false"
+			$this->db->query();
+		}
+	}
+
+	/*
+	 * @email[0] email
+	 * return "User already exists", or "true" for successfully inserted, or "false" when an updating error occurs
+	 */
+	private function updateLastLoggedIn($email){
+		$this->generateLoginCoins($email);
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("UPDATE User SET lastLoggedIn = now() WHERE email = '".$params[0]."';");
+		
+		//Execute query and return "true" or "false"
+		return $this->db->query();
+	}
+
+	/*
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
@@ -143,6 +212,7 @@ class Users_Model{
 			if ($userHashDecoded[0][0][0] != $hash){
 				return false;
 			}
+			$this->updateLastLoggedIn($email);
 			return true;
 		} else{
 			return false;
@@ -157,6 +227,7 @@ class Users_Model{
 	 * @params[4] salt
 	 * @params[5] hash
 	 * @params[6] photoURL
+	 * @params[7] photoURL
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
 	 * index.php?users&command=addUser&values[]=test@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds
 	 */
@@ -172,7 +243,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5');");
+		$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isPrivate, lastLoggedIn) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '".$params[7]."', now());");
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
@@ -184,9 +255,10 @@ class Users_Model{
 	 * @params[2] lastName
 	 * @params[3] gender
 	 * @params[4] photoURL
+	 * @params[5] isPrivate
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-	 * http://localhost/index.php?users&command=updateUser&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
+	 * http://localhost/index.php?users&command=updateUser&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&values[]=false&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function updateUser($params, $hash){
 		//Authenticate user
@@ -198,7 +270,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
+		$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."', isPrivate = '".$params[5]."' WHERE email = '".$params[0]."';");
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
@@ -212,13 +284,15 @@ class Users_Model{
 	 * @params[4] salt
 	 * @params[5] hash
 	 * @params[6] photoURL
-	 * @params[7] vendorId
-	 * @params[8] twitter
-	 * @params[9] facebook
-	 * @params[10] linkedin
-	 * @params[11] github
+	 * @params[7] isPrivate
+	 * @params[8] vendorId
+	 * @params[9] website
+	 * @params[10] twitter
+	 * @params[11] facebook
+	 * @params[12] linkedin
+	 * @params[13] github
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-	 * http://localhost/index.php?users&command=addDeveloper&values[]=dev2@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds&values[]=222&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github
+	 * http://localhost/index.php?users&command=addDeveloper&values[]=dev2@seederapp.com&values[]=Some&values[]=Dude&values[]=male&values[]=53452vsd2&values[]=fspl2023dsla432&values[]=sdsds&values[]=222&values[]=true&values[]=http://www.google.com&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github
 	 */
 	public function addDeveloper($params){
 		//Check if user exists
@@ -232,11 +306,11 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query for inserting Developer info
-		$this->db->prepare("INSERT INTO Developer (vendorId, twitter, facebook, linkedin, github) VALUES ('".$params[7]."', '".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."');");
+		$this->db->prepare("INSERT INTO Developer (vendorId, website, twitter, facebook, linkedin, github) VALUES ('".$params[8]."', '".$params[9]."', '".$params[10]."', '".$params[11]."', '".$params[12]."', '".$params[13]."');");
 		
 		if ($this->db->query() == 1){
 			//Prepare query for inserting User info
-			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->fetchId()."');");
+			$this->db->prepare("INSERT INTO User (email, firstName, lastName, gender, salt, hash, photoURL, coins, isDeveloper, idDeveloper, isPrivate, lastLoggedIn) VALUES ('".$params[0]."', '".$params[1]."', '".$params[2]."', '".$params[3]."', '".$params[4]."', '".$params[5]."', '".$params[6]."', '5', '1', '".$this->db->fetchId()."', '".$params[7]."', now());");
 			return $this->db->query();
 		}
 	}
@@ -247,14 +321,16 @@ class Users_Model{
 	 * @params[2] lastName
 	 * @params[3] gender
 	 * @params[4] photoURL
-	 * @params[5] vendorId
-	 * @params[6] twitter
-	 * @params[7] facebook
-	 * @params[8] linkedin
-	 * @params[9] github
+	 * @params[6] vendorId
+	 * @params[7] vendorId
+	 * @params[8] website
+	 * @params[9] twitter
+	 * @params[10] facebook
+	 * @params[11] linkedin
+	 * @params[12] github
 	 * @hash hash sent by the client
 	 * return "User already exists", or "true" for successfully inserted, or "false" when an inserting error occurs
-	 * http://localhost/index.php?users&command=updateDeveloper&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&values[]=1111&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
+	 * http://localhost/index.php?users&command=updateDeveloper&values[]=robert@seederapp.com&values[]=Robert&values[]=Stanica&values[]=male&values[]=photo&values[]=1111&values[]=false&values[]=http://www.google.com&values[]=twitter&values[]=facebook&values[]=linkedin&values[]=github&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function updateDeveloper($params, $hash){
 		//Authenticate user
@@ -268,11 +344,11 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query for inserting Developer info
-		$this->db->prepare("UPDATE Developer SET vendorId = '".$params[5]."', twitter = '".$params[6]."', facebook = '".$params[7]."', linkedin = '".$params[8]."', github = '".$params[9]."' WHERE idDeveloper = '".$developerId."';");
+		$this->db->prepare("UPDATE Developer SET vendorId = '".$params[6]."', website = '".$params[7]."', twitter = '".$params[8]."', facebook = '".$params[9]."', linkedin = '".$params[10]."', github = '".$params[11]."' WHERE idDeveloper = '".$developerId."';");
 		
 		if ($this->db->query() == 1){
 			//Prepare query for inserting User info
-			$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."' WHERE email = '".$params[0]."';");
+			$this->db->prepare("UPDATE User SET firstName = '".$params[1]."', lastName = '".$params[2]."', gender = '".$params[3]."', photoURL = '".$params[4]."', isPrivate = '".$params[5]."' WHERE email = '".$params[0]."';");
 			return $this->db->query();
 		}
 	}
@@ -296,9 +372,9 @@ class Users_Model{
 		//Delete user's ideas
 		$this->removeAllUserIdeas($idUser);
 		
-    //Delete user's reports
-    $this->removeAllUserReports($idUser);
-    
+		//Delete user's reports
+		$this->removeAllUserReports($idUser);
+		
 		//Connect to database
 		$this->db->connect();
 		
@@ -532,7 +608,7 @@ class Users_Model{
 	/*
 	 * @email email
 	 */
-	private function getUserCoinsByEmail($email){
+	public function getUserCoinsByEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
@@ -675,21 +751,20 @@ class Users_Model{
 			$this->removeCommentsByIdComment($commentIdsDecoded[$i][0][0]);
 		}
 	}
-  
-  /*
+
+	/*
 	 * @idUser idUser
 	 * return "true" for successfully removed, or "false" when a removing error occurs
 	 */
 	private function removeAllUserReports($idUser){
-
 		//Delete all ReportedIdea records by the idUser
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
 		$this->db->prepare("DELETE FROM ReportedIdeas WHERE idUser = '".$idUser."';");
-    
-    return $this->db->query();
+		
+	return $this->db->query();
 	}
 
 	/*
@@ -837,6 +912,26 @@ class Users_Model{
 	}
 
 	/*
+	 * @params[0] email
+	 */
+	public function isPrivate($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT isPrivate FROM User WHERE email = '".$params[0]."';");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
 	 * @params[0] idUser
 	 * @hash hash sent by the client
 	 */
@@ -850,7 +945,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT email, firstName, lastName, gender, photoURL, coins FROM User WHERE idUser = '".$params[1]."';");
+		$this->db->prepare("SELECT email, firstName, lastName, gender, photoURL, coins, isPrivate FROM User WHERE idUser = '".$params[1]."';");
 		
 		//Execute query
 		$this->db->query();
@@ -876,7 +971,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT email, firstName, lastName, gender, photoURL, coins FROM User WHERE email = '".$params[0]."';");
+		$this->db->prepare("SELECT email, firstName, lastName, gender, photoURL, coins, isPrivate FROM User WHERE email = '".$params[0]."';");
 		
 		//Execute query
 		$this->db->query();
@@ -902,7 +997,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT User.email, User.firstName, User.lastName, User.gender, User.photoURL, User.coins, Developer.* FROM User JOIN Developer WHERE User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = '".$params[0]."';");
+		$this->db->prepare("SELECT User.email, User.firstName, User.lastName, User.gender, User.photoURL, User.coins, User.isPrivate, Developer.* FROM User JOIN Developer WHERE User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = '".$params[0]."';");
 		
 		//Execute query
 		$this->db->query();
@@ -928,7 +1023,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT User.email, User.firstName, User.lastName, User.gender, User.photoURL, User.coins, Developer.* FROM User JOIN Developer WHERE User.idDeveloper = Developer.idDeveloper AND User.email = '".$params[0]."';");
+		$this->db->prepare("SELECT User.email, User.firstName, User.lastName, User.gender, User.photoURL, User.coins, User.isPrivate, Developer.* FROM User JOIN Developer WHERE User.idDeveloper = Developer.idDeveloper AND User.email = '".$params[0]."';");
 		
 		//Execute query
 		$this->db->query();
