@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:rim="http://www.blackberry.com/ns/widgets"
+        version="1.0.0"
+        id="br.com.nomedoapp">
+        
+    <name>NomeDoApp</name>
+    
+    <!-- Informações do Autor -->
+    <author rim:copyright="2013"
+            href="http://twitter.com/autor"
+            email = "@autor">Autor</author>
+    <description>Descricão do App</description>
+    
+    <!-- Libera Acesso a URLs Externas -->
+    <access uri="*" subdomains="true" /> 
+    
+    <!-- Icone -->
+    <icon src="icon.png"/>
+    <!-- Splash Z10 -->
+    <rim:splash src="splash-1280x768.png"/>
+    <!-- Splash Q10 -->
+    <rim:splash src="splash-720x720.png"/>    
+    
+    <!-- Orientação da Tela (portrait, landscape, auto) -->
+    <feature id="blackberry.app">
+      <param name="orientation" value="portrait" />
+    </feature>
+
+    <!-- Pagina Inicial -->
+    <content src="local:///index.html" />
+    
+    <!-- Live Preview -->
+    <!-- Serve para Atualizar o App sem precisar re-empacotar -->
+    <!--
+    <content src="http://IpDaMaquina/Caminho/index.html" />
+    <access uri="http://IpDaMaquina" subdomains="true">
+        <feature id="blackberry.bbm.platform" />
+        <feature id="blackberry.invoke" />
+        <feature id="blackberry.invoke.card" />
+        <feature id="blackberry.ui.cover" />
+        <feature id="blackberry.ui.dialog" />
+        <feature id="blackberry.ui.toast" />
+        <feature id="blackberry.app"/>
+        <feature id="blackberry.app.event"/>
+    </access>
+    -->
+
+    <!-- Acessos API -->
+    <feature id="blackberry.bbm.platform" />
+    <feature id="blackberry.invoke" />
+    <feature id="blackberry.invoke.card" />
+    <feature id="blackberry.ui.cover" />
+    <feature id="blackberry.ui.dialog" />
+    <feature id="blackberry.ui.toast" />
+    <feature id="blackberry.app"/>
+    <feature id="blackberry.app.event"/>
+
+    <!-- Permissões -->
+    <rim:permissions>
+        <rim:permit>bbm_connect</rim:permit> 
+        <rim:permit>access_shared</rim:permit> 
+    </rim:permissions>
+</widget>

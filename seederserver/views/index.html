@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/bbui.css" type="text/css" media="screen" />
+
+    <!-- WebWorks -->
+    <script src="local:///chrome/webworks.js" type="text/javascript"></script>
+
+    <!-- BBUI.js -->
+    <script src="js/lib/bbui.js" type="text/javascript"></script>
+
+    <!-- JS -->
+    <script src="js/app.js"></script>
+    <script src="js/api.js"></script>
+
+    <!-- Init -->
+    <script type="text/javascript">
+    window.addEventListener('load', function() {
+        document.addEventListener('webworksready', function(e) {         
+            bb.init({
+                actionBarDark: true,
+                controlsDark: true,
+                listsDark: false,
+                // Invocado ANTES do estilo e do DOM serem inseridos. 
+                onscreenready: function(element, id, params) {
+                },
+                // Invocado DEPOIS do estilo e do DOM serem inseridos. 
+                ondomready: function(element, id, params) {
+                }
+            });
+            
+            // Inicia o App
+            App.init();
+
+            // Atualiza a Imagem de cover
+            App.ui.windowCover.setup('local:///cover.png');
+
+
+        }, false);
+    }, false);
+    </script>
+</head>
+<body style="background-color: #181818">
+</body>
+</html>
