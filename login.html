@@ -16,10 +16,11 @@
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
-				alert(xmlhttp.responseText);
+				obj[] = xmlhttp.responseText;
+				alert(obj[salt]);
 			}
 		}
-		xmlhttp.open("GET","http://seederserver.aws.af.cm/index.php?users&command=getSalt&values[]=" +email,true);
+		xmlhttp.open("GET","http://seederserver.aws.af.cm/index.php?users&command=getSaltByEmail&values[]=" +email,true);
 		xmlhttp.send();
 		
 		hash = Sha1.hash(password);
