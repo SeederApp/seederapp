@@ -1,5 +1,109 @@
 <!DOCTYPE html>
 <div data-bb-type="screen" style="background-image:url('images/backgroundRegister.png'); background-color: #fff" data-bb-effect="slide-left" data-bb-scroll-effect="off">
+	<script src="js/sha1.js"></script>
+	<script type="text/javascript">
+	function enableDevOptions() {
+		if (document.getElementById('developer').getChecked()) {
+			document.getElementById('developerOptions').style.display="block";
+		}
+		else {
+			document.getElementById('developerOptions').style.display="none";
+		}
+	}
+	function validateEmail(email) { 
+		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return re.test(email);
+	} 
+	function trim(s) {
+		return s.replace(/^\s*/, "").replace(/\s*$/, "");
+	}
+	function validate() {
+		if (trim(document.getElementById("firstName").value) == "") {
+			document.getElementById("firstName").placeholder="Please enter your first name";
+			document.getElementById("firstName").focus();
+			return false;
+		} else if (trim(document.getElementById("lastName").value) == "") {
+			document.getElementById("lastName").placeholder="Please enter your last name";
+			document.getElementById("lastName").focus();
+			return false;
+		}  else if (trim(document.getElementById("email").value) == "") {
+			document.getElementById("email").placeholder="Please enter your email";
+			document.getElementById("email").focus();
+			return false;
+		} else if (!validateEmail(document.getElementById("email").value)) {
+			document.getElementById("email").value="";
+			document.getElementById("email").placeholder="Please enter a proper email";
+			document.getElementById("email").focus();
+			return false;
+		} else if (trim(document.getElementById("password").value) == "") {
+			document.getElementById("password").placeholder="Please enter your password";
+			document.getElementById("password").focus();
+			return false;
+		} else if (trim(document.getElementById("password2").value) == "") {
+			document.getElementById("password2").placeholder="Please enter your password again";
+			document.getElementById("password2").focus();
+			return false;
+		} else if (document.getElementById("password").value != document.getElementById("password2").value) {
+			document.getElementById("password2").value="";
+			document.getElementById("password2").placeholder="Please enter the same password";
+			document.getElementById("password2").focus();
+			return false;
+		}
+		else
+			registerUser();
+	}
+	function sendRequest(url, callback) {
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{
+		  xmlhttp=new XMLHttpRequest();
+		}
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
+					alert("bad request");
+				}
+				else{
+					callback(JSON.parse(xmlhttp.responseText));}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
+	function registerUser() {
+		var firstName = document.getElementById("firstName").value;
+		var lastName = document.getElementById("firstName").value;
+		var radioButtons = document.getElementsByName("group1");
+		var gender = "other";
+		for (var x = 0; x < radioButtons.length; x ++) {
+			if(radioButtons[x].checked)
+				gender = radioButtons[x].value;
+		}
+		var email = document.getElementById("email").value;
+		var password = document.getElementById("password").value;
+		var isPrivate = document.getElementById("privacy").checked;
+		var isDeveloper = document.getElementById("developer").checked;
+		if (isDeveloper) {
+			var vendor = document.getElementById("vendor").value;
+			var website = document.getElementById("website").value;
+			var twitter = document.getElementById("twitter").value;
+			var facebook = document.getElementById("facebook").value;
+			var linkedin = document.getElementById("linkedin").value;
+			var github = document.getElementById("github").value;
+			
+		}
+		else {
+			var salt = Sha1.hash(Math.random());
+			var hash = Sha1.hash(password + salt);
+			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getSaltByEmail&values[]=" +email, function (data){
+				salt = data[0][0][0];
+				hash = Sha1.hash(password + salt);
+			});
+		}
+			
+	}
+	</script>
 	<div data-bb-type="title" data-bb-caption="Register Your Account"></div>
 	<div data-bb-type="action-bar" data-bb-back-caption ="Back"></div>
 		<div data-bb-type="round-panel"> 
@@ -7,11 +111,11 @@
 			<div data-bb-type="label-control-container">
 				<div data-bb-type="row">
 					<div data-bb-type="label">First Name:</div>
-					<input type="text"/>
+					<input id="firstName" type="text"/>
 				</div>
 				<div data-bb-type="row">
 					<div data-bb-type="label">Last Name:</div>
-					<input type="text"/>
+					<input id="lastName" type="text"/>
 				</div>
 				<div style="margin:15px 0 35px 0;">
 					<table>
@@ -36,7 +140,7 @@
 				<table>
 					<tr>
 						<td class="cell">
-							<input type="checkbox" value="private"/>
+							<input id="privacy" type="checkbox" value="private"/>
 						</td>
 						<td class="cell" style="font-size: 45px; padding-top:7px;">Share first and last name with other users?</td>
 					</tr>
@@ -47,29 +151,56 @@
 			<div data-bb-type="label-control-container" style="margin:15px 0 35px 0;">
 				<div data-bb-type="row">
 					<div data-bb-type="label">Email:</div>
-					<input type="email"/>
+					<input id="email" type="email"/>
 				</div>
 				<div data-bb-type="row">
 					<div data-bb-type="label">Password:</div>
-					<input type="password"/>
+					<input id="password" type="password"/>
 				</div>
 				<div data-bb-type="row">
 					<div data-bb-type="label">Re-enter password:</div>
-					<input type="password"/>
+					<input id="password2" type="password"/>
 				</div>
 			</div>
 			<div data-bb-type="panel-header">Developer Settings</div>
 			<div data-bb-type="label-control-container">
-				<div style="margin:15px 0 35px 0;">
+				<div style="margin:15px 0 0 0;">
 					<table>
 						<tr>
 							<td class="cell">
-								<input type="checkbox" value="private"/>
+								<input id="developer" type="checkbox" value="developer" onchange="enableDevOptions()"/>
 							</td>
 							<td class="cell" style="font-size: 45px; padding-top:7px;">I'm a developer</td>
 						</tr>
 					</table>
 				</div>
 			</div>
+			<div id="developerOptions" style="display:none" data-bb-type="label-control-container">
+				<div id="ele1" data-bb-type="row">
+					<div id="vendorLabel" data-bb-type="label">Blackberry Vendor Id:</div>
+					<input id="vendor" type="text" placeholder="Optional"/>
+				</div>
+				<div id="ele2" style="display:none" data-bb-type="row">
+					<div data-bb-type="label">Website:</div>
+					<input id="website" type="text" placeholder="Optional"/>
+				</div>
+				<div id="ele3" style="display:none" data-bb-type="row">
+					<div data-bb-type="label">Twitter:</div>
+					<input id="twitter" type="text" placeholder="Optional"/>
+				</div>
+				<div id="ele4" style="display:none" data-bb-type="row">
+					<div data-bb-type="label">Facebook:</div>
+					<input id="facebook" type="text" placeholder="Optional"/>
+				</div>
+				<div id="ele5" style="display:none" data-bb-type="row">
+					<div data-bb-type="label">LinkedIn:</div>
+					<input id="linkedin" type="text" placeholder="Optional"/>
+				</div>
+				<div id="ele6" style="display:none" data-bb-type="row">
+					<div data-bb-type="label">GitHub:</div>
+					<input id="github" type="text" placeholder="Optional"/>
+				</div>
+			</div>
+			<div data-bb-type="button" data-bb-style="stretch" onclick="validate()">Submit</div>
 		</div>
 </div>
