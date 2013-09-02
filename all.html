@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
-
 <div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="fade" data-bb-scroll-effect="off"> 
 <script type="text/javascript">
 	bb.init({onscreenready : function(element, id, params){
 			if (id == 'allIdeas'){
-				
+				loadIdeas();
+				alert(userName.email);	
 			}
 		}
 	});
@@ -104,31 +104,32 @@
 			document.getElementById('indicator').style.display="none";
 		});
 	}
-	loadIdeas();
+	/*window.onload = loadIdeas();*/
 </script>
 	<div data-bb-type="title" data-bb-caption="All Ideas"></div>	
+	
 	<!-- App menu -->
 	<div data-bb-type="menu">
-		<div onclick="help();" data-bb-type="menu-item" data-bb-img="images/icons/help.png" data-bb-pin="left">Help</div>
-		<div onclick="settings();" data-bb-type="menu-item" data-bb-img="images/icons/settings.png" data-bb-pin="right">Settings</div>
+		<div onClick="help();" data-bb-type="menu-item" data-bb-img="images/icons/help.png" data-bb-pin="left">Help</div>
+		<div onClick="settings();" data-bb-type="menu-item" data-bb-img="images/icons/settings.png" data-bb-pin="right">Settings</div>
 	</div>
 	
 	<!-- Action bar -->
 	<div data-bb-type="action-bar"> 
 		
 		<!-- Tabs -->
-		<div onclick="allIdeas();" data-bb-type="action" data-bb-overflow="true" data-bb-style="tab" data-bb-img="images/icons/all.png" data-bb-selected="true">All</div>
-		<div onclick="appIdeas();" data-bb-type="action" data-bb-style="tab" data-bb-overflow="true" data-bb-img="images/icons/apps.png">Apps</div>
-		<div onclick="gameIdeas();" data-bb-type="action" data-bb-style="tab" data-bb-overflow="true" data-bb-img="images/icons/games.png">Games</div>
+		<div onClick="allIdeas();" data-bb-type="action" data-bb-overflow="true" data-bb-style="tab" data-bb-img="images/icons/all.png" data-bb-selected="true">All</div>
+		<div onClick="appIdeas();" data-bb-type="action" data-bb-style="tab" data-bb-overflow="true" data-bb-img="images/icons/apps.png">Apps</div>
+		<div onClick="gameIdeas();" data-bb-type="action" data-bb-style="tab" data-bb-overflow="true" data-bb-img="images/icons/games.png">Games</div>
 		
 		<!-- Actions -->
-		<div onclick="refreshIdeas()" data-bb-type="action" data-bb-style="button" data-bb-img="images/icons/refresh.png">Refresh</div>
+		<div onClick="refreshIdeas()" data-bb-type="action" data-bb-style="button" data-bb-img="images/icons/refresh.png">Refresh</div>
 		<!--<div onclick="" data-bb-type="action" data-bb-style="button" data-bb-img="images/icons/search.png">Search</div>-->
 		
 		<!-- Action overflow -->
-		<div onclick="popularIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/popular.png">Popular Ideas</div>
-		<div onclick="recentIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/recent.png">Recent Ideas</div>
-		<div onclick="newIdea()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/submit.png">Submit New Idea</div>
+		<div onClick="popularIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/popular.png">Popular Ideas</div>
+		<div onClick="recentIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/recent.png">Recent Ideas</div>
+		<div onClick="newIdea()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/submit.png">Submit New Idea</div>
 	</div>
 	
 	<!-- Content -->
