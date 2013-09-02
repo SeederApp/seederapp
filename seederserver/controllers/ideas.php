@@ -31,10 +31,8 @@ class Ideas_Controller {
 		else if (isset($values)) {
 			$ideas = $ideasModel->$command($values);
 		}
-		else 
+		else
 			$ideas = $ideasModel->$command();
-	else
-		$ideas = $ideasModel->$command();
 	}
 	else if ($this->method == "POST")
 		$ideas="post";

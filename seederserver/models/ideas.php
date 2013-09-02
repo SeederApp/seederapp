@@ -720,12 +720,12 @@ class Ideas_Model{
 		return $this->db->query();
 	}
 
-	public function getAllIdeas($params){
+	public function getAllIdeasByFilter($params){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea ORDED BY ".$params[0].";");
+		$this->db->prepare("SELECT * FROM Idea ORDER BY ".$params[0]." DESC;");
 		
 		//Execute query
 		$this->db->query();
@@ -742,7 +742,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea ORDED BY votes;");
+		$this->db->prepare("SELECT * FROM Idea ORDER BY votes;");
 		
 		//Execute query
 		$this->db->query();
