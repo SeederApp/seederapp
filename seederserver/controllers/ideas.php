@@ -31,6 +31,8 @@ class Ideas_Controller {
 		else if (isset($values)) {
 			$ideas = $ideasModel->$command($values);
 		}
+		else 
+			$ideas = $ideasModel->$command();
 	else
 		$ideas = $ideasModel->$command();
 	}
