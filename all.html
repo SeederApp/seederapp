@@ -1,41 +1,101 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
-<div data-bb-type="screen" data-bb-effect="fade">
-	<script type="text/javascript">
+
+<div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="fade" data-bb-scroll-effect="off"> 
+<script type="text/javascript">
+	bb.init({onscreenready : function(element, id, params){
+			if (id == 'allIdeas'){
+				alert (params.userEmail + ' ' + params.userHash);
+			}
+		}
+	});
+
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest){
 			xmlhttp=new XMLHttpRequest();
 		}
-		xmlhttp.onreadystatechange=function(){
-		if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			{
-				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
-					/*document.getElementById("message").innerHTML = "Incorrect email or password";
-					document.getElementById('indicator').style.visibility="hidden";
-					document.getElementById('indicator').style.display="none";*/
-				}
-				else{
-					callback(JSON.parse(xmlhttp.responseText));}
+		xmlhttp.onreadystatechange = function(){
+			if (xmlhttp.readyState==4 && xmlhttp.status==200){
+					if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
+						/*document.getElementById('message').innerHTML = "Failure to load ideas. Please check your Internet connection.";
+						document.getElementById('indicator').style.visibility="hidden";
+						document.getElementById('indicator').style.display="none";*/
+					} else {
+						callback(JSON.parse(xmlhttp.responseText));
+					}
 			}
 		}
 		xmlhttp.open("GET",url,true);
 		xmlhttp.send();
 	}
-	function registerUser() {
-		bb.pushScreen('register.html', 'registerUser');
+	
+	function help() {
+		bb.pushScreen('help.html', 'help');
 	}
+	
+	function settings() {
+		bb.pushScreen('settings.html', 'settings');
+	}
+	
+	function seeDetails(idIdea){
+		console.log(idIdea);
+	}
+
+	function allIdeas() {
+		categoryType = 'All';
+		refreshIdeas();
+	}
+	
+	function appIdeas() {
+		categoryType = 'Apps';
+		refreshIdeas();
+	}
+
+	function gameIdeas() {
+		categoryType = 'Games';
+		refreshIdeas();
+	}
+
+	function popularIdeas() {
+		filter = 'votes';
+		refreshIdeas();
+	}
+	
+	function recentIdeas() {
+		filter = 'date';
+		refreshIdeas();
+	}
+	
+	var filter = 'votes';
+	var categoryType = 'All';
+	var url = "http://seederserver.aws.af.cm/index.php?ideas&command=getAllIdeasByFilter&values[]=votes&values[]=DESC";
+	
+	function refreshIdeas() {
+		
+		if (categoryType == 'All'){
+			url = "http://seederserver.aws.af.cm/index.php?ideas&command=getAllIdeasByFilter&values[]=" + filter + "&values[]=DESC";
+		} else {
+			url = "http://seederserver.aws.af.cm/index.php?ideas&command=getAllIdeasByCategoryType&values[]=" + categoryType + "&values[]=" + filter + "&values[]=DESC";
+		}		
+		
+		document.getElementById("indicator").show();
+		var allIdeas = document.getElementById("allIdeasList");
+		allIdeas.innerHTML = "";
+		
+		loadIdeas();
+	}
+	
 	function loadIdeas() {
-		/*document.getElementById('indicator').style.visibility="visible";
-		document.getElementById('indicator').style.display="block";
-		document.getElementById("message").innerHTML = "";*/
-		sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getAllIdeas", function (data){
-			ideas = data[0][0][0];
+		//Default ideas loading options
+		sendRequest(url, function (data){
+			var ideas = data[0][0][0];
 			var listItem, dataList = document.getElementById('allIdeasList');
 			for (var i = 0; i < data.length; i++) {
 				//Ideas reported very often are hidden
 				if ((data[i][0]['reportNumber']) < 10){
 					listItem = document.createElement('div');
 					listItem.setAttribute('data-bb-type', 'item');
+					listItem.setAttribute('onbtnclick', 'seeDetails(' + data[i][0]['idIdea'] + ');');
 					listItem.setAttribute('data-bb-img', 'images/icons/category'+data[i][0]['idCategory']+'.png');
 					listItem.setAttribute('data-bb-title', data[i][0]['title']);
 					listItem.setAttribute('data-bb-accent-text', data[i][0]['votes']);
@@ -43,15 +103,39 @@
 					document.getElementById("allIdeasList").appendItem(listItem);
 				}
 			}
+			document.getElementById("indicator").hide();
 		});
 	}
 	loadIdeas();
-	</script>
-	
-	<div data-bb-type="title" data-bb-caption="All Ideas"></div>
-	
-	<div id="allIdeasList" data-bb-type="image-list">
+</script>
+	<div data-bb-type="title" data-bb-caption="All Ideas"></div>	
+	<!-- App menu -->
+	<div data-bb-type="menu">
+		<div onclick="help();" data-bb-type="menu-item" data-bb-img="images/icons/help.png" data-bb-pin="left">Help</div>
+		<div onclick="settings();" data-bb-type="menu-item" data-bb-img="images/icons/settings.png" data-bb-pin="right">Settings</div>
 	</div>
-	<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="visibility: hidden;"></div>
-	<div id="message" style="color: white"></div>
+	
+	<!-- Action bar -->
+	<div data-bb-type="action-bar"> 
+		
+		<!-- Tabs -->
+		<div onclick="allIdeas();" data-bb-type="action" data-bb-overflow="true" data-bb-style="tab" data-bb-img="images/icons/all.png" data-bb-selected="true">All</div>
+		<div onclick="appIdeas();" data-bb-type="action" data-bb-style="tab" data-bb-overflow="true" data-bb-img="images/icons/apps.png">Apps</div>
+		<div onclick="gameIdeas();" data-bb-type="action" data-bb-style="tab" data-bb-overflow="true" data-bb-img="images/icons/games.png">Games</div>
+		
+		<!-- Actions -->
+		<div onclick="refreshIdeas()" data-bb-type="action" data-bb-style="button" data-bb-img="images/icons/refresh.png">Refresh</div>
+		<!--<div onclick="" data-bb-type="action" data-bb-style="button" data-bb-img="images/icons/search.png">Search</div>-->
+		
+		<!-- Action overflow -->
+		<div onclick="popularIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/popular.png">Popular Ideas</div>
+		<div onclick="recentIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/recent.png">Recent Ideas</div>
+		<div onclick="newIdea()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/submit.png">Submit New Idea</div>
+	</div>
+	
+	<!-- Content -->
+	<div id="content">
+		<div id="indicator" data-bb-type="activity-indicator" data-bb-size="medium" style="margin: 0 auto; margin-top: 50%;"></div>
+		<div id="allIdeasList" data-bb-type="image-list" data-bb-image-loading="loading.png"></div>
+	</div>
 </div>
