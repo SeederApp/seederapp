@@ -11,10 +11,13 @@
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
-				if (xmlhttp.responseText == "")
+				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
 					document.getElementById("message").innerHTML = "Incorrect email or password";
-				else
-					callback(JSON.parse(xmlhttp.responseText));
+					document.getElementById('indicator').style.visibility="hidden";
+					document.getElementById('indicator').style.display="none";
+				}
+				else{
+					callback(JSON.parse(xmlhttp.responseText));}
 			}
 		}
 		xmlhttp.open("GET",url,true);
@@ -24,13 +27,15 @@
 		
 	});
 		function authenticateUser () {
+		document.getElementById('indicator').style.visibility="visible";
+		document.getElementById('indicator').style.display="block";
+		document.getElementById("message").innerHTML = "";
 		password = document.getElementById("password").value;
 		email = document.getElementById("email").value;
 		sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getSaltByEmail&values[]=" +email, function (data){
 			salt = data[0][0][0];
 			hash = Sha1.hash(password + salt);
 			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" +email +"&hash=" +hash;
-			console.log (url);
 			sendRequest(url, function(data){
 				 bb.pushScreen('all.html', 'allIdeas');
 			});
@@ -46,6 +51,7 @@
 			<div>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 20px 0; background-color: blue" onclick="authenticateUser()">Login</div>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0;">Register</div>
+				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="large" style="visibility: hidden; text-align: center; margin: 0 auto"></div>
 				<div id="message" style="color: white"></div>
 			</div>
 	</div>
