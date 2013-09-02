@@ -725,7 +725,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea ORDER BY ".$params[0]." DESC;");
+		$this->db->prepare("SELECT * FROM Idea ORDER BY ".$params[0]." ".$params[1].";");
 		
 		//Execute query
 		$this->db->query();
