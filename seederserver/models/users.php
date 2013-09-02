@@ -180,11 +180,12 @@ class Users_Model{
 		//Get lastLoggedIn
 		$lastLoggedInDecoded = json_decode($this->getLastLoggedInByEmail($email), true);
 		$lastLoggedIn = $lastLoggedInDecoded[0][0][0];
-		
-		$oldDate = (explode(' ', $lastLoggedIn, 1));
-		
+		echo "<><><>" + $lastLoggedIn + "<><><>";
+		$oldDate = (explode(' ', $lastLoggedIn));
+		echo $oldDate[0]; echo "****";
 		$currentDate = time();
-		
+		echo $currentDate;
+		$oldDate = strtotime($oldDate[0]);
 		$dateDiff = floor((abs($currentDate - $oldDate))/(60*60*24));
 		
 		if ($dateDiff >= 1){
@@ -233,6 +234,24 @@ class Users_Model{
 				return false;
 			}
 			$this->updateLastLoggedIn($email);
+			return true;
+		} else{
+			return false;
+		}
+	}
+	
+		/*
+	 * @params[0] email
+	 * @hash hash sent by the client
+	 */
+	public function login($params, $hash){
+		$userHash = $this->getHashByEmail($params[0]);
+		$userHashDecoded = json_decode($userHash, true);
+		if ($userHashDecoded != null){
+			if ($userHashDecoded[0][0][0] != $hash){
+				return false;
+			}
+			$this->updateLastLoggedIn($params[0]);
 			return true;
 		} else{
 			return false;
