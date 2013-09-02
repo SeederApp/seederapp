@@ -1,4 +1,57 @@
-<!DOCTYPE html>
-<div data-bb-type="screen" style="background-color: #181818" data-bb-effect="fade" data-bb-scroll-effect="off">
-	  <div data-bb-type="title" data-bb-caption="Login success!" ></div>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<div data-bb-type="screen" data-bb-effect="fade">
+	<script type="text/javascript">
+	function sendRequest(url, callback) {
+		var xmlhttp;
+		if (window.XMLHttpRequest){
+			xmlhttp=new XMLHttpRequest();
+		}
+		xmlhttp.onreadystatechange=function(){
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
+					/*document.getElementById("message").innerHTML = "Incorrect email or password";
+					document.getElementById('indicator').style.visibility="hidden";
+					document.getElementById('indicator').style.display="none";*/
+				}
+				else{
+					callback(JSON.parse(xmlhttp.responseText));}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
+	function registerUser() {
+		bb.pushScreen('register.html', 'registerUser');
+	}
+	function loadIdeas() {
+		/*document.getElementById('indicator').style.visibility="visible";
+		document.getElementById('indicator').style.display="block";
+		document.getElementById("message").innerHTML = "";*/
+		sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getAllIdeas", function (data){
+			ideas = data[0][0][0];
+			var listItem, dataList = document.getElementById('allIdeasList');
+			for (var i = 0; i < data.length; i++) {
+				//Ideas reported very often are hidden
+				if ((data[i][0]['reportNumber']) < 10){
+					listItem = document.createElement('div');
+					listItem.setAttribute('data-bb-type', 'item');
+					listItem.setAttribute('data-bb-img', 'images/icons/category'+data[i][0]['idCategory']+'.png');
+					listItem.setAttribute('data-bb-title', data[i][0]['title']);
+					listItem.setAttribute('data-bb-accent-text', data[i][0]['votes']);
+					listItem.innerHTML = data[i][0]['description'];
+					document.getElementById("allIdeasList").appendItem(listItem);
+				}
+			}
+		});
+	}
+	loadIdeas();
+	</script>
+	
+	<div data-bb-type="title" data-bb-caption="All Ideas"></div>
+	
+	<div id="allIdeasList" data-bb-type="image-list">
+	</div>
+	<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="visibility: hidden;"></div>
+	<div id="message" style="color: white"></div>
 </div>

@@ -467,6 +467,7 @@ class Ideas_Model{
 		$this->db->query();
 	}
 
+
 	/*
 	 * @idIdea idIdea
 	 */
@@ -719,12 +720,29 @@ class Ideas_Model{
 		return $this->db->query();
 	}
 
+	public function getAllIdeas($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT * FROM Idea ORDED BY ".$params[0].";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+	
 	public function getAllIdeas(){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea;");
+		$this->db->prepare("SELECT * FROM Idea ORDED BY votes;");
 		
 		//Execute query
 		$this->db->query();
