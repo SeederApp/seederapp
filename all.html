@@ -4,7 +4,7 @@
 <script type="text/javascript">
 	bb.init({onscreenready : function(element, id, params){
 			if (id == 'allIdeas'){
-				alert (params.userEmail + ' ' + params.userHash);
+				
 			}
 		}
 	});
@@ -77,16 +77,14 @@
 		} else {
 			url = "http://seederserver.aws.af.cm/index.php?ideas&command=getAllIdeasByCategoryType&values[]=" + categoryType + "&values[]=" + filter + "&values[]=DESC";
 		}		
-		
-		document.getElementById("indicator").show();
 		var allIdeas = document.getElementById("allIdeasList");
 		allIdeas.innerHTML = "";
-		
 		loadIdeas();
 	}
 	
 	function loadIdeas() {
 		//Default ideas loading options
+		document.getElementById('indicator').style.display="block";
 		sendRequest(url, function (data){
 			var ideas = data[0][0][0];
 			var listItem, dataList = document.getElementById('allIdeasList');
@@ -103,7 +101,7 @@
 					document.getElementById("allIdeasList").appendItem(listItem);
 				}
 			}
-			document.getElementById("indicator").hide();
+			document.getElementById('indicator').style.display="none";
 		});
 	}
 	loadIdeas();
@@ -135,7 +133,7 @@
 	
 	<!-- Content -->
 	<div id="content">
-		<div id="indicator" data-bb-type="activity-indicator" data-bb-size="medium" style="margin: 0 auto; margin-top: 50%;"></div>
+		<div id="indicator" data-bb-type="activity-indicator" data-bb-size="medium" style="margin: 0 auto; margin-top: 50%; display:none"></div>
 		<div id="allIdeasList" data-bb-type="image-list" data-bb-image-loading="loading.png"></div>
 	</div>
 </div>
