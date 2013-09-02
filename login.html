@@ -24,7 +24,7 @@
 		xmlhttp.send();
 	}
 	function registerUser() {
-	
+		bb.pushScreen('register.html', 'registerUser');
 	}
 	function authenticateUser () {
 		document.getElementById('indicator').style.visibility="visible";
@@ -53,9 +53,8 @@
 			</div>
 			<div>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 5px 0; background-color: blue" onclick="authenticateUser()">Login</div>
-				<hr style="position: fixed; bottom: 120px; width:80%; height:1px; border-color: #8A8A8A; border-bottom: 5px; background-color: #181818"/>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0; position: fixed; bottom: 20px; width: 80%" onclick="registerUser()">Register</div>
-				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="large" style="visibility: hidden; text-align: center; margin: 0 auto"></div>
+				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="visibility: hidden;"></div>
 				<div id="message" style="color: white"></div>
 			</div>
 	</div>
