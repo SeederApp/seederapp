@@ -180,25 +180,20 @@ class Users_Model{
 		//Get lastLoggedIn
 		$lastLoggedInDecoded = json_decode($this->getLastLoggedInByEmail($email), true);
 		$lastLoggedIn = $lastLoggedInDecoded[0][0][0];
-		echo "<><><>" + $lastLoggedIn + "<><><>";
 		$oldDate = (explode(' ', $lastLoggedIn));
-		echo $oldDate[0]; echo "****";
 		$currentDate = time();
-		echo $currentDate;
 		$oldDate = strtotime($oldDate[0]);
 		$dateDiff = floor((abs($currentDate - $oldDate))/(60*60*24));
-		
 		if ($dateDiff >= 1){
 		
 			//Get coins
 			$coinsDecoded = json_decode($this->getUserCoinsByEmail($email), true);
 			$coins = $coinsDecoded[0][0][0];
-			
 			//Connect to database
 			$this->db->connect();
 			
 			//Update User Coins, so user gets a coin back
-			$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = ".$email.";");
+			$this->db->prepare("UPDATE User SET coins = ".++$coins." WHERE email = '".$email."';");
 			
 			//Execute query and return "true" or "false"
 			$this->db->query();
@@ -216,7 +211,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("UPDATE User SET lastLoggedIn = now() WHERE email = '".$params[0]."';");
+		$this->db->prepare("UPDATE User SET lastLoggedIn = now() WHERE email = '".$email."';");
 		
 		//Execute query and return "true" or "false"
 		return $this->db->query();
