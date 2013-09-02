@@ -37,7 +37,7 @@
 			var hash = Sha1.hash(password + salt);
 			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" +email +"&hash=" +hash;
 			sendRequest(url, function(data){
-				 bb.pushScreen('all.html', 'allIdeas');
+				 bb.pushScreen('all.html', 'allIdeas', {userEmail:email, userHash:hash});
 			});
 		});
 	}

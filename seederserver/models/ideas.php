@@ -736,6 +736,23 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
+	
+	public function getAllIdeasByCategoryType($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Category WHERE Idea.idCategory = Category.idCategory AND Category.categoryType = '".$params[0]."' ORDER BY Idea.".$params[1]." ".$params[2].";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
 
 	public function getIdeaById($params){
 		//Connect to database

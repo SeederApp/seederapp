@@ -22,6 +22,10 @@
 		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		return re.test(email);
 	} 
+	function validateWebsite(url) {
+		var re = new RegExp("^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?");
+		return re.test(url);
+	}
 	function jump(id){
 		var divid = document.getElementById(id);
 		divid.style.display = 'block';
@@ -32,6 +36,14 @@
 		return s.replace(/^\s*/, "").replace(/\s*$/, "");
 	}
 	function validate() {
+		if (document.getElementById("developer").checked) {
+			if (!validateWebsite(document.getElementById("website").value)) {
+				document.getElementById("website").value="";
+				document.getElementById("website").placeholder="Please enter a valid website";
+				document.getElementById("website").focus();
+				return false;
+			} 
+		}
 		if (trim(document.getElementById("firstName").value) == "") {
 			document.getElementById("firstName").placeholder="Please enter your first name";
 			document.getElementById("firstName").focus();
@@ -127,23 +139,28 @@
 			isPrivate = 1;
 		else
 			isPrivate = 0;
+		var salt = Sha1.hash(Math.random().toString());
+		var hash = Sha1.hash(password + salt);
+		
 		var isDeveloper = document.getElementById("developer").checked;
 		if (isDeveloper) {
+			document.getElementById('indicator').style.display="block";
+			document.getElementById("message").style.display = "block";
 			var vendor = document.getElementById("vendor").value;
 			var website = document.getElementById("website").value;
 			var twitter = document.getElementById("twitter").value;
 			var facebook = document.getElementById("facebook").value;
 			var linkedin = document.getElementById("linkedin").value;
 			var github = document.getElementById("github").value;
-			
+			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addDeveloper&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]=www.google.com&values[]="+isPrivate+"&values[]="+vendor+"&values[]="+website+"&values[]="+twitter+"&values[]="+facebook+"&values[]="+linkedin+"&values[]="+github, function (data){
+				bb.pushScreen('all.html', 'login');
+			});
 		}
 		else {
 			document.getElementById('indicator').style.display="block";
 			document.getElementById("message").style.display = "block";
-			var salt = Sha1.hash(Math.random().toString());
-			var hash = Sha1.hash(password + salt);
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addUser&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]=www.google.com&values[]="+isPrivate, function (data){
-				bb.pushScreen('login.html', 'login');
+				bb.pushScreen('all.html', 'login');
 			});
 		}	
 	}
@@ -176,6 +193,10 @@
 							<td class="cell" style="font-size: 45px; padding-top:7px;">Female</td>
 						</tr>
 					</table>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Photo URL:</div>
+					<input id="photo" type="text"/>
 				</div>
 			</div>
 			<div data-bb-type="panel-header">Privacy Setting</div>

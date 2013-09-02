@@ -127,7 +127,7 @@ class Mysql_Driver extends Database_Library {
 	 * Fetch id of last query
 	 */
 	public function fetchId() {
-		return $this->connection->insert_id;
+		return mysql_insert_id();
 	}
 }
 ?>
