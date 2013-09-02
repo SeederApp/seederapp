@@ -1,4 +1,75 @@
 <!DOCTYPE html>
-<div data-bb-type="screen" style="background-color: #181818" data-bb-effect="slide-left" data-bb-scroll-effect="off">
-	  <div data-bb-type="title" data-bb-caption="Login success!" ></div>
+<div data-bb-type="screen" style="background-image:url('images/backgroundRegister.png'); background-color: #fff" data-bb-effect="slide-left" data-bb-scroll-effect="off">
+	<div data-bb-type="title" data-bb-caption="Register Your Account"></div>
+	<div data-bb-type="action-bar" data-bb-back-caption ="Back"></div>
+		<div data-bb-type="round-panel"> 
+			<div data-bb-type="panel-header">Personal Info</div>
+			<div data-bb-type="label-control-container">
+				<div data-bb-type="row">
+					<div data-bb-type="label">First Name:</div>
+					<input type="text"/>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Last Name:</div>
+					<input type="text"/>
+				</div>
+				<div style="margin:15px 0 35px 0;">
+					<table>
+						<tr>
+							<td class="cell" >
+								<input type="radio" name="group1" id="control1" checked="true" value="male"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">Male</td>
+						</tr>
+						<tr>
+							<td class="cell">
+								<input type="radio" name="group1" id="control2" value="female"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">Female</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div data-bb-type="panel-header">Privacy Setting</div>
+			<div data-bb-type="label-control-container">
+			<div style="margin:15px 0 35px 0;">
+				<table>
+					<tr>
+						<td class="cell">
+							<input type="checkbox" value="private"/>
+						</td>
+						<td class="cell" style="font-size: 45px; padding-top:7px;">Share first and last name with other users?</td>
+					</tr>
+				</table>
+			</div>
+			</div>
+			<div data-bb-type="panel-header">Account Info</div>
+			<div data-bb-type="label-control-container" style="margin:15px 0 35px 0;">
+				<div data-bb-type="row">
+					<div data-bb-type="label">Email:</div>
+					<input type="email"/>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Password:</div>
+					<input type="password"/>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Re-enter password:</div>
+					<input type="password"/>
+				</div>
+			</div>
+			<div data-bb-type="panel-header">Developer Settings</div>
+			<div data-bb-type="label-control-container">
+				<div style="margin:15px 0 35px 0;">
+					<table>
+						<tr>
+							<td class="cell">
+								<input type="checkbox" value="private"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">I'm a developer</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
 </div>

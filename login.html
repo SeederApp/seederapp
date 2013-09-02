@@ -41,6 +41,22 @@
 			});
 		});
 	}
+	function trim(s) {
+		return s.replace(/^\s*/, "").replace(/\s*$/, "");
+	}
+	function validate() {
+		if (trim(document.getElementById("email").value) == "") {
+			document.getElementById("message").innerHTML = "Login empty";
+			document.getElementById("email").focus();
+			return false;
+		} else if (trim(document.getElementById("password").value) == "") {
+			document.getElementById("message").innerHTML = "Password empty";
+			document.getElementById("password").focus();
+			return false;
+		}
+		else
+			authenticateUser();
+	}
 	</script> 
 	<div data-bb-type="round-panel" width="100%" style="margin: 0 50 0 50;"> 
 		<div style="background-image:url('images/seeder.png'); background-repeat: no-repeat; background-position: bottom; height: 300px; margin: 60px 0 80px 0"></div>
@@ -52,9 +68,9 @@
 				<input id="password" type="password" placeholder="Password"/>
 			</div>
 			<div>
-				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 5px 0; background-color: blue" onclick="authenticateUser()">Login</div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 5px 0;" onclick="validate()">Login</div>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0; position: fixed; bottom: 20px; width: 80%" onclick="registerUser()">Register</div>
-				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="visibility: hidden;"></div>
+				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="display: none; visibility: hidden;"></div>
 				<div id="message" style="color: white"></div>
 			</div>
 	</div>
