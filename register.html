@@ -10,10 +10,24 @@
 			document.getElementById('developerOptions').style.display="none";
 		}
 	}
+	function hideSpinner() {
+		document.getElementById('indicator').style.display="none";
+		document.getElementById("message").style.display = "none";
+	}
+	function showSpinner() {
+		document.getElementById('indicator').style.display="block";
+		document.getElementById("message").style.display = "block";
+	}
 	function validateEmail(email) { 
 		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		return re.test(email);
 	} 
+	function jump(id){
+		var divid = document.getElementById(id);
+		divid.style.display = 'block';
+		divid.scrollIntoView(true);
+		return false;
+	}
 	function trim(s) {
 		return s.replace(/^\s*/, "").replace(/\s*$/, "");
 	}
@@ -22,8 +36,17 @@
 			document.getElementById("firstName").placeholder="Please enter your first name";
 			document.getElementById("firstName").focus();
 			return false;
+		} else if (document.getElementById("firstName").value.length > 100) {
+			document.getElementById("firstName").value="";
+			document.getElementById("firstName").placeholder="Your name is too long";
+			document.getElementById("firstName").focus();
+			return false;
 		} else if (trim(document.getElementById("lastName").value) == "") {
 			document.getElementById("lastName").placeholder="Please enter your last name";
+			document.getElementById("lastName").focus();
+			return false;
+		}  else if (document.getElementById("lastName").value.length > 100) {
+			document.getElementById("lastName").placeholder="Your name is too long";
 			document.getElementById("lastName").focus();
 			return false;
 		}  else if (trim(document.getElementById("email").value) == "") {
@@ -35,8 +58,18 @@
 			document.getElementById("email").placeholder="Please enter a proper email";
 			document.getElementById("email").focus();
 			return false;
+		} else if (document.getElementById("email").value.length > 100) {
+			document.getElementById("email").value="";
+			document.getElementById("email").placeholder="Your email is too long";
+			document.getElementById("email").focus();
+			return false;
 		} else if (trim(document.getElementById("password").value) == "") {
 			document.getElementById("password").placeholder="Please enter your password";
+			document.getElementById("password").focus();
+			return false;
+		} else if (document.getElementById("password").value.length < 6) {
+			document.getElementById("password").value="";
+			document.getElementById("password").placeholder="Your password is too short";
 			document.getElementById("password").focus();
 			return false;
 		} else if (trim(document.getElementById("password2").value) == "") {
@@ -49,8 +82,11 @@
 			document.getElementById("password2").focus();
 			return false;
 		}
-		else
+		else {
+			showSpinner();
+			jump('message');
 			registerUser();
+		}
 	}
 	function sendRequest(url, callback) {
 		var xmlhttp;
@@ -61,8 +97,12 @@
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
-				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
-					alert("bad request");
+				if (xmlhttp.responseText == "User already exists" || JSON.parse(xmlhttp.responseText) == "") {
+					hideSpinner();
+					document.getElementById("email").value="";
+					jump('email');
+					document.getElementById("email").placeholder="Email already exists";
+					document.getElementById("email").focus();
 				}
 				else{
 					callback(JSON.parse(xmlhttp.responseText));}
@@ -73,7 +113,7 @@
 	}
 	function registerUser() {
 		var firstName = document.getElementById("firstName").value;
-		var lastName = document.getElementById("firstName").value;
+		var lastName = document.getElementById("lastName").value;
 		var radioButtons = document.getElementsByName("group1");
 		var gender = "other";
 		for (var x = 0; x < radioButtons.length; x ++) {
@@ -82,7 +122,11 @@
 		}
 		var email = document.getElementById("email").value;
 		var password = document.getElementById("password").value;
-		var isPrivate = document.getElementById("privacy").checked;
+		var isPrivate = !document.getElementById("privacy").checked;
+		if (isPrivate)
+			isPrivate = 1;
+		else
+			isPrivate = 0;
 		var isDeveloper = document.getElementById("developer").checked;
 		if (isDeveloper) {
 			var vendor = document.getElementById("vendor").value;
@@ -94,14 +138,14 @@
 			
 		}
 		else {
-			var salt = Sha1.hash(Math.random());
+			document.getElementById('indicator').style.display="block";
+			document.getElementById("message").style.display = "block";
+			var salt = Sha1.hash(Math.random().toString());
 			var hash = Sha1.hash(password + salt);
-			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getSaltByEmail&values[]=" +email, function (data){
-				salt = data[0][0][0];
-				hash = Sha1.hash(password + salt);
+			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addUser&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]=www.google.com&values[]="+isPrivate, function (data){
+				bb.pushScreen('login.html', 'login');
 			});
-		}
-			
+		}	
 	}
 	</script>
 	<div data-bb-type="title" data-bb-caption="Register Your Account"></div>
@@ -142,7 +186,7 @@
 						<td class="cell">
 							<input id="privacy" type="checkbox" value="private"/>
 						</td>
-						<td class="cell" style="font-size: 45px; padding-top:7px;">Share first and last name with other users?</td>
+						<td class="cell" style="font-size: 45px; padding-top:7px;">Share personal info with other users?</td>
 					</tr>
 				</table>
 			</div>
@@ -202,5 +246,10 @@
 				</div>
 			</div>
 			<div data-bb-type="button" data-bb-style="stretch" onclick="validate()">Submit</div>
+			<div style="position:relative;">
+				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="position:absolute; top:0; left: 12px; display: none; "></div>
+				<div id="message" style="display: none; position: absolute; top:7px; left: 70px;">Creating your account...</div>
+				<a href="#bottom"></a>
+			</div>
 		</div>
 </div>
