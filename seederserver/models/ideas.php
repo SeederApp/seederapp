@@ -736,23 +736,6 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-	
-	public function getAllIdeas(){
-		//Connect to database
-		$this->db->connect();
-		
-		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea ORDER BY votes;");
-		
-		//Execute query
-		$this->db->query();
-		
-		//Fetch data
-		$article = $this->db->fetch('array');
-		
-		//Return data
-		return $article;
-	}
 
 	public function getIdeaById($params){
 		//Connect to database
