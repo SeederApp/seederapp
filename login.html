@@ -23,10 +23,10 @@
 		xmlhttp.open("GET",url,true);
 		xmlhttp.send();
 	}
-	window.onload(function () {
-		
-	});
-		function authenticateUser () {
+	function registerUser() {
+	
+	}
+	function authenticateUser () {
 		document.getElementById('indicator').style.visibility="visible";
 		document.getElementById('indicator').style.display="block";
 		document.getElementById("message").innerHTML = "";
@@ -43,14 +43,14 @@
 	}
 	</script> 
 	<div data-bb-type="round-panel" width="100%"> 
-		<div style="background-image:url('images/icon.png'); background-repeat: no-repeat; background-position: bottom; height: 25%; margin-bottom: 20px"></div>
+		<div style="background-image:url('images/seeder.png'); background-repeat: no-repeat; background-position: bottom; height: 25%; margin-bottom: 20px"></div>
 			<div style="margin-bottom:30px;">
 				<input id="email" type="text" placeholder="Email"/>
 				<input id="password" type="password" placeholder="Password"/>
 			</div>
 			<div>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 20px 0; background-color: blue" onclick="authenticateUser()">Login</div>
-				<div data-bb-type="button" data-bb-style="stretch" style="margin:0;">Register</div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0;" onclick="registerUser()">Register</div>
 				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="large" style="visibility: hidden; text-align: center; margin: 0 auto"></div>
 				<div id="message" style="color: white"></div>
 			</div>
