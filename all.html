@@ -3,7 +3,8 @@
 <script type="text/javascript">
 	bb.init({ondomready : function(element, id, params){
 				loadIdeas();
-		
+				//alert(localStorage.getItem("userHash") + " | " + localStorage.getItem("userEmail"));
+				//alert(params.userEmail + " | " + params.userHash);
 		}
 	});
 
@@ -92,7 +93,7 @@
 					listItem = document.createElement('div');
 					listItem.setAttribute('data-bb-type', 'item');
 					listItem.setAttribute('onbtnclick', 'seeDetails(' + data[i][0]['idIdea'] + ');');
-					listItem.setAttribute('data-bb-img', 'images/icons/category'+data[i][0]['idCategory']+'.png');
+					listItem.setAttribute('data-bb-img', 'images/categories/category-'+data[i][0]['idCategory']+'.png');
 					listItem.setAttribute('data-bb-title', data[i][0]['title']);
 					listItem.setAttribute('data-bb-accent-text', data[i][0]['votes']);
 					listItem.innerHTML = data[i][0]['description'];
@@ -104,11 +105,12 @@
 	}
 	/*window.onload = loadIdeas();*/
 </script>
-	<div data-bb-type="title" data-bb-caption="All Ideas"></div>	
+	<div data-bb-type="title" data-bb-caption="Ideas"></div>	
 	
 	<!-- App menu -->
 	<div data-bb-type="menu">
 		<div onClick="help();" data-bb-type="menu-item" data-bb-img="images/icons/help.png" data-bb-pin="left">Help</div>
+		<div onClick="coins();" data-bb-type="menu-item" data-bb-img="images/icons/coin-2.png" data-bb-pin="center">Coins</div>
 		<div onClick="settings();" data-bb-type="menu-item" data-bb-img="images/icons/settings.png" data-bb-pin="right">Settings</div>
 	</div>
 	
@@ -133,6 +135,6 @@
 	<!-- Content -->
 	<div id="content">
 		<div id="indicator" data-bb-type="activity-indicator" data-bb-size="medium" style="margin: 0 auto; margin-top: 50%; display:none"></div>
-		<div id="allIdeasList" data-bb-type="image-list" data-bb-image-loading="loading.png"></div>
+		<div id="allIdeasList" data-bb-type="image-list" data-bb-image-loading="images/icons/refresh.png"></div>
 	</div>
 </div>
