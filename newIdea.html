@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<div data-bb-type="screen" style="background-image:url('images/backgroundRegister.png'); background-color: #fff" data-bb-effect="slide-left" data-bb-scroll-effect="off">
+<script>
+	function sendRequest(url, callback) {
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{
+			xmlhttp=new XMLHttpRequest();
+		}
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
+					
+				}
+				else{
+					callback(JSON.parse(xmlhttp.responseText));}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
+	function loadCategories(input, type) {
+		var select = document.getElementById("subcategory");
+		var length = select.options.length;
+		for (i = 0; i < length; i++) {
+		  select.options[i] = null;
+		}
+		if (input.checked && type == 'apps') {
+			var op = document.createElement("option"); 
+			op.setAttribute('1','Books');
+			op.innerHTML = 'Books';
+			select.appendChild(op);
+		}
+		else if (input.checked && type == 'games') {
+			var op = document.createElement("option"); 
+			op.setAttribute('1','Arcade');
+			op.innerHTML = 'Arcade';
+			select.appendChild(op);
+		}
+		document.getElementById('dropdownContainer').appendChild(select);
+		bb.refresh();
+	}
+	</script>
+	<div data-bb-type="title" data-bb-caption="Submit Your Idea"></div>
+	<div data-bb-type="action-bar" data-bb-back-caption ="Back"></div>
+		<div data-bb-type="round-panel"> 
+			<div data-bb-type="panel-header">Category</div>
+			<div data-bb-type="label-control-container">
+				<div style="margin:15px 0 35px 0;">
+					<table>
+						<tr>
+							<td class="cell" >
+								<input type="radio" name="group2" id="control1" checked="true" onchange="loadCategories(this,'apps')" value="apps"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">Apps</td>
+						</tr>
+						<tr>
+							<td class="cell">
+								<input type="radio" name="group2" id="control2" onchange="loadCategories(this,'games')" value="games"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">Games</td>
+						</tr>
+					</table>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Subcategory:</div>
+						<select data-bb-style="stretch" id="subcategory"></select>
+						<div id="dropdownContainer"></div>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Last Name:</div>
+					<input id="lastName" type="text"/>
+				</div>
+				<div style="margin:15px 0 35px 0;">
+					<table>
+						<tr>
+							<td class="cell" >
+								<input type="radio" name="group1" id="control1" checked="true" value="male"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">Male</td>
+						</tr>
+						<tr>
+							<td class="cell">
+								<input type="radio" name="group1" id="control2" value="female"/>
+							</td>
+							<td class="cell" style="font-size: 45px; padding-top:7px;">Female</td>
+						</tr>
+					</table>
+				</div>
+				<div data-bb-type="row">
+					<div data-bb-type="label">Photo URL:</div>
+					<input id="photo" type="text"/>
+				</div>
+			</div>
+		</div>
+</div>

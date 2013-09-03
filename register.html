@@ -22,6 +22,9 @@
 		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		return re.test(email);
 	} 
+	function validatePhoto(url) {
+		return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+	}
 	function validateWebsite(url) {
 		var re = new RegExp("^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_\+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?");
 		return re.test(url);
@@ -61,7 +64,12 @@
 			document.getElementById("lastName").placeholder="Your name is too long";
 			document.getElementById("lastName").focus();
 			return false;
-		}  else if (trim(document.getElementById("email").value) == "") {
+		}  else if (!validatePhoto(document.getElementById("photo").value)) {
+			document.getElementById("photo").value="";
+			document.getElementById("photo").placeholder="Please enter a proper image URL";
+			document.getElementById("photo").focus();
+			return false;
+		} else if (trim(document.getElementById("email").value) == "") {
 			document.getElementById("email").placeholder="Please enter your email";
 			document.getElementById("email").focus();
 			return false;
@@ -126,6 +134,7 @@
 	function registerUser() {
 		var firstName = document.getElementById("firstName").value;
 		var lastName = document.getElementById("lastName").value;
+		var photo = document.getElementById("photo").value;
 		var radioButtons = document.getElementsByName("group1");
 		var gender = "other";
 		for (var x = 0; x < radioButtons.length; x ++) {
@@ -152,7 +161,7 @@
 			var facebook = document.getElementById("facebook").value;
 			var linkedin = document.getElementById("linkedin").value;
 			var github = document.getElementById("github").value;
-			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addDeveloper&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]=www.google.com&values[]="+isPrivate+"&values[]="+vendor+"&values[]="+website+"&values[]="+twitter+"&values[]="+facebook+"&values[]="+linkedin+"&values[]="+github, function (data){
+			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addDeveloper&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]="+photo+"&values[]="+isPrivate+"&values[]="+vendor+"&values[]="+website+"&values[]="+twitter+"&values[]="+facebook+"&values[]="+linkedin+"&values[]="+github, function (data){
 				bb.pushScreen('all.html', 'login');
 			});
 		}
