@@ -9,17 +9,14 @@
 	});
 
 	function onBackgroundCallback() {
-		//alert("Going to the background!");
-	}
-	function onSwipeDownCallback() {
-		alert("Swipe down!");
+		alert("Going to the background!");
 	}
 	
-	function onSwipeDown() {
-		blackberry.app.event.onSwipeDown(onSwipeDownCallback);
+	function onBackground() {
+		blackberry.app.event.onBackground(onBackgroundCallback);
 	}
 	
-	onSwipeDown();
+	//onBackground();
 
 	function sendRequest(url, callback) {
 		var xmlhttp;
