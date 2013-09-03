@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <div data-bb-type="screen" style="background-image:url('images/backgroundRegister.png'); background-color: #fff" data-bb-effect="slide-left" data-bb-scroll-effect="off">
 <script>
+	bb.init({
+	  ondomready: function (element, id) {
+		var select2 = document.getElementById("subcategory2");
+		select2.hide();
+	  }
+	});
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest)
@@ -22,24 +28,15 @@
 	}
 	function loadCategories(input, type) {
 		var select = document.getElementById("subcategory");
-		var length = select.options.length;
-		for (i = 0; i < length; i++) {
-		  select.options[i] = null;
-		}
+		var select2 = document.getElementById("subcategory2");
 		if (input.checked && type == 'apps') {
-			var op = document.createElement("option"); 
-			op.setAttribute('1','Books');
-			op.innerHTML = 'Books';
-			select.appendChild(op);
+			select.show();
+			select2.hide();
 		}
 		else if (input.checked && type == 'games') {
-			var op = document.createElement("option"); 
-			op.setAttribute('1','Arcade');
-			op.innerHTML = 'Arcade';
-			select.appendChild(op);
+			select2.show();
+			select.hide();
 		}
-		document.getElementById('dropdownContainer').appendChild(select);
-		bb.refresh();
 	}
 	</script>
 	<div data-bb-type="title" data-bb-caption="Submit Your Idea"></div>
@@ -63,11 +60,41 @@
 						</tr>
 					</table>
 				</div>
-				<div data-bb-type="row">
 					<div data-bb-type="label">Subcategory:</div>
-						<select data-bb-style="stretch" id="subcategory"></select>
+						<select data-bb-style="stretch" id="subcategory">
+							<option value="1">Books</option>
+							<option value="2">Finance</option>
+							<option value="3">Navigation & Travel</option>
+							<option value="4">Social</option>
+							<option value="5">Business</option>
+							<option value="6">Health & Fitness</option>
+							<option value="7">News & Magazines</option>
+							<option value="8">Sports</option>
+							<option value="9">Education & Reference</option>
+							<option value="10">Lifestyle</option>
+							<option value="11">Photo & Video</option>
+							<option value="12">Utilities</option>
+							<option value="13">Entertainment</option>
+							<option value="14">Music & Audio</option>
+							<option value="15">Productivity</option>
+							<option value="16">Weather</option>
+							<option value="17">Other</option>
+						</select>
+						<select data-bb-style="stretch" id="subcategory2">
+							<option value="18">Action</option>
+							<option value="19">Children's Games</option>
+							<option value="20">Space</option>
+							<option value="21">Arcade</option>
+							<option value="22">Combat</option>
+							<option value="23">Sports</option>
+							<option value="24">Board Games</option>
+							<option value="25">Movies & TV</option>
+							<option value="26">Strategy</option>
+							<option value="27">Cards</option>
+							<option value="28">Puzzles</option>
+							<option value="29">Other</option>
+						</select>
 						<div id="dropdownContainer"></div>
-				</div>
 				<div data-bb-type="row">
 					<div data-bb-type="label">Last Name:</div>
 					<input id="lastName" type="text"/>
