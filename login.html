@@ -2,6 +2,17 @@
 <div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="fade" data-bb-scroll-effect="off">
 	<script src="js/sha1.js"></script>
 	<script type="text/javascript">
+	autoAuthentication();
+	function autoAuthentication(){
+		localUserEmail = localStorage.getItem("userEmail");
+		localUserHash = localStorage.getItem("userHash");
+		if ((localUserEmail != "") && (localUserEmail != "")){
+			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" + localUserEmail +"&hash=" + localUserHash;
+			sendRequest(url, function(data){
+				bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});
+			});
+		}
+	}
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest)
@@ -9,24 +20,23 @@
 		  xmlhttp=new XMLHttpRequest();
 		}
 		xmlhttp.onreadystatechange=function(){
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-			{
-				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == ""){
 					document.getElementById("message").innerHTML = "Incorrect email or password";
 					document.getElementById('indicator').style.visibility="hidden";
 					document.getElementById('indicator').style.display="none";
+				} else {
+					callback(JSON.parse(xmlhttp.responseText));
 				}
-				else{
-					callback(JSON.parse(xmlhttp.responseText));}
 			}
 		}
 		xmlhttp.open("GET",url,true);
 		xmlhttp.send();
 	}
-	function registerUser() {
+	function registerUser(){
 		bb.pushScreen('register.html', 'registerUser');
 	}
-	function authenticateUser () {
+	function authenticateUser(){
 		document.getElementById('indicator').style.visibility="visible";
 		document.getElementById('indicator').style.display="block";
 		document.getElementById("message").innerHTML = "";
@@ -37,7 +47,10 @@
 			var hash = Sha1.hash(password + salt);
 			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" +email +"&hash=" +hash;
 			sendRequest(url, function(data){
-				 bb.pushScreen('all.html', 'allIdeas', {userEmail:email, userHash:hash});
+				localStorage.clear();
+				localStorage.setItem("userEmail", email);
+				localStorage.setItem("userHash", hash);
+				bb.pushScreen('all.html', 'allIdeas', {userEmail:email, userHash:hash});
 			});
 		});
 	}

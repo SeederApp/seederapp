@@ -8,6 +8,19 @@
 		}
 	});
 
+	function onBackgroundCallback() {
+		//alert("Going to the background!");
+	}
+	function onSwipeDownCallback() {
+		alert("Swipe down!");
+	}
+	
+	function onSwipeDown() {
+		blackberry.app.event.onSwipeDown(onSwipeDownCallback);
+	}
+	
+	onSwipeDown();
+
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest){
@@ -105,7 +118,7 @@
 	}
 	/*window.onload = loadIdeas();*/
 </script>
-	<div data-bb-type="title" data-bb-caption="Ideas"></div>	
+	<div data-bb-type="title" data-bb-caption="Discover new ideas"></div>	
 	
 	<!-- App menu -->
 	<div data-bb-type="menu">
