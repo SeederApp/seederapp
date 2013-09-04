@@ -3,6 +3,8 @@
 <script type="text/javascript">
 	bb.init({ondomready : function(element, id, params){
 				loadIdeas();
+				//alert(localStorage.getItem("userHash") + " | " + localStorage.getItem("userEmail"));
+				//alert(params.userEmail + " | " + params.userHash);
 		}
 	});
 
@@ -13,6 +15,8 @@
 	function onBackground() {
 		blackberry.app.event.onBackground(onBackgroundCallback);
 	}
+	
+	//onBackground();
 
 	function sendRequest(url, callback) {
 		var xmlhttp;
@@ -98,19 +102,27 @@
 		document.getElementById('indicator').style.display="block";
 		sendRequest(url, function (data){
 			var ideas = data[0][0][0];
-			var listItem, dataList = document.getElementById('allIdeasList');
+			var listItem, dataList, categoryIcon, ideaTitle = document.getElementById('allIdeasList');
+			
+			var ideaList = "";
+			
 			for (var i = 0; i < data.length; i++) {
 				//Ideas reported very often are hidden
 				if ((data[i][0]['reportNumber']) < 10){
-					listItem = document.createElement('div');
-					listItem.setAttribute("onclick", "getDetails("+data[i][0]['idIdea']+")");
-					listItem.setAttribute('data-bb-type', 'item');
-					listItem.setAttribute('onbtnclick', 'seeDetails(' + data[i][0]['idIdea'] + ');');
-					listItem.setAttribute('data-bb-img', 'images/categories/category-'+data[i][0]['idCategory']+'.png');
-					listItem.setAttribute('data-bb-title', data[i][0]['title']);
-					listItem.setAttribute('data-bb-accent-text', data[i][0]['votes']);
-					listItem.innerHTML = data[i][0]['description'];
-					document.getElementById("allIdeasList").appendItem(listItem);
+					ideaList += "<div class='idea' onclick='getDetails(" + (data[i][0]['idIdea']) + ")' style='float: left; display: block; clear: both; margin-left: 7px; margin-top: 25px; margin-bottom: 10px; padding: 0px; top: 0px; left: 0px; background-image:url(images/description.png); position:relative; width:709px; height:220px; font-family: 'Slate Pro', Slate,'Myriad Pro',Helvetica;>"
+					+ "<div class='votes' style='position: absolute; top: 165px; left: 21px; text-align: center; width: 120px; font-size:32px; font-style: normal; font-weight: 600; color: #FFFFFF'>" + data[i][0]['votes'] + "</div>"
+					+ "<div class='title' style='position: absolute; top: 20px; left: 170px; font-size:32px; font-style: normal; font-weight: 600; color: #FFFFFF';>" + data[i][0]['title'] + "</div>"
+					+ "<div class='category' style='position: absolute; top: 55px; left: 170px; font-size:18px; font-style: normal; font-weight: 500; color: #888888;'>" + data[i][0]['name'] + "</div>"
+					+ "<div class='description' style='position: absolute; top: 85px; left: 170px; font-size:21px; font-style: normal; font-weight: 400; color: #CCCCCC; width: 440px'>" + (data[i][0]['description']).slice(0,100) + "<span style='color: white;'>...</span></div>"
+					+ "<div><img src='images/category.png' width='135' height='135'  alt='' style='position: absolute; top: 10px; left: 10px'/></div>"
+					+ "<div><img src='images/categories/category-" + (data[i][0]['idCategory']) + ".png' width='81' height='81'  alt='' style='position: absolute; top: 38px; left: 38px'/></div>"
+					+ "<div class='enriched' style='position: absolute; top: 170px; left: 520'><img src='images/icons/enrich.png' width='50' height='50'  alt='' style='position: absolute; left: -350px; top: -10px;'/></div>"
+					+ "<div class='planted' style='position: absolute; top: 170px; left: 520'><img src='images/icons/plant.png' width='50' height='50'  alt='' style='position: absolute; left: -175px; top: -10px;'/></div>"
+					+ "<div class='owned' style='position: absolute; top: 170px; left: 520'><img src='images/icons/owned.png' width='50' height='50'  alt='' style='position: absolute; left: 0px; top: -10px;'/></div>"
+					+ "</div>"					
+				}
+				if (i == (data.length-1)){
+					document.getElementById("allIdeasList").innerHTML = ideaList;
 				}
 			}
 			document.getElementById('indicator').style.display="none";
@@ -118,7 +130,7 @@
 	}
 	/*window.onload = loadIdeas();*/
 </script>
-	<div data-bb-type="title" data-bb-caption="Discover new ideas"></div>	
+	<div data-bb-type="title" data-bb-caption="Discover new ideas"></div>
 	
 	<!-- App menu -->
 	<div data-bb-type="menu">
@@ -147,7 +159,14 @@
 	
 	<!-- Content -->
 	<div id="content">
+	
 		<div id="indicator" data-bb-type="activity-indicator" data-bb-size="medium" style="margin: 0 auto; margin-top: 50%; display:none"></div>
-		<div id="allIdeasList" data-bb-type="image-list" data-bb-image-loading="images/icons/refresh.png"></div>
+		<!--<div id="allIdeasList" data-bb-type="image-list" data-bb-image-loading="images/icons/refresh.png"></div>-->
+		<!--<div id="allIdeasList" style="width: 709px; height: 220; position: relative;">
+		</div>-->
+		<div data-bb-type="scroll-panel" style="height:100%">
+			<div id="allIdeasList">
+			</div>
+		</div>
 	</div>
 </div>
