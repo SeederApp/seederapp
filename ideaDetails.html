@@ -13,17 +13,16 @@
 				title.children[0].children[1].children[1].innerHTML += localStorage.getItem(data[0][0]['idCategory']);
 				document.getElementById("description").innerHTML = data[0][0]['description'];
 				document.getElementById('indicator').style.display="none";
-				document.getElementById('indicator4').style.display="block";
 				sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=isIdeaTakenByDeveloper&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
 					if (data[0][0][0] == 1) {
 						var title = document.getElementById("title");
 						title.setCaption(title.getCaption()+" [TAKEN]");
-						document.getElementById('takeIdea').style.display="none";
-						document.getElementById('indicator4').style.display="none";
+						document.getElementById('plantIdea').children[0].src = "images/icons/planted.png";
+						document.getElementById("plantIdea").children[1].innerHTML = "Release seed"
 					}
 					else {
-						document.getElementById('takeIdea').style.display="block";
-						document.getElementById('indicator4').style.display="none";
+						document.getElementById('plantIdea').children[0].src = "images/icons/plant.png";
+						document.getElementById("plantIdea").children[1].innerHTML = "Plant seed"
 					}
 				});
 			});
@@ -58,6 +57,13 @@
 			});
 			if (params.jumpTo)
 				jump(params.jumpTo);
+				
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotedByUserByIdIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
+				if (data[0][0][0] == 1) {
+					document.getElementById("plantedContainer").style.display="block";
+					document.getElementById("plantedHeader").style.display="block";
+				}
+			});	
 		}
 	});
 	function jump(id){
@@ -91,7 +97,15 @@
 					jump('bottom');
 				}
 				else if (xmlhttp.responseText == "User already took this idea") {
-					document.getElementById('takeIdea').style.display="none";
+					sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=releaseIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+						if (data == 1) {
+							document.getElementById('plantIdea').children[0].src = "images/icons/plant.png";
+							document.getElementById("plantIdea").children[1].innerHTML = "Plant seed"
+						}
+					});
+				}
+				else if (xmlhttp.responseText == "Invalid user or password") {
+					bb.pushScreen('login.html', 'login');
 				}
 				else{
 					callback(JSON.parse(xmlhttp.responseText));}
@@ -184,19 +198,35 @@
 	  }
 	}
 	function takeIdea() {
-		document.getElementById('indicator4').style.display="block";
-		document.getElementById('takeIdea').style.display="none";
-		sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=takeIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
-			var title = document.getElementById("title");
-			title.setCaption(title.getCaption()+" [TAKEN]");
-			document.getElementById('indicator4').style.display="none";
-		});
+		var planted = document.getElementById("plantIdea").children[1].innerHTML;
+		if (planted == "Plant seed") {
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=takeIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+				var title = document.getElementById("title");
+				title.setCaption(title.getCaption()+" [TAKEN]");
+				document.getElementById('plantIdea').children[0].src = "images/icons/planted.png";
+				document.getElementById("plantIdea").children[1].innerHTML = "Release seed"
+			});
+		}
+		else if (planted == "Release seed") {
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=releaseIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+				if (data == 1) {
+						var title = document.getElementById("title");
+						title.setCaption(title.getCaption().split(" ")[0]);
+						document.getElementById('plantIdea').children[0].src = "images/icons/plant.png";
+						document.getElementById("plantIdea").children[1].innerHTML = "Plant seed"
+					}
+				});
+		}
 	}
 	</script>
 	<div id="title" data-bb-type="title" data-bb-accent-text="" data-bb-img=""></div>
-	<div id = "takeIdea" style="display: none" data-bb-type="button" data-bb-style="stretch" onclick="takeIdea()">Plant Idea</div>
 	<div data-bb-type="round-panel"> 
-		<div id = "indicator4" data-bb-type="activity-indicator" data-bb-size="small" style="padding: 20px 0 40px 0; display: none" ></div>
+		<div id="plantedHeader" style="display:none; color:white;" data-bb-type="panel-header">Planted By</div>
+		<div id="plantedContainer" style="display: none; padding: 20px 0 40px 0" data-bb-type="label-control-container">
+			<div id="plantedBy" style="color:white" data-bb-type="label"></div>
+			<div style="color:white" data-bb-type="label"></div>
+			<div id = "indicator4" data-bb-type="activity-indicator" data-bb-size="small" style="display: none" ></div>
+		</div>
 		<div style="color:white;" data-bb-type="panel-header">Description</div>
 		<div style="padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="description" style="color:white" data-bb-type="label"></div>
@@ -221,6 +251,7 @@
 	<div data-bb-type="action-bar" data-bb-back-caption ="Back"> 
 		<!-- Action overflow -->
 		<div id="voteButton" onClick="vote();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/vote.png">Enrich</div>
+		<div id="plantIdea" onClick="takeIdea();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/plant.png">Plant Idea</div>
 		<div onClick="comment();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/comment.png">Comment</div>
 		<div onClick="share();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/share.png">Share</div>
 		<div onClick="confirmReport()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/report.png">Report Idea</div>
