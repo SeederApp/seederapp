@@ -861,14 +861,14 @@ class Ideas_Model{
 	//Get ideas taken by developer
 	public function getIdeasTakenByEmail($params){
 		
-		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
-		$userId = $userIdDecoded[0][0][0];
+		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
+		$developerId = $developerIdDecoded[0][0][0];
 		
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Developer_Idea WHERE Idea.idIdea = Developer_Idea.idIdea AND Idea.idUser = ".$userId.";");
+		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Developer_Idea WHERE Idea.idIdea = Developer_Idea.idIdea AND Idea.idDeveloper = ".$developerId.";");
 		
 		//Execute query
 		$this->db->query();
@@ -883,7 +883,7 @@ class Ideas_Model{
 	/*
 	 * @params[0] idIdea
 	 */
-	//Get ideas taken by developer
+	//Get developers that have taken an idea
 	public function getDevelopersByIdIdea($params){		
 		//Connect to database
 		$this->db->connect();
@@ -905,7 +905,6 @@ class Ideas_Model{
 	 * @params[0] email
 	 * @params[1] idIdea
 	 */
-	//Get ideas taken by developer
 	public function getVotedByUserByIdIdea($params){
 		
 		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
