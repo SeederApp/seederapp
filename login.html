@@ -34,10 +34,19 @@
 			localStorage.setItem(27,"Cards");
 			localStorage.setItem(28,"Puzzles");
 			localStorage.setItem(28,"Other");
+			localStorage.setItem('storedCategories',"true");
 		}
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserEmail != null)){
+			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
+				localStorage.setItem('firstName',data[0][0]['firstName']);
+				localStorage.setItem('lastName',data[0][0]['lastName']);
+				localStorage.setItem('isPrivate',data[0][0]['isPrivate']);
+				localStorage.setItem('gender',data[0][0]['gender']);
+				localStorage.setItem('photoURL',data[0][0]['photoURL']);
+				localStorage.setItem('isDeveloper',data[0][0]['isDeveloper']);
+			});
 			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" + localUserEmail +"&hash=" + localUserHash;
 			sendRequest(url, function(data){
 				bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});

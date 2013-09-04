@@ -3,8 +3,6 @@
 <script type="text/javascript">
 	bb.init({ondomready : function(element, id, params){
 				loadIdeas();
-				//alert(localStorage.getItem("userHash") + " | " + localStorage.getItem("userEmail"));
-				//alert(params.userEmail + " | " + params.userHash);
 		}
 	});
 
@@ -15,8 +13,6 @@
 	function onBackground() {
 		blackberry.app.event.onBackground(onBackgroundCallback);
 	}
-	
-	//onBackground();
 
 	function sendRequest(url, callback) {
 		var xmlhttp;

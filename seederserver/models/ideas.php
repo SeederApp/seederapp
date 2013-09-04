@@ -541,14 +541,14 @@ class Ideas_Model{
 		
 		//Check if vote exists on this idea regarding user
 		$reportExistsDecoded = json_decode($this->validateReportingByEmail($params[0], $params[1]), true);
-		$reportExists = $voteExistsDecoded[0][0][0];
+		$reportExists = $reportExistsDecoded[0][0][0];
 		if ($reportExists != 0){
 			return "User already reported this idea";
 		}
 		
-		//Update number of votes
+		//Update number of reports
 		$reportDecoded = json_decode($this->getReportsByIdIdea($params[1]), true);
-		$reports = $votesDecoded[0][0][0];
+		$reports = $reportDecoded[0][0][0];
 		
 		//Connect to database
 		$this->db->connect();
@@ -559,15 +559,15 @@ class Ideas_Model{
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
 			
-			//Insert ReportIdeas record
+			//Insert ReportedIdeas record
 			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 			$userId = $userIdDecoded[0][0][0];
-			$this->db->prepare("INSERT INTO ReportIdeas (idIdea, idUser) VALUES (".$params[1].", ".$userId.");");
+			$this->db->prepare("INSERT INTO ReportedIdeas (idIdea, idUser) VALUES (".$params[1].", ".$userId.");");
 			
 			//Execute query and return "true" or "false"
 			return $this->db->query();
 		} else {
-			return "Failure to update votes number";
+			return "Failure to update report number";
 		}
 	}
 

@@ -71,9 +71,8 @@ class Comments_Model{
 
 	/*
 	 * @params[0] email
-	 * @params[1] idUser
-	 * @params[2] idIdea
-	 * @params[3] content
+	 * @params[1] idIdea
+	 * @params[2] content
 	 * @hash hash sent by the client
 	 */
 	public function addComment($params, $hash){
@@ -83,27 +82,24 @@ class Comments_Model{
 		}
 		$userIdDecoded = json_decode($this->getIdByEmail($params[0]), true);
 		$userId = $userIdDecoded[0][0][0];
-		if ($userId != $params[1]){
-			return false;
-		}
 		
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("INSERT INTO Comment (date, content) VALUES (now(), '".$params[3]."');");
+		$this->db->prepare("INSERT INTO Comment (date, content) VALUES (now(), '".$params[2]."');");
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
 			$idComment = $this->db->fetchId();
 			
 			//Prepare query
-			$this->db->prepare("INSERT INTO Idea_Comment (idIdea, idComment) VALUES ('".$params[2]."', '".$idComment."');");
+			$this->db->prepare("INSERT INTO Idea_Comment (idIdea, idComment) VALUES ('".$params[1]."', '".$idComment."');");
 			
 			//Execute query and return "true" or "false"
 			if ($this->db->query() == 1){
 				//Prepare query
-				$this->db->prepare("INSERT INTO User_Comment (idUser, idComment) VALUES ('".$params[1]."', '".$idComment."');");
+				$this->db->prepare("INSERT INTO User_Comment (idUser, idComment) VALUES ('".$userId."', '".$idComment."');");
 				
 				//Return "true" or "false"
 				return $this->db->query();

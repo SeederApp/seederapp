@@ -30,7 +30,7 @@
 						var item = document.createElement('div');
 						item.setAttribute('data-bb-type', 'item');
 						item.setAttribute('data-bb-img', 'images/icons/comment_dark.png');
-						item.innerHTML = data[i][0]['content'];
+						item.innerHTML = "<div style='font-size:20px; color:gray'>"+data[i][0]['date'].split(" ")[0]+"</div>" + " " +data[i][0]['content'];
 						bubble.appendChild(item);
 						bubble = bb.bbmBubble.style(bubble);
 						document.getElementById('comments').appendChild(bubble);
@@ -38,6 +38,8 @@
 					document.getElementById('indicator2').style.display="none";
 				}
 			});
+			if (params.jumpTo)
+				jump(params.jumpTo);
 		}
 	});
 	function jump(id){
@@ -59,21 +61,20 @@
 	}
 	function sendRequest(url, callback) {
 		var xmlhttp;
-		if (window.XMLHttpRequest)
-		{
+		if (window.XMLHttpRequest) {
 			xmlhttp=new XMLHttpRequest();
 		}
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
-				if (xmlhttp.responseText == "") {
-					document.getElementById('indicator').style.display="none";
-					document.getElementById('message').innerHTML="Database failure";
-					jump('mesasge');
+				if (xmlhttp.responseText == "User already reported this idea") {
+					document.getElementById('indicator3').style.display="none";
+					document.getElementById('bottom').innerHTML="You have already reported this idea";
+					jump('bottom');
 				}
-				else if (xmlhttp.responseText == "User does not have enough coins to create idea" || xmlhttp.responseText == "Failure to insert idea") {
-					document.getElementById('indicator').style.display="none";
-					document.getElementById('message').innerHTML="Database error.";
+				else if (xmlhttp.responseText == "" || xmlhttp.responseText == "Failure to insert idea") {
+					document.getElementById('indicator3').style.display="none";
+					document.getElementById('bottom').innerHTML="Database error.";
 					jump('mesasge');
 				}
 				else{
@@ -108,26 +109,93 @@
 			});
 		}
 	}
+	function comment() {
+		jump("submit");
+		document.getElementById("commentContent").focus();
+	}
+	function validate() {
+		if (trim(document.getElementById("commentContent").value) == "") {
+			document.getElementById("commentContent").placeholder="Please enter a comment";
+			document.getElementById("commentContent").focus();
+			return false;
+		} else if (document.getElementById("commentContent").value.length > 480) {
+			document.getElementById("commentContent").value="";
+			document.getElementById("commentContent").placeholder="Your comment is too long";
+			document.getElementById("commentContent").focus();
+			return false;
+		}
+		else {
+			document.getElementById('indicator3').style.display="block";
+			jump("bottom");
+			submitComment();
+		}
+	}
+	function submitComment() {
+		document.getElementById("bottom").style.display="none";
+		var commentContent = document.getElementById("commentContent").value;
+		sendRequest("http://seederserver.aws.af.cm/index.php?comments&command=addComment&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&values[]="+commentContent+"&hash="+localStorage.getItem('userHash'), function (data) {
+			if (data == 1) {
+				bb.pushScreen('ideaDetails.html', 'ideaDetails', {ideaId:ideaId, jumpTo:'aboveComment'});
+			}
+		});
+	}
+	function share() {
+		
+	}
+	function dialogCallBack(index){
+		//OK
+		if (index == 0) {
+			document.getElementById('indicator3').style.display="block";
+			document.getElementById('bottom').style.display="block";
+			jump("bottom");
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=reportIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+				if (data == 1) {
+					document.getElementById('indicator3').style.display="none";
+					document.getElementById('bottom').innerHTML="Report successful. Thank you.";
+				}
+			});
+		}
+		else {
+		
+		}
+	}
+
+	function confirmReport() {
+	  try {
+		blackberry.ui.dialog.standardAskAsync("Are you sure you want to report this idea?", blackberry.ui.dialog.D_OK_CANCEL, dialogCallBack, {title : "Confirm Report", size: blackberry.ui.dialog.SIZE_MEDIUM, position : blackberry.ui.dialog.BOTTOM});
+	  }catch (e) {
+		alert("Exception in standardDialog: " + e);
+	  }
+	}
 	</script>
 	<div id="title" data-bb-type="title" data-bb-accent-text="" data-bb-img=""></div>
 	<div data-bb-type="round-panel"> 
 		<div style="color:white;" data-bb-type="panel-header">Description</div>
-		<div style="padding-bottom: 20px" data-bb-type="label-control-container">
+		<div style="padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="description" style="color:white" data-bb-type="label"></div>
 			<div style="color:white" data-bb-type="label"></div>
 			<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="display: none" ></div>
 		</div>
 		<div style="color:white;" data-bb-type="panel-header">Comments</div>
-		<div style="padding-bottom: 20px" data-bb-type="label-control-container">
+		<div style="padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="comments"></div>
 			<div id = "indicator2" data-bb-type="activity-indicator" data-bb-size="small" style="display: none"></div>
 		</div>
+		<div id="aboveComment"></div>
+		<div style="color:white;" data-bb-type="panel-header">Leave a comment</div>
+		<div style="padding: 20px 0 40px 0" data-bb-type="label-control-container">
+			<div style="color:white" data-bb-type="label">Comment:</div>
+			<textarea id="commentContent" type="text" rows="8" cols="33" style="font-size: 30pt; font-family: 'Slate Pro',Slate,'Myriad Pro',Helvetica; padding: 31px 14px 31px 14px"/></textarea>
+		</div>
+		<div id = "submit" data-bb-type="button" data-bb-style="stretch" onclick="validate()">Submit</div>
+		<div id = "indicator3" data-bb-type="activity-indicator" data-bb-size="small" style="float: left; top:0; left: 12px; display: none" ></div>
+		<div id="bottom" style="position: relative; top:7px; left: 20px; display:none; color:white">Reporting...</div>
 	</div>
 	<div data-bb-type="action-bar" data-bb-back-caption ="Back"> 
 		<!-- Action overflow -->
 		<div id="voteButton" onClick="vote();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/vote.png">Enrich</div>
 		<div onClick="comment();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/comment.png">Comment</div>
 		<div onClick="share();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/share.png">Share</div>
-		<div onClick="report()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/report.png">Report Idea</div>
+		<div onClick="confirmReport()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/report.png">Report Idea</div>
 	</div>
 </div>

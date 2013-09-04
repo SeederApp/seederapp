@@ -152,6 +152,12 @@
 		var hash = Sha1.hash(password + salt);
 		
 		var isDeveloper = document.getElementById("developer").checked;
+		localStorage.setItem('firstName',firstName);
+		localStorage.setItem('lastName',lastName);
+		localStorage.setItem('photoURL',photo);
+		localStorage.setItem('isPrivate',isPrivate);
+		localStorage.setItem('gender',gender);
+		localStorage.setItem('isDeveloper',isDeveloper);
 		if (isDeveloper) {
 			document.getElementById('indicator').style.display="block";
 			document.getElementById("message").style.display = "block";

@@ -1005,7 +1005,7 @@ class Users_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT email, firstName, lastName, gender, photoURL, coins, isPrivate FROM User WHERE email = '".$params[0]."';");
+		$this->db->prepare("SELECT email, firstName, lastName, gender, photoURL, coins, isPrivate, isDeveloper FROM User WHERE email = '".$params[0]."';");
 		
 		//Execute query
 		$this->db->query();
