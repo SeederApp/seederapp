@@ -783,7 +783,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea ORDER BY ".$params[0]." ".$params[1].";");
+		$this->db->prepare("SELECT Idea.*, Category.categoryType, Category.name FROM Idea INNER JOIN Category ON Idea.idCategory = Category.idCategory ORDER BY ".$params[0]." ".$params[1].";");
 		
 		//Execute query
 		$this->db->query();
@@ -800,7 +800,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Category WHERE Idea.idCategory = Category.idCategory AND Category.categoryType = '".$params[0]."' ORDER BY Idea.".$params[1]." ".$params[2].";");
+		$this->db->prepare("SELECT Idea.*, Category.categoryType, Category.name FROM Idea INNER JOIN Category WHERE Idea.idCategory = Category.idCategory AND Category.categoryType = '".$params[0]."' ORDER BY Idea.".$params[1]." ".$params[2].";");
 		
 		//Execute query
 		$this->db->query();
@@ -861,14 +861,35 @@ class Ideas_Model{
 	//Get ideas taken by developer
 	public function getIdeasTakenByEmail($params){
 		
-		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
-		$userId = $userIdDecoded[0][0][0];
+		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
+		$developerId = $developerIdDecoded[0][0][0];
 		
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Developer_Idea WHERE Idea.idIdea = Developer_Idea.idIdea AND Idea.idUser = ".$userId.";");
+		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Developer_Idea WHERE Idea.idIdea = Developer_Idea.idIdea AND Idea.idDeveloper = ".$developerId.";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+	
+	/*
+	 * @params[0] idIdea
+	 */
+	//Get developers that have taken an idea
+	public function getDevelopersByIdIdea($params){		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT User.idUser, User.firstName, User.lastName FROM User INNER JOIN Developer INNER JOIN Developer_Idea INNER JOIN Idea ON User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = Developer_Idea.idDeveloper AND Developer_Idea.idIdea = Idea.idIdea AND Idea.idIdea = ".$param[0].";");
 		
 		//Execute query
 		$this->db->query();
@@ -884,7 +905,6 @@ class Ideas_Model{
 	 * @params[0] email
 	 * @params[1] idIdea
 	 */
-	//Get ideas taken by developer
 	public function getVotedByUserByIdIdea($params){
 		
 		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
