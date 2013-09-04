@@ -6,7 +6,7 @@
 	function autoAuthentication(){
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
-		if ((localUserEmail != "") && (localUserEmail != "")){
+		if ((localUserEmail != null) && (localUserEmail != null)){
 			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" + localUserEmail +"&hash=" + localUserHash;
 			sendRequest(url, function(data){
 				bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});
