@@ -113,7 +113,7 @@
 					+ "<div class='votes' style='position: absolute; top: 165px; left: 21px; text-align: center; width: 120px; font-size:32px; font-style: normal; font-weight: 600; color: #FFFFFF'>" + data[i][0]['votes'] + "</div>"
 					+ "<div class='title' style='position: absolute; top: 20px; left: 170px; font-size:32px; font-style: normal; font-weight: 600; color: #FFFFFF';>" + data[i][0]['title'] + "</div>"
 					+ "<div class='category' style='position: absolute; top: 55px; left: 170px; font-size:18px; font-style: normal; font-weight: 500; color: #888888;'>" + data[i][0]['name'] + "</div>"
-					+ "<div class='description' style='position: absolute; top: 85px; left: 170px; font-size:21px; font-style: normal; font-weight: 400; color: #CCCCCC; width: 440px'>" + (data[i][0]['description']).slice(0,100) + "<span style='color: white;'>...</span></div>"
+					+ "<div class='description' style='position: absolute; top: 85px; left: 170px; font-size:21px; font-style: normal; font-weight: 400; color: #CCCCCC; width: 440px'>" + (data[i][0]['description']).slice(0,80) + "<span style='color: white;'>...</span></div>"
 					+ "<div><img src='images/category.png' width='135' height='135'  alt='' style='position: absolute; top: 10px; left: 10px'/></div>"
 					+ "<div><img src='images/categories/category-" + (data[i][0]['idCategory']) + ".png' width='81' height='81'  alt='' style='position: absolute; top: 38px; left: 38px'/></div>"
 					+ "<div class='enriched' style='position: absolute; top: 170px; left: 520'><img src='images/icons/enrich.png' width='50' height='50'  alt='' style='position: absolute; left: -350px; top: -10px;'/></div>"
@@ -128,7 +128,9 @@
 			document.getElementById('indicator').style.display="none";
 		});
 	}
-	/*window.onload = loadIdeas();*/
+	function settings() {
+		localStorage.clear();
+	}
 </script>
 	<div data-bb-type="title" data-bb-caption="Discover new ideas"></div>
 	

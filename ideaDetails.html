@@ -9,11 +9,11 @@
 				var title = document.getElementById("title");
 				var accent = document.getElementsByClassName("data-bb-accent-text");
 				title.setCaption(data[0][0]['title']);
-				title.children[0].children[0].src = "images/categories/category-"+data[0][0]['idCategory']+".png";
+				title.children[0].children[0].src = "images/categories_white/category-"+data[0][0]['idCategory']+".png";
 				title.children[0].children[1].children[1].innerHTML += data[0][0]['name'];
 				document.getElementById("description").innerHTML = data[0][0]['description'];
 				document.getElementById('indicator').style.display="none";
-				if(localStorage.getItem('isDeveloper')) {
+				if(localStorage.getItem('isDeveloper') == 1) {
 					sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=isIdeaTakenByDeveloper&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
 						if (data[0][0][0] == 1) {
 							var title = document.getElementById("title");
@@ -62,7 +62,6 @@
 			});
 			if (params.jumpTo)
 				jump(params.jumpTo);
-				
 			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getDevelopersByIdIdea&values[]="+ideaId, function (data) {
 				var items = [], item;
 				var idUser;
@@ -278,7 +277,7 @@
 			<div style="color:white" data-bb-type="label">Comment:</div>
 			<textarea id="commentContent" type="text" rows="8" cols="33" style="font-size: 30pt; font-family: 'Slate Pro',Slate,'Myriad Pro',Helvetica; padding: 31px 14px 31px 14px"/></textarea>
 		</div>
-		<div id = "submit" data-bb-type="button" data-bb-style="stretch" onclick="validate()">Submit</div>
+		<div id = "submit" data-bb-type="button" data-bb-style="stretch" onclick="validate()">Post Comment</div>
 		<div id = "indicator3" data-bb-type="activity-indicator" data-bb-size="small" style="float: left; top:0; left: 12px; display: none" ></div>
 		<div id="bottom" style="position: relative; top:7px; left: 20px; display:none; color:white">Reporting...</div>
 	</div>

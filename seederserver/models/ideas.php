@@ -838,7 +838,6 @@ class Ideas_Model{
 		
 		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
 		$developerId = $developerIdDecoded[0][0][0];
-		echo $developerId;
 		//Connect to database
 		$this->db->connect();
 		
