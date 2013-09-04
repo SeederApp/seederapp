@@ -783,7 +783,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea ORDER BY ".$params[0]." ".$params[1].";");
+		$this->db->prepare("SELECT Idea.*, Category.categoryType, Category.name FROM Idea INNER JOIN Category ON Idea.idCategory = Category.idCategory ORDER BY ".$params[0]." ".$params[1].";");
 		
 		//Execute query
 		$this->db->query();
@@ -800,7 +800,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Idea.* FROM Idea INNER JOIN Category WHERE Idea.idCategory = Category.idCategory AND Category.categoryType = '".$params[0]."' ORDER BY Idea.".$params[1]." ".$params[2].";");
+		$this->db->prepare("SELECT Idea.*, Category.categoryType, Category.name FROM Idea INNER JOIN Category WHERE Idea.idCategory = Category.idCategory AND Category.categoryType = '".$params[0]."' ORDER BY Idea.".$params[1]." ".$params[2].";");
 		
 		//Execute query
 		$this->db->query();
