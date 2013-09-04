@@ -308,9 +308,8 @@ class Ideas_Model{
 		//Execute query
 		$this->db->query();
 	}
-
-	/*
-	 * @params[0] email
+	
+	/* @params[0] email
 	 * @params[1] idIdea
 	 * @hash hash sent by the client
 	 * return "true" for successfully inserted, or "false" when an inserting error occurs
@@ -324,14 +323,33 @@ class Ideas_Model{
 		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
 		$developerId = $developerIdDecoded[0][0][0];
 		
+		//Check if user already took this idea
+		$takeExistsDecoded = json_decode($this->validateTakeByEmail($developerId, $params[1]), true);
+		$takeExists = $takeExistsDecoded[0][0][0];
+		if ($takeExists != 0){
+			return "User already took this idea";
+		}
+		
+		//Update how many times this ideas was taken
+		$takesDecoded = json_decode($this->getTakesByIdIdea($params[1]), true);
+		$takes = $takesDecoded[0][0][0];
+		
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("INSERT INTO Developer_Idea (idDeveloper, idIdea, progress) VALUES ('".$developerId."', '".$params[1]."', '0');");
+		$this->db->prepare("UPDATE Idea SET isTaken = ".++$takes." WHERE idIdea = ".$params[1].";");
 		
 		//Execute query and return "true" or "false"
-		return $this->db->query();
+		if ($this->db->query() == 1){
+			
+			$this->db->prepare("INSERT INTO Developer_Idea (idDeveloper, idIdea, progress) VALUES ('".$developerId."', '".$params[1]."', '0');");
+			
+			//Execute query and return "true" or "false"
+			return $this->db->query();
+		} else {
+			return "Failure to update how many times this idea was taken";
+		}
 	}
 	
 	/*
@@ -428,6 +446,26 @@ class Ideas_Model{
 		
 		//Prepare query
 		$this->db->prepare("SELECT votes FROM Idea WHERE idIdea = '".$idIdea."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+	
+	/*
+	 * @idIdea idIdea
+	 */
+	public function getTakesByIdIdea($idIdea){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT isTaken FROM Idea WHERE idIdea = '".$idIdea."';");
 		
 		//Execute query
 		$this->db->query();
@@ -571,6 +609,26 @@ class Ideas_Model{
 		}
 	}
 
+	/*
+	 * @email email
+	 * @idIdea idIdea
+	 */
+	private function validateTakeByEmail($developerId, $idIdea){
+		//Connect to database
+		$this->db->connect();
+
+		//Prepare query
+		$this->db->prepare("SELECT count(1) FROM Developer_Idea WHERE idDeveloper = ".$developerId." AND idIdea = ".$idIdea.";");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		//Return data
+		return $article;
+	}
+	
 	/*
 	 * @email email
 	 * @idIdea idIdea
@@ -760,6 +818,32 @@ class Ideas_Model{
 		
 		//Prepare query
 		$this->db->prepare("SELECT * FROM Idea WHERE idIdea = ".$params['0'].";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
+	 * @params[0] email
+	 * @params[1] idIdea
+	 */
+	//Get ideas taken by developer
+	public function isIdeaTakenByDeveloper($params){
+		
+		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
+		$developerId = $developerIdDecoded[0][0][0];
+		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT count(1) FROM Developer_Idea WHERE idIdea = ".$params[1]." AND idDeveloper = ".$developerId.";");
 		
 		//Execute query
 		$this->db->query();
