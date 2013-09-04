@@ -36,8 +36,8 @@
 			localStorage.setItem(28,"Other");
 			localStorage.setItem('storedCategories',"true");
 		}
-		localUserEmail = localStorage.getItem("userEmail");
-		localUserHash = localStorage.getItem("userHash");
+		localUserEmail = null;//localStorage.getItem("userEmail");
+		localUserHash = null;//localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserEmail != null)){
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
 				localStorage.setItem('firstName',data[0][0]['firstName']);

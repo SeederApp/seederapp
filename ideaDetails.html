@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="slide-left" data-bb-scroll-effect="off"> 
-	<script>
+	<script type = "text/javascript">
 	bb.init({
 		ondomready: function (element, id, params) {
 			document.getElementById('indicator').style.display="block";
@@ -10,21 +10,26 @@
 				var accent = document.getElementsByClassName("data-bb-accent-text");
 				title.setCaption(data[0][0]['title']);
 				title.children[0].children[0].src = "images/categories/category-"+data[0][0]['idCategory']+".png";
-				title.children[0].children[1].children[1].innerHTML += localStorage.getItem(data[0][0]['idCategory']);
+				title.children[0].children[1].children[1].innerHTML += data[0][0]['name'];
 				document.getElementById("description").innerHTML = data[0][0]['description'];
 				document.getElementById('indicator').style.display="none";
-				sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=isIdeaTakenByDeveloper&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
-					if (data[0][0][0] == 1) {
-						var title = document.getElementById("title");
-						title.setCaption(title.getCaption()+" [TAKEN]");
-						document.getElementById('plantIdea').children[0].src = "images/icons/planted.png";
-						document.getElementById("plantIdea").children[1].innerHTML = "Release seed"
-					}
-					else {
-						document.getElementById('plantIdea').children[0].src = "images/icons/plant.png";
-						document.getElementById("plantIdea").children[1].innerHTML = "Plant seed"
-					}
-				});
+				if(localStorage.getItem('isDeveloper')) {
+					sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=isIdeaTakenByDeveloper&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
+						if (data[0][0][0] == 1) {
+							var title = document.getElementById("title");
+							title.setCaption(title.getCaption()+" [TAKEN]");
+							document.getElementById('plantIdea').children[0].src = "images/icons/planted.png";
+							document.getElementById("plantIdea").children[1].innerHTML = "Release seed"
+						}
+						else {
+							document.getElementById('plantIdea').children[0].src = "images/icons/plant.png";
+							document.getElementById("plantIdea").children[1].innerHTML = "Plant seed"
+						}
+					});
+				}
+				else {
+					document.getElementById('plantIdea').style.display="none";
+				}
 			});
 			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotedByUserByIdIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
 				if (data[0][0][0] == 1) {
@@ -59,17 +64,36 @@
 				jump(params.jumpTo);
 				
 			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getDevelopersByIdIdea&values[]="+ideaId, function (data) {
-				console.log(data);
-				if (data[0][0][0]) {
+				var items = [], item;
+				var idUser;
+				if (data.length > 0) {
 					var container = document.getElementById("plantedContainer");
 					container.style.display="block";
 					document.getElementById("plantedHeader").style.display="block";
-					for (i=0; i<data.length; i++) {
-						console.log(data[0][i]['firstName']);
+					for (var i=0; i<data.length; i++) {
+						item = document.createElement('div');
+						item.setAttribute("id","planter"+i+1);
+						item.style.color = "white";
+						item.style.padding = "10px";
+						item.style.border = "3px solid #1eAeD2";
+						item.setAttribute("idUser",data[i][0]['idUser']);
+						item.onclick = (function() {
+										  var idUser = data[i][0]['idUser'];
+										  return function() { 
+											  goDevProfile(idUser);
+										  }})();
+						item.setAttribute('data-bb-type','item');
+						item.setAttribute('data-bb-title',data[i][0]['firstName'] +" "+ data[i][0]['lastName']);
+						item.setAttribute('data-bb-img',data[i][0]['photoURL']);
+						items.push(item);
+					}
+					document.getElementById('developerList').refresh(items);
+					function goDevProfile(devId) {
+						bb.pushScreen('devProfile.html', 'devProfile', {idUser:devId});
 					}
 				}
 				else {
-				
+					document.getElementById("plantedHeader").style.display="none";
 				}
 			});	
 		}
@@ -239,9 +263,7 @@
 		<div id="plantedContainer" style="display: none; padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="plantedBy" style="color:white" data-bb-type="label"></div>
 			<div style="color:white" data-bb-type="label"></div>
-			<div data-bb-type="image-list" data-bb-image-loading="loading.png">
-			  <div data-bb-type="item" data-bb-title="Title">My Image</div>
-			  <div data-bb-type="item" data-bb-img="http://long/loading/image.png" data-bb-title="Title">Taking a long time</div>
+			<div id="developerList" data-bb-type="image-list" data-bb-image-loading="images/icons/developer.png" data-bb-image-placeholder="images/icons/developer.png">
 		  </div>
 			<div id = "indicator4" data-bb-type="activity-indicator" data-bb-size="small" style="display: none" ></div>
 		</div>

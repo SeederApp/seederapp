@@ -838,7 +838,7 @@ class Ideas_Model{
 		
 		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
 		$developerId = $developerIdDecoded[0][0][0];
-		
+		echo $developerId;
 		//Connect to database
 		$this->db->connect();
 		
@@ -889,7 +889,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT User.idUser, User.firstName, User.lastName FROM User INNER JOIN Developer INNER JOIN Developer_Idea INNER JOIN Idea ON User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = Developer_Idea.idDeveloper AND Developer_Idea.idIdea = Idea.idIdea AND Idea.idIdea = ".$params[0].";");
+		$this->db->prepare("SELECT User.idUser, User.firstName, User.photoURL, User.lastName FROM User INNER JOIN Developer INNER JOIN Developer_Idea INNER JOIN Idea ON User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = Developer_Idea.idDeveloper AND Developer_Idea.idIdea = Idea.idIdea AND Idea.idIdea = ".$params[0].";");
 		
 		//Execute query
 		$this->db->query();
