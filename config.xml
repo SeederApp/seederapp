@@ -9,11 +9,13 @@
     <icon src="images/icon.png"/>
     <content src="index.html"/> 
 	<access uri="http://seederserver.aws.af.cm/" subdomains="true">
-		
+		<feature id="blackberry.app" version="1.0.0.0" required="true"/>
+		<feature id="blackberry.invoke" version="1.0.0.0" required="true"/>
 	</access>
 	<feature id="blackberry.system.event" />
 	<feature id="blackberry.app" >
 		<param name="websecurity" value="disable" />
+		<param name="orientation" value="portrait"/>
 	</feature>
 	<feature id="blackberry.app.event"/>
 	<feature id="blackberry.ui.contextmenu"/>
