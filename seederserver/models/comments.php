@@ -197,7 +197,7 @@ class Comments_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT Comment.*, User.firstName, User.lastName FROM Comment INNER JOIN Idea_Comment INNER JOIN User_Comment INNER JOIN User ON Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = ".$params[0]." AND User_Comment.idComment = Comment.idComment AND User.idUser = User_Comment.idUser ORDER BY Comment.date");
+		$this->db->prepare("SELECT Comment.*, User.firstName, User.lastName, User.isPrivate FROM Comment INNER JOIN Idea_Comment INNER JOIN User_Comment INNER JOIN User ON Comment.idComment = Idea_Comment.idComment AND Idea_Comment.idIdea = ".$params[0]." AND User_Comment.idComment = Comment.idComment AND User.idUser = User_Comment.idUser ORDER BY Comment.date");
 		
 		//Execute query
 		$this->db->query();

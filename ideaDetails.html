@@ -13,6 +13,8 @@
 				title.children[0].children[1].children[1].innerHTML += localStorage.getItem(data[0][0]['idCategory']);
 				document.getElementById("description").innerHTML = data[0][0]['description'];
 				document.getElementById('indicator').style.display="none";
+				if (localStorage.getItem('isDeveloper'))
+				document.getElementById('takeIdea').style.display="block"
 			});
 			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotedByUserByIdIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
 				if (data[0][0][0] == 1) {
@@ -30,7 +32,12 @@
 						var item = document.createElement('div');
 						item.setAttribute('data-bb-type', 'item');
 						item.setAttribute('data-bb-img', 'images/icons/comment_dark.png');
-						item.innerHTML = "<div style='font-size:20px; color:gray'>"+data[i][0]['date'].split(" ")[0]+"</div>" + " " +data[i][0]['content'];
+						var name;
+						if (data[i][0]['isPrivate'] == 1)
+							name = data[i][0]['firstName'] + " " + data[i][0]['lastName'].substring(0,1) + ".";
+						else
+							name = data[i][0]['firstName'] + " " + data[i][0]['lastName'];
+						item.innerHTML = "<div style='font-size:20px; color:gray'>"+data[i][0]['date'].split(" ")[0]+ "  |  "+name+"</div>" + " " +data[i][0]['content'];
 						bubble.appendChild(item);
 						bubble = bb.bbmBubble.style(bubble);
 						document.getElementById('comments').appendChild(bubble);
@@ -167,9 +174,20 @@
 		alert("Exception in standardDialog: " + e);
 	  }
 	}
+	function takeIdea() {
+		document.getElementById('indicator4').style.display="block";
+		document.getElementById('takeIdea').style.display="none";
+		sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=takeIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+			var title = document.getElementById("title");
+			title.setCaption(title.getCaption()+" [TAKEN]");
+			document.getElementById('indicator4').style.display="none";
+		});
+	}
 	</script>
 	<div id="title" data-bb-type="title" data-bb-accent-text="" data-bb-img=""></div>
+	<div id = "takeIdea" style="display: none" data-bb-type="button" data-bb-style="stretch" onclick="takeIdea()">Take Idea</div>
 	<div data-bb-type="round-panel"> 
+		<div id = "indicator4" data-bb-type="activity-indicator" data-bb-size="small" style="padding: 20px 0 40px 0; display: none" ></div>
 		<div style="color:white;" data-bb-type="panel-header">Description</div>
 		<div style="padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="description" style="color:white" data-bb-type="label"></div>
