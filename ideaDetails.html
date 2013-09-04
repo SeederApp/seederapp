@@ -4,6 +4,15 @@
 	bb.init({
 		ondomready: function (element, id, params) {
 			ideaId = params.ideaId;
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getIdeaById&values[]="+ideaId, function (data){
+				console.log (data[0][0]['title']);
+				var title = document.getElementById("title");
+				var accent = document.getElementsByClassName("data-bb-accent-text");
+				title.setCaption(data[0][0]['title']);
+				title.children[0].children[0].src = "images/categories/category-"+data[0][0]['idCategory']+".png";
+				title.children[0].children[1].children[1].innerHTML += localStorage.getItem(data[0][0]['idCategory']);
+			});
+			
 		}
 	});
 	function jump(id){
@@ -50,9 +59,11 @@
 		xmlhttp.send();
 	}
 	</script>
-	<div data-bb-type="action-bar" data-bb-back-caption ="Back"></div>
-	<div data-bb-type="title" data-bb-caption="Icon Details" data-bb-accent-text="Available" data-bb-img="images/categories/category-4.png"></div>
-	<!-- Content -->
-	<div id="content">
+	<div id="title" data-bb-type="title" data-bb-accent-text="" data-bb-img=""></div>
+	<div data-bb-type="action-bar" data-bb-back-caption ="Back"> 
+		<!-- Action overflow -->
+		<div id="voteButton" onClick="vote();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/vote.png">Enrich</div>
+		<div onClick="recentIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/share.png">Share</div>
+		<div onClick="newIdea()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/report.png">Report Idea</div>
 	</div>
 </div>

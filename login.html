@@ -4,6 +4,37 @@
 	<script type="text/javascript">
 	bb.init({
 	  ondomready: function (element, id) {
+		if (localStorage.getItem("storedCategories") == null) {
+			localStorage.setItem(1,"Books");
+			localStorage.setItem(2,"Finance");
+			localStorage.setItem(3,"Navigation & Travel");
+			localStorage.setItem(4,"Social");
+			localStorage.setItem(5,"Business");
+			localStorage.setItem(6,"Health & Fitness");
+			localStorage.setItem(7,"News & Magazines");
+			localStorage.setItem(8,"Sports");
+			localStorage.setItem(9,"Education & Reference");
+			localStorage.setItem(10,"Lifestyle");
+			localStorage.setItem(11,"Photo & Video");
+			localStorage.setItem(12,"Utilities");
+			localStorage.setItem(13,"Entertainment");
+			localStorage.setItem(14,"Music & Audio");
+			localStorage.setItem(15,"Productivity");
+			localStorage.setItem(16,"Weather");
+			localStorage.setItem(17,"Other");
+			localStorage.setItem(18,"Action");
+			localStorage.setItem(19,"Children's Games");
+			localStorage.setItem(20,"Space");
+			localStorage.setItem(21,"Arcade");
+			localStorage.setItem(22,"Combat");
+			localStorage.setItem(23,"Sports");
+			localStorage.setItem(24,"Board Games");
+			localStorage.setItem(25,"Movies & TV");
+			localStorage.setItem(26,"Strategy");
+			localStorage.setItem(27,"Cards");
+			localStorage.setItem(28,"Puzzles");
+			localStorage.setItem(28,"Other");
+		}
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserEmail != null)){
