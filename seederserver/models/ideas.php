@@ -881,6 +881,27 @@ class Ideas_Model{
 	}
 	
 	/*
+	 * @params[0] idIdea
+	 */
+	//Get ideas taken by developer
+	public function getDevelopersByIdIdea($params){		
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT User.idUser, User.firstName, User.lastName FROM User INNER JOIN Developer INNER JOIN Developer_Idea INNER JOIN Idea ON User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = Developer_Idea.idDeveloper AND Developer_Idea.idIdea = Idea.idIdea AND Idea.idIdea = ".$param[0].";");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+	
+	/*
 	 * @params[0] email
 	 * @params[1] idIdea
 	 */
