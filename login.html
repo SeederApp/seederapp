@@ -2,8 +2,8 @@
 <div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="fade" data-bb-scroll-effect="off">
 	<script src="js/sha1.js"></script>
 	<script type="text/javascript">
-	autoAuthentication();
-	function autoAuthentication(){
+	bb.init({
+	  ondomready: function (element, id) {
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserEmail != null)){
@@ -12,7 +12,8 @@
 				bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});
 			});
 		}
-	}
+	  }
+	});
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest)
