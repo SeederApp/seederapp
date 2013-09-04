@@ -58,10 +58,18 @@
 			if (params.jumpTo)
 				jump(params.jumpTo);
 				
-			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotedByUserByIdIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
-				if (data[0][0][0] == 1) {
-					document.getElementById("plantedContainer").style.display="block";
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getDevelopersByIdIdea&values[]="+ideaId, function (data) {
+				console.log(data);
+				if (data[0][0][0]) {
+					var container = document.getElementById("plantedContainer");
+					container.style.display="block";
 					document.getElementById("plantedHeader").style.display="block";
+					for (i=0; i<data.length; i++) {
+						console.log(data[0][i]['firstName']);
+					}
+				}
+				else {
+				
 				}
 			});	
 		}
@@ -231,9 +239,12 @@
 		<div id="plantedContainer" style="display: none; padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="plantedBy" style="color:white" data-bb-type="label"></div>
 			<div style="color:white" data-bb-type="label"></div>
+			<div data-bb-type="image-list" data-bb-image-loading="loading.png">
+			  <div data-bb-type="item" data-bb-title="Title">My Image</div>
+			  <div data-bb-type="item" data-bb-img="http://long/loading/image.png" data-bb-title="Title">Taking a long time</div>
+		  </div>
 			<div id = "indicator4" data-bb-type="activity-indicator" data-bb-size="small" style="display: none" ></div>
 		</div>
-		
 		<div style="color:white;" data-bb-type="panel-header">Comments</div>
 		<div style="padding: 20px 0 40px 0" data-bb-type="label-control-container">
 			<div id="comments"></div>

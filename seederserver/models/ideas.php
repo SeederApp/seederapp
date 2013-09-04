@@ -889,7 +889,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT User.idUser, User.firstName, User.lastName FROM User INNER JOIN Developer INNER JOIN Developer_Idea INNER JOIN Idea ON User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = Developer_Idea.idDeveloper AND Developer_Idea.idIdea = Idea.idIdea AND Idea.idIdea = ".$param[0].";");
+		$this->db->prepare("SELECT User.idUser, User.firstName, User.lastName FROM User INNER JOIN Developer INNER JOIN Developer_Idea INNER JOIN Idea ON User.idDeveloper = Developer.idDeveloper AND Developer.idDeveloper = Developer_Idea.idDeveloper AND Developer_Idea.idIdea = Idea.idIdea AND Idea.idIdea = ".$params[0].";");
 		
 		//Execute query
 		$this->db->query();
