@@ -1,10 +1,59 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="slide-left" data-bb-scroll-effect="off"> 
-	<div data-bb-type="title" data-bb-caption="Help"></div>
+	<script>
+	bb.init({
+		ondomready: function (element, id, params) {
+			ideaId = params.ideaId;
+		}
+	});
+	function jump(id){
+		var divid = document.getElementById(id);
+		divid.style.display = 'block';
+		divid.scrollIntoView(true);
+		return false;
+	}
+	function hideSpinner() {
+		document.getElementById('indicator').style.display="none";
+		document.getElementById("message").style.display = "none";
+	}
+	function showSpinner() {
+		document.getElementById('indicator').style.display="block";
+		document.getElementById("message").style.display = "block";
+	}
+	function trim(s) {
+		return s.replace(/^\s*/, "").replace(/\s*$/, "");
+	}
+	function sendRequest(url, callback) {
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{
+			xmlhttp=new XMLHttpRequest();
+		}
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				if (xmlhttp.responseText == "Failure to update user's coins number") {
+					document.getElementById('indicator').style.display="none";
+					document.getElementById('message').innerHTML="You do not have enough coins.";
+					jump('mesasge');
+				}
+				else if (xmlhttp.responseText == "User does not have enough coins to create idea" || xmlhttp.responseText == "Failure to insert idea") {
+					document.getElementById('indicator').style.display="none";
+					document.getElementById('message').innerHTML="Database error.";
+					jump('mesasge');
+				}
+				else{
+					callback(JSON.parse(xmlhttp.responseText));}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
+	</script>
 	<div data-bb-type="action-bar" data-bb-back-caption ="Back"></div>
-
+	<div data-bb-type="title" data-bb-caption="Icon Details" data-bb-accent-text="Available" data-bb-img="images/categories/category-4.png"></div>
 	<!-- Content -->
 	<div id="content">
-		Help
+		Details
 	</div>
 </div>
