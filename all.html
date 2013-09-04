@@ -74,6 +74,9 @@
 		filter = 'date';
 		refreshIdeas();
 	}
+	function newIdea() {
+		bb.pushScreen('newIdea.html', 'newIdea');
+	}
 	
 	var filter = 'votes';
 	var categoryType = 'All';
@@ -90,6 +93,9 @@
 		allIdeas.innerHTML = "";
 		loadIdeas();
 	}
+	function getDetails (id) {
+		console.log(id);
+	}
 	
 	function loadIdeas() {
 		//Default ideas loading options
@@ -101,6 +107,7 @@
 				//Ideas reported very often are hidden
 				if ((data[i][0]['reportNumber']) < 10){
 					listItem = document.createElement('div');
+					listItem.setAttribute("onclick", "getDetails("+data[i][0]['idIdea']+")");
 					listItem.setAttribute('data-bb-type', 'item');
 					listItem.setAttribute('onbtnclick', 'seeDetails(' + data[i][0]['idIdea'] + ');');
 					listItem.setAttribute('data-bb-img', 'images/categories/category-'+data[i][0]['idCategory']+'.png');

@@ -162,14 +162,14 @@
 			var linkedin = document.getElementById("linkedin").value;
 			var github = document.getElementById("github").value;
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addDeveloper&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]="+photo+"&values[]="+isPrivate+"&values[]="+vendor+"&values[]="+website+"&values[]="+twitter+"&values[]="+facebook+"&values[]="+linkedin+"&values[]="+github, function (data){
-				bb.pushScreen('all.html', 'login');
+				bb.pushScreen('all.html', 'allIdeas');
 			});
 		}
 		else {
 			document.getElementById('indicator').style.display="block";
 			document.getElementById("message").style.display = "block";
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=addUser&values[]="+email+"&values[]="+firstName+"&values[]="+lastName+"&values[]="+gender+"&values[]="+salt+"&values[]="+hash+"&values[]=www.google.com&values[]="+isPrivate, function (data){
-				bb.pushScreen('all.html', 'login');
+				bb.pushScreen('all.html', 'allIdeas');
 			});
 		}	
 	}
@@ -279,7 +279,6 @@
 			<div style="position:relative;">
 				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="position:absolute; top:0; left: 12px; display: none; "></div>
 				<div id="message" style="display: none; position: absolute; top:7px; left: 70px;">Creating your account...</div>
-				<a href="#bottom"></a>
 			</div>
 		</div>
 </div>

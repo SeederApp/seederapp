@@ -5,8 +5,26 @@
 	  ondomready: function (element, id) {
 		var select2 = document.getElementById("subcategory2");
 		select2.hide();
+		category = document.getElementById("subcategory");
 	  }
 	});
+	function jump(id){
+		var divid = document.getElementById(id);
+		divid.style.display = 'block';
+		divid.scrollIntoView(true);
+		return false;
+	}
+	function hideSpinner() {
+		document.getElementById('indicator').style.display="none";
+		document.getElementById("message").style.display = "none";
+	}
+	function showSpinner() {
+		document.getElementById('indicator').style.display="block";
+		document.getElementById("message").style.display = "block";
+	}
+	function trim(s) {
+		return s.replace(/^\s*/, "").replace(/\s*$/, "");
+	}
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest)
@@ -16,8 +34,15 @@
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
-				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "") {
-					
+				if (xmlhttp.responseText == "Failure to update user's coins number") {
+					document.getElementById('indicator').style.display="none";
+					document.getElementById('message').innerHTML="You do not have enough coins.";
+					jump('mesasge');
+				}
+				else if (xmlhttp.responseText == "User does not have enough coins to create idea" || xmlhttp.responseText == "Failure to insert idea") {
+					document.getElementById('indicator').style.display="none";
+					document.getElementById('message').innerHTML="Database error.";
+					jump('mesasge');
 				}
 				else{
 					callback(JSON.parse(xmlhttp.responseText));}
@@ -32,11 +57,51 @@
 		if (input.checked && type == 'apps') {
 			select.show();
 			select2.hide();
+			category = select;
 		}
 		else if (input.checked && type == 'games') {
 			select2.show();
 			select.hide();
+			category = select2;
 		}
+	}
+	function validate() {
+		if (trim(document.getElementById("title").value) == "") {
+			document.getElementById("title").placeholder="Please enter a title";
+			document.getElementById("title").focus();
+			return false;
+		} else if (document.getElementById("title").value.length > 100) {
+			document.getElementById("title").value="";
+			document.getElementById("title").placeholder="Your title is too long";
+			document.getElementById("title").focus();
+			return false;
+		} else if (trim(document.getElementById("description").value) == "") {
+			document.getElementById("description").placeholder="Please enter a description";
+			document.getElementById("description").focus();
+			return false;
+		} else if (document.getElementById("description").value.length > 450) {
+			document.getElementById("description").value="";
+			document.getElementById("description").placeholder="Your description is too long";
+			document.getElementById("description").focus();
+			return false;
+		} 
+		else {
+			showSpinner();
+			jump('message');
+			newIdea();
+		}
+	}
+	function newIdea() {
+		var categoryId = category.options[category.selectedIndex].value;
+		var title = document.getElementById("title").value;
+		var description = document.getElementById("description").value;
+		var hash = localStorage.getItem("userHash");
+		var email = localStorage.getItem("userEmail");
+		if (hash == "" || email == "")
+			bb.pushScreen('login.html', 'login');
+		sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=addIdea&values[]="+email+"&values[]="+categoryId+"&values[]="+title+"&values[]="+description+"&hash="+hash, function (data){
+				bb.pushScreen('all.html', 'allIdeas', {userEmail:email, userHash:hash});
+		});
 	}
 	</script>
 	<div data-bb-type="title" data-bb-caption="Submit Your Idea"></div>
@@ -96,29 +161,17 @@
 						</select>
 						<div id="dropdownContainer"></div>
 				<div data-bb-type="row">
-					<div data-bb-type="label">Last Name:</div>
-					<input id="lastName" type="text"/>
-				</div>
-				<div style="margin:15px 0 35px 0;">
-					<table>
-						<tr>
-							<td class="cell" >
-								<input type="radio" name="group1" id="control1" checked="true" value="male"/>
-							</td>
-							<td class="cell" style="font-size: 45px; padding-top:7px;">Male</td>
-						</tr>
-						<tr>
-							<td class="cell">
-								<input type="radio" name="group1" id="control2" value="female"/>
-							</td>
-							<td class="cell" style="font-size: 45px; padding-top:7px;">Female</td>
-						</tr>
-					</table>
+					<div data-bb-type="label">Title:</div>
+					<input id="title" type="text"/>
 				</div>
 				<div data-bb-type="row">
-					<div data-bb-type="label">Photo URL:</div>
-					<input id="photo" type="text"/>
+					<div data-bb-type="label">Description:</div>
+					<textarea id="description" type="text" rows="8" cols="33" style="font-size: 30pt; font-family: 'Slate Pro',Slate,'Myriad Pro',Helvetica; padding: 31px 14px 31px 14px"/></textarea>
 				</div>
+				<div data-bb-type="button" data-bb-style="stretch" onclick="validate()">Submit</div>
+				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="float: left; top:0; left: 12px; display:none"></div>
+				<div id="message" style="position: relative; top:7px; left: 20px; display:none">Creating your idea...</div>
+				<a href="#bottom"></a>
 			</div>
 		</div>
 </div>

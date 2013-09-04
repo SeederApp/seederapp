@@ -143,7 +143,7 @@ class Ideas_Model{
 				//Execute query and return "true" or "false"
 				if ($this->db->query() == 1){
 					//Prepare query
-					$this->db->prepare("INSERT INTO VotedIdea (idUser, idIdea) VALUES (".$userId.", ".$this->db->fetchId().");");
+					$this->db->prepare("INSERT INTO VotedIdeas (idUser, idIdea) VALUES (".$userId.", ".$this->db->fetchId().");");
 					
 					//Execute query and return "true" or "false"
 					return $this->db->query();
@@ -154,7 +154,7 @@ class Ideas_Model{
 				return "Failure to update user's coins number";
 			}
 		} else {
-			return "User does not have enough coins to vote";
+			return "User does not have enough coins to create idea";
 		}
 	}
 
