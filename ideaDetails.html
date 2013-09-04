@@ -3,16 +3,41 @@
 	<script>
 	bb.init({
 		ondomready: function (element, id, params) {
+			document.getElementById('indicator').style.display="block";
 			ideaId = params.ideaId;
 			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getIdeaById&values[]="+ideaId, function (data){
-				console.log (data[0][0]['title']);
 				var title = document.getElementById("title");
 				var accent = document.getElementsByClassName("data-bb-accent-text");
 				title.setCaption(data[0][0]['title']);
 				title.children[0].children[0].src = "images/categories/category-"+data[0][0]['idCategory']+".png";
 				title.children[0].children[1].children[1].innerHTML += localStorage.getItem(data[0][0]['idCategory']);
+				document.getElementById("description").innerHTML = data[0][0]['description'];
+				document.getElementById('indicator').style.display="none";
 			});
-			
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotedByUserByIdIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
+				if (data[0][0][0] == 1) {
+					document.getElementById("voteButton").children[0].src = "images/icons/voted.png";
+					document.getElementById("voteButton").children[1].innerHTML = "Enriched"
+				}
+			});
+			document.getElementById('indicator2').style.display="block";
+			sendRequest("http://seederserver.aws.af.cm/index.php?comments&command=getCommentsByIdIdea&values[]="+ideaId, function (data) {
+				if (data) {
+					for (i=0; i<data.length; i++) {
+						var bubble = document.createElement('div');
+						bubble.setAttribute('data-bb-type','bbm-bubble');
+						bubble.setAttribute('data-bb-style', i%2==0? 'left':'right');
+						var item = document.createElement('div');
+						item.setAttribute('data-bb-type', 'item');
+						item.setAttribute('data-bb-img', 'images/icons/comment_dark.png');
+						item.innerHTML = data[i][0]['content'];
+						bubble.appendChild(item);
+						bubble = bb.bbmBubble.style(bubble);
+						document.getElementById('comments').appendChild(bubble);
+					}
+					document.getElementById('indicator2').style.display="none";
+				}
+			});
 		}
 	});
 	function jump(id){
@@ -23,11 +48,11 @@
 	}
 	function hideSpinner() {
 		document.getElementById('indicator').style.display="none";
-		document.getElementById("message").style.display = "none";
+		document.getElementById('indicator2').style.display="none";
 	}
 	function showSpinner() {
 		document.getElementById('indicator').style.display="block";
-		document.getElementById("message").style.display = "block";
+		document.getElementById('indicator2').style.display="block";
 	}
 	function trim(s) {
 		return s.replace(/^\s*/, "").replace(/\s*$/, "");
@@ -41,9 +66,9 @@
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
-				if (xmlhttp.responseText == "Failure to update user's coins number") {
+				if (xmlhttp.responseText == "") {
 					document.getElementById('indicator').style.display="none";
-					document.getElementById('message').innerHTML="You do not have enough coins.";
+					document.getElementById('message').innerHTML="Database failure";
 					jump('mesasge');
 				}
 				else if (xmlhttp.responseText == "User does not have enough coins to create idea" || xmlhttp.responseText == "Failure to insert idea") {
@@ -58,12 +83,51 @@
 		xmlhttp.open("GET",url,true);
 		xmlhttp.send();
 	}
+	function vote() {
+		var voteStatus = document.getElementById("voteButton").children[1].innerHTML;
+		if (voteStatus == "Enrich") {
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=voteOnIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+				if (data == 1) {
+					document.getElementById("voteButton").children[0].src = "images/icons/voted.png";
+					document.getElementById("voteButton").children[1].innerHTML = "Enriched";
+				}
+				else {
+					
+				}
+			});
+		}
+		else if (voteStatus == "Enriched") {
+			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=removeVoteOnIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId+"&hash="+localStorage.getItem('userHash'), function (data) {
+				if (data == 1) {
+					document.getElementById("voteButton").children[0].src = "images/icons/vote.png";
+					document.getElementById("voteButton").children[1].innerHTML = "Enrich";
+				}
+				else {
+					
+				}
+			});
+		}
+	}
 	</script>
 	<div id="title" data-bb-type="title" data-bb-accent-text="" data-bb-img=""></div>
+	<div data-bb-type="round-panel"> 
+		<div style="color:white;" data-bb-type="panel-header">Description</div>
+		<div style="padding-bottom: 20px" data-bb-type="label-control-container">
+			<div id="description" style="color:white" data-bb-type="label"></div>
+			<div style="color:white" data-bb-type="label"></div>
+			<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="display: none" ></div>
+		</div>
+		<div style="color:white;" data-bb-type="panel-header">Comments</div>
+		<div style="padding-bottom: 20px" data-bb-type="label-control-container">
+			<div id="comments"></div>
+			<div id = "indicator2" data-bb-type="activity-indicator" data-bb-size="small" style="display: none"></div>
+		</div>
+	</div>
 	<div data-bb-type="action-bar" data-bb-back-caption ="Back"> 
 		<!-- Action overflow -->
 		<div id="voteButton" onClick="vote();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/vote.png">Enrich</div>
-		<div onClick="recentIdeas();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/share.png">Share</div>
-		<div onClick="newIdea()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/report.png">Report Idea</div>
+		<div onClick="comment();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/comment.png">Comment</div>
+		<div onClick="share();" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/share.png">Share</div>
+		<div onClick="report()" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="images/icons/report.png">Report Idea</div>
 	</div>
 </div>
