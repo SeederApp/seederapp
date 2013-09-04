@@ -817,7 +817,7 @@ class Ideas_Model{
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT * FROM Idea WHERE idIdea = ".$params['0'].";");
+		$this->db->prepare("SELECT Idea.*, User.firstName, User.lastName, Category.categoryType, Category.name FROM Idea INNER JOIN User INNER JOIN Category ON User.idUser = Idea.idUser AND Idea.idCategory = Category.idCategory AND Idea.idIdea = ".$params['0'].";");
 		
 		//Execute query
 		$this->db->query();
