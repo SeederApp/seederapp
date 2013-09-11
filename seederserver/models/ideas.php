@@ -8,13 +8,15 @@ class Ideas_Model{
 	 */
 	private $db;
 	
+	//Controller constructor
 	public function __construct(){
 		$this->db = new Mysql_Driver;
 	}
-
+	
 	/*
 	 * @email email
 	 */
+	//Return respective hash by providing a user email
 	private function getHashByEmail($email){
 		//Connect to database
 		$this->db->connect();
@@ -24,18 +26,18 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @idIdea idIdea
 	 * @votes votes
-	 * return "User already exists", or "true" for successfully inserted, or "false" when an updating error occurs
+	 * return "true" for successfully generated coin, or "false" in case of an error
 	 */
 	private function generateVoteCoins($email, $idIdea, $votes){
 		//Get generated coins by idIdea
@@ -66,11 +68,12 @@ class Ideas_Model{
 			}
 		}
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @hash hash sent by the client
 	 */
+	//Authenticate User based on user's email and respective hash
 	private function authenticateUser($email, $hash){
 		$userHash = $this->getHashByEmail($email);
 		$userHashDecoded = json_decode($userHash, true);
@@ -83,10 +86,11 @@ class Ideas_Model{
 			return false;
 		}
 	}
-
+	
 	/*
 	 * @email email
 	 */
+	//Return idDeveloper passing developer's email
 	private function getDeveloperIdByEmail($email){
 		//Connect to database
 		$this->db->connect();
@@ -103,7 +107,7 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idCategory
@@ -157,12 +161,13 @@ class Ideas_Model{
 			return "User does not have enough coins to create idea";
 		}
 	}
-
+	
 	/*
 	 * @email email
 	 * @idIdea idIdea
 	 */
-	public function validateIdeaByEmail($email, $idIdea){
+	//Verify if an idea was published by the user
+	private function validateIdeaByEmail($email, $idIdea){
 		//Connect to database
 		$this->db->connect();
 		
@@ -182,7 +187,7 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
@@ -195,7 +200,7 @@ class Ideas_Model{
 			return "Invalid user or password";
 		}
 		
-		//Check if the idea exists, and that it was publish by the user
+		//Check if the idea exists, and that it was published by the user
 		$ideaDecoded = json_decode($this->validateIdeaByEmail($params[0], $params[1]), true);
 		$ideaExists = $ideaDecoded[0][0][0];
 		if ($ideaExists == 0){
@@ -249,7 +254,11 @@ class Ideas_Model{
 			return "Failure to update user's coins number";
 		}
 	}
-
+	
+	/*
+	 * $idIdea idIdea
+	 */
+	//Return all idea comments by passing the respective idea for fetching its comments
 	private function getAllCommentIdsByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
@@ -266,10 +275,11 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @idComment idComment
 	 */
+	//Remove a specific comment by passing the respective id
 	private function removeCommentsByIdComment($idComment){
 		//Connect to database
 		$this->db->connect();
@@ -280,10 +290,11 @@ class Ideas_Model{
 		//Execute query
 		$this->db->query();
 	}
-
+	
 	/*
 	 * @idComment idComment
 	 */
+	//Remove from User_Comment table an association regarding a comment that a user posted
 	private function removeUserCommentByIdComment($idComment){
 		//Connect to database
 		$this->db->connect();
@@ -298,6 +309,7 @@ class Ideas_Model{
 	/*
 	 * @idComment idComment
 	 */
+	//Remove from Idea_Comment table an association regarding a posted comment on an idea
 	private function removeIdeaCommentByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
@@ -356,7 +368,7 @@ class Ideas_Model{
 	 * @params[0] email
 	 * @params[1] idIdea
 	 * @hash hash sent by the client
-	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+	 * return "true" for successfully removed, or "false" when a removing error occurs
 	 */
 	public function releaseIdea($params, $hash){
 		//Authenticate user
@@ -376,10 +388,11 @@ class Ideas_Model{
 		//Execute query and return "true" or "false"
 		return $this->db->query();
 	}
-
+	
 	/*
 	 * @email email
 	 */
+	//Return idUser by passing an email
 	private function getUserIdByEmail($email){
 		//Connect to database
 		$this->db->connect();
@@ -389,17 +402,18 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @email email
 	 */
+	//Return user coin number
 	private function getUserCoinsByEmail($email){
 		//Connect to database
 		$this->db->connect();
@@ -409,18 +423,19 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @idIdea idIdea
 	 */
-	public function getGeneratedCoinsByIdIdea($idIdea){
+	//Return an idea generated coin number (10 votes generates one coin)
+	private function getGeneratedCoinsByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
@@ -429,18 +444,19 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @idIdea idIdea
 	 */
-	public function getVotesByIdIdea($idIdea){
+	//Return an idea vote number
+	private function getVotesByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
@@ -449,7 +465,7 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
@@ -460,7 +476,8 @@ class Ideas_Model{
 	/*
 	 * @idIdea idIdea
 	 */
-	public function getTakesByIdIdea($idIdea){
+	//Return the number of times that an idea has been taken
+	private function getTakesByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
@@ -469,17 +486,18 @@ class Ideas_Model{
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @idIdea idIdea
 	 */
+	//Remove all submitted votes regarding an idea
 	private function removeVotesByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
@@ -490,10 +508,11 @@ class Ideas_Model{
 		//Execute query
 		$this->db->query();
 	}
-
+	
 	/*
 	 * @idIdea idIdea
 	 */
+	//Remove all submitted reports regarding an idea
 	private function removeReportsByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
@@ -504,11 +523,11 @@ class Ideas_Model{
 		//Execute query
 		$this->db->query();
 	}
-
-
+	
 	/*
 	 * @idIdea idIdea
 	 */
+	//Remove all developer associations about taking an idea
 	private function removeDeveloperAssociationsByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
@@ -519,51 +538,53 @@ class Ideas_Model{
 		//Execute query
 		$this->db->query();
 	}
-
+	
 	/*
 	 * @idIdea idIdea
 	 */
-	public function getReportsByIdIdea($idIdea){
+	//Return idea report number
+	private function getReportsByIdIdea($idIdea){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT votes FROM Idea WHERE idIdea = '".$idIdea."';");
+		$this->db->prepare("SELECT reportNumber FROM Idea WHERE idIdea = '".$idIdea."';");
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @email email
 	 * @idIdea idIdea
 	 */
-	public function validateReportingByEmail($email, $idIdea){
+	//Verify if user has reported an idea using user's email and idIdea for verification
+	private function validateReportingByEmail($email, $idIdea){
 		//Connect to database
 		$this->db->connect();
 		
 		//Get user id by email
 		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
 		$userId = $userIdDecoded[0][0][0];
-
+		
 		//Prepare query
 		$this->db->prepare("SELECT count(1) FROM ReportedIdeas WHERE idUser = ".$userId." AND idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
@@ -596,7 +617,6 @@ class Ideas_Model{
 		
 		//Execute query and return "true" or "false"
 		if ($this->db->query() == 1){
-			
 			//Insert ReportedIdeas record
 			$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 			$userId = $userIdDecoded[0][0][0];
@@ -608,21 +628,22 @@ class Ideas_Model{
 			return "Failure to update report number";
 		}
 	}
-
+	
 	/*
 	 * @email email
 	 * @idIdea idIdea
 	 */
+	// Verify if an idea was taken by developer using developer's email
 	private function validateTakeByEmail($developerId, $idIdea){
 		//Connect to database
 		$this->db->connect();
-
+		
 		//Prepare query
 		$this->db->prepare("SELECT count(1) FROM Developer_Idea WHERE idDeveloper = ".$developerId." AND idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		//Return data
@@ -633,26 +654,27 @@ class Ideas_Model{
 	 * @email email
 	 * @idIdea idIdea
 	 */
-	public function validateVoteByEmail($email, $idIdea){
+	// Verify if user has voted on an idea using user's email
+	private function validateVoteByEmail($email, $idIdea){
 		//Connect to database
 		$this->db->connect();
 		
-		//Get user id by email
+		//Get idUser by email
 		$userIdDecoded = json_decode($this->getUserIdByEmail($email), true);
 		$userId = $userIdDecoded[0][0][0];
-
+		
 		//Prepare query
 		$this->db->prepare("SELECT count(1) FROM VotedIdeas WHERE idUser = ".$userId." AND idIdea = ".$idIdea.";");
 		
 		//Execute query
 		$this->db->query();
-	
+		
 		//Fetch query
 		$article = $this->db->fetch('array');
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
@@ -699,12 +721,12 @@ class Ideas_Model{
 			return "Failure to update votes number";
 		}
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
 	 * @hash hash sent by the client
-	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+	 * return "true" for successfully removed, or "false" when a removing error occurs
 	 * http://localhost/index.php?ideas&command=unvoteOnIdea&values[]=robert@seederapp.com&values[]=1&hash=80867ff188f6159e110afca6bfe997d1dc436c0552533902552104dda473c00.49723503
 	 */
 	public function removeVoteOnIdea($params, $hash){
@@ -744,14 +766,14 @@ class Ideas_Model{
 			return "Failure to update votes number";
 		}
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
 	 * @params[2] progress
-	 * @params[3] appId //Only if @params[2] == 100
+	 * @params[3] appId (if @params[2] == 100)
 	 * @hash hash sent by the client
-	 * return "true" for successfully inserted, or "false" when an inserting error occurs
+	 * return "true" for successfully updated, or "false" when an updating error occurs
 	 */
 	public function updateProgress($params, $hash){
 		//Authenticate user
@@ -777,7 +799,12 @@ class Ideas_Model{
 		//Execute query and return "true" or "false"
 		return $this->db->query();
 	}
-
+	
+	/*
+	 * @params[0] sorting option (popular (votes) or recent (date))
+	 * @params[1] sorting method ('ASC' or 'DESC')
+	 */
+	//Return all ideas filtering by popularity or submission date
 	public function getAllIdeasByFilter($params){
 		//Connect to database
 		$this->db->connect();
@@ -795,6 +822,12 @@ class Ideas_Model{
 		return $article;
 	}
 	
+	/*
+	 * @params[0] category type ('Apps' or 'Games')
+	 * @params[1] sorting option (popular (votes) or recent (date))
+	 * @params[2] sorting method ('ASC' or 'DESC')
+	 */
+	//Return all ideas regarding its categoryType attribute, specifying the sorting option and method
 	public function getAllIdeasByCategoryType($params){
 		//Connect to database
 		$this->db->connect();
@@ -811,7 +844,11 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
+	/*
+	 * @params[0] idIdea
+	 */
+	//Return all data regarding a single idea using its idIdea
 	public function getIdeaById($params){
 		//Connect to database
 		$this->db->connect();
@@ -828,16 +865,17 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] email
 	 * @params[1] idIdea
 	 */
-	//Get ideas taken by developer
+	//Verify if idea was taken by developer passing the developers email and idIdea of the idea to be verified
 	public function isIdeaTakenByDeveloper($params){
-		
+		//Get idDeveloper by email
 		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
 		$developerId = $developerIdDecoded[0][0][0];
+		
 		//Connect to database
 		$this->db->connect();
 		
@@ -853,13 +891,13 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] email
 	 */
 	//Get ideas taken by developer
 	public function getIdeasTakenByEmail($params){
-		
+		//Get idDeveloper by email
 		$developerIdDecoded = json_decode($this->getDeveloperIdByEmail($params[0]), true);
 		$developerId = $developerIdDecoded[0][0][0];
 		
@@ -882,8 +920,8 @@ class Ideas_Model{
 	/*
 	 * @params[0] idIdea
 	 */
-	//Get developers that have taken an idea
-	public function getDevelopersByIdIdea($params){		
+	//Return all developers that have taken an idea
+	public function getDevelopersByIdIdea($params){
 		//Connect to database
 		$this->db->connect();
 		
@@ -904,8 +942,9 @@ class Ideas_Model{
 	 * @params[0] email
 	 * @params[1] idIdea
 	 */
+	//Verify if user has voted on an idea passing the user email and idIdea of the idea to be verified
 	public function getVotedByUserByIdIdea($params){
-		
+		//Get idUser by email
 		$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 		$userId = $userIdDecoded[0][0][0];
 		
@@ -924,11 +963,11 @@ class Ideas_Model{
 		//Return data
 		return $article;
 	}
-
+	
 	/*
 	 * @params[0] idCategory
 	 */
-	//Get ideas by id Category
+	//Regurn all ideas regarding its subcategory
 	public function getIdeasByIdCategory($params){
 		//Connect to database
 		$this->db->connect();
