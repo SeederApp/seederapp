@@ -42,6 +42,29 @@
 		bb.pushScreen('help.html', 'help');
 	}
 	
+	function coins() {
+	   sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotesByEmail&values[]="+ localStorage.getItem("userEmail"), function (data){
+		   var userCoins = 2;
+		   var message = "You have: " + (userCoins > 1) ? (userCoins + " coins.") : (userCoins + " coin."),
+			   buttonText = "Close",
+			   toastId,
+			   onButtonSelected = function () {
+				  console.log('Button was clicked for toast: ' + toastId);
+			   },
+			   onToastDismissed = function () {
+				  console.log('Toast disappeared: ' + toastId);
+			   },
+			   options = {
+				 buttonText : buttonText,
+				 dissmissCallback : onToastDismissed,
+				 buttonCallback : onButtonSelected,
+				 timeout : 10000
+			   };
+		
+		   toastId = blackberry.ui.toast.show(message, options); 
+	   });
+	}
+	
 	function settings() {
 		localStorage.clear()
 		bb.pushScreen('login.html', 'login');

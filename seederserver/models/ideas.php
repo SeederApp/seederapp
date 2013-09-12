@@ -768,6 +768,26 @@ class Ideas_Model{
 	}
 	
 	/*
+	 * @params email
+	 */
+	public function getUserCoinsByEmail($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT coins FROM User WHERE email = '".$params[0]."';");
+		
+		//Execute query
+		$this->db->query();
+	
+		//Fetch query
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+
+	/*
 	 * @params[0] email
 	 * @params[1] idIdea
 	 * @params[2] progress
