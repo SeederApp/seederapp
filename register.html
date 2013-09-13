@@ -64,7 +64,8 @@
 			document.getElementById("lastName").placeholder="Your name is too long";
 			document.getElementById("lastName").focus();
 			return false;
-		}  else if (!validatePhoto(document.getElementById("photo").value)) {
+		//Photo can be empty, and default image will be shown
+		}  else if ((trim(document.getElementById("photo").value) != "") && (!validatePhoto(document.getElementById("photo").value))) {
 			document.getElementById("photo").value="";
 			document.getElementById("photo").placeholder="Please enter a proper image URL";
 			document.getElementById("photo").focus();
@@ -134,7 +135,7 @@
 	function registerUser() {
 		var firstName = document.getElementById("firstName").value;
 		var lastName = document.getElementById("lastName").value;
-		var photo = document.getElementById("photo").value;
+		var photo = (trim(document.getElementById("photo").value) != "") ? document.getElementById("photo").value : ((document.getElementById("developer").checked) ? "images/icons/developer.png" : "images/icons/user.png");
 		var radioButtons = document.getElementsByName("group1");
 		var gender = "other";
 		for (var x = 0; x < radioButtons.length; x ++) {

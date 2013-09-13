@@ -42,6 +42,29 @@
 		bb.pushScreen('help.html', 'help');
 	}
 	
+	function coins() {
+	   sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotesByEmail&values[]="+ localStorage.getItem("userEmail"), function (data){
+		   var userCoins = 2;
+		   var message = "You have: " + (userCoins > 1) ? (userCoins + " coins.") : (userCoins + " coin."),
+			   buttonText = "Close",
+			   toastId,
+			   onButtonSelected = function () {
+				  console.log('Button was clicked for toast: ' + toastId);
+			   },
+			   onToastDismissed = function () {
+				  console.log('Toast disappeared: ' + toastId);
+			   },
+			   options = {
+				 buttonText : buttonText,
+				 dissmissCallback : onToastDismissed,
+				 buttonCallback : onButtonSelected,
+				 timeout : 10000
+			   };
+		
+		   toastId = blackberry.ui.toast.show(message, options); 
+	   });
+	}
+	
 	function settings() {
 		localStorage.clear()
 		bb.pushScreen('login.html', 'login');
@@ -110,7 +133,7 @@
 			for (var i = 0; i < data.length; i++) {
 				//Ideas reported very often are hidden
 				if ((data[i][0]['reportNumber']) < 10){
-					ideaList += "<div class='idea' onclick='getDetails(" + (data[i][0]['idIdea']) + ")' style='float: left; display: block; clear: both; margin-left: 7px; margin-top: 25px; margin-bottom: 10px; padding: 0px; top: 0px; left: 0px; background-image:url(images/description.png); position:relative; width:709px; height:220px; font-family: 'Slate Pro', Slate,'Myriad Pro',Helvetica;>"
+					ideaList += "<div class='idea' onclick='getDetails(" + (data[i][0]['idIdea']) + ")' style='float: left; display: block; clear: both; margin-left: 20px; margin-top: 25px; margin-bottom: 10px; padding: 0px; top: 0px; left: 0px; background-image:url(images/description.png); position:relative; width:709px; height:220px; font-family: 'Slate Pro', Slate,'Myriad Pro',Helvetica;>"
 					+ "<div class='votes' style='position: absolute; top: 165px; left: 21px; text-align: center; width: 120px; font-size:32px; font-style: normal; font-weight: 600; color: #FFFFFF'>" + data[i][0]['votes'] + "</div>"
 					+ "<div class='title' style='position: absolute; top: 20px; left: 170px; font-size:32px; font-style: normal; font-weight: 600; color: #FFFFFF';>" + data[i][0]['title'] + "</div>"
 					+ "<div class='category' style='position: absolute; top: 55px; left: 170px; font-size:18px; font-style: normal; font-weight: 500; color: #888888;'>" + data[i][0]['name'] + "</div>"

@@ -2371,8 +2371,9 @@ body, html {
 =================================================*/   
 
 .bb-tab-overflow-menu-item {
-	font-size:39pt;
+	font-size:39px;
 	padding-left: 10px;
+	color: white;
 }
 
 .bb-tab-overflow-menu-item-single {
@@ -2380,6 +2381,8 @@ body, html {
 	padding-bottom: 3px;		
 	height: 109px;
 	line-height: 85px;
+	font-size:39px;
+	color: white;
 }
 
 .bb-tab-overflow-menu-item-double {
@@ -2392,13 +2395,13 @@ body, html {
 .bb-tab-overflow-menu-item-inner {
 	padding-left: 15px;
 }
-
+/*
 .bb-tab-overflow-menu-item .tab-accent-text {
 	padding-left: 15px;
 	font-size: 30pt;
 	height: 49px;
 	color:#606060;
-}
+}*/
 
 .bb-tab-overflow-menu-item-dark {
 	color:White;
