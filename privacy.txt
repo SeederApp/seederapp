@@ -1,0 +1,9 @@
+Passwords are encrypted with a unique randomly generated salt. Hashes are stored locally and are used for authentication of the user. Any create/update/edit methods require authentication. The authentication prevents users from changing data and information that is not their own. There is server-side and client-side authentication and validation on inputs/forms/fields. The database is hosted on AppFog. 
+
+Yes
+
+Yes. We have a reporting feature that lets users easily report content that is inappropriate as per our terms and conditions. 
+
+Yes, our email will clearly be visible on the AppWorld and in the app as well, either on the Help menu or the About menu. 
+
+We will constantly be monitoring our emails for complaints/suggestions/inquiries. We may set up automatic replies in the event of increased traffic. 

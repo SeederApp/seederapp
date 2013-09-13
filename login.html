@@ -36,7 +36,7 @@
 			localStorage.setItem(28,"Other");
 			localStorage.setItem('storedCategories',"true");
 		}
-		localUserEmail =localStorage.getItem("userEmail");
+		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserEmail != null)){
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
@@ -122,8 +122,8 @@
 				<input id="password" type="password" placeholder="Password"/>
 			</div>
 			<div>
-				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 5px 0;" onclick="validate()">Login</div>
-				<div data-bb-type="button" data-bb-style="stretch" style="margin:0; position: fixed; bottom: 20px; width: 80%" onclick="registerUser()">Register</div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 20px 0;" onclick="validate()">Login</div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0;" onclick="registerUser()">Register</div>
 				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="display: none; visibility: hidden;"></div>
 				<div id="message" style="color: white"></div>
 			</div>
