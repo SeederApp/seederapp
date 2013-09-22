@@ -43,9 +43,9 @@
 		}
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
-		if ((localUserEmail != null) && (localUserEmail != null)){
+		if ((localUserEmail != null) && (localUserHash != null)){
 			document.getElementById('email').value = localUserEmail;
-			document.getElementById('password').value = localUserEmail;
+			document.getElementById('password').value = localUserHash;
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
 				localStorage.setItem('firstName',data[0][0]['firstName']);
 				localStorage.setItem('lastName',data[0][0]['lastName']);
@@ -75,7 +75,7 @@
 		}
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200){
-				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == ""){
+				if (xmlhttp.responseText == "" || JSON.parse(xmlhttp.responseText) == "" || xmlhttp.responseText == "Invalid user or password"){
 					document.getElementById("message").innerHTML = "Incorrect email or password";
 					document.getElementById('indicator').style.visibility="hidden";
 					document.getElementById('indicator').style.display="none";
