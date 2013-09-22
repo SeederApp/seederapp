@@ -1,19 +1,47 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <div data-bb-type="screen" style="background-image:url('images/background.png'); background-color: #181818" data-bb-effect="slide-left" data-bb-scroll-effect="off"> 
 	<script type = "text/javascript">
-		bb.init({
-		ondomready: function (element, id, params) {
-			idUser = params.idUser;
-			console.log(idUser);
-			sendRequest("http://seederserver.aws.af.cm/index.php?ideas&command=getVotedByUserByIdIdea&values[]="+localStorage.getItem('userEmail')+"&values[]="+ideaId, function (data) {
-				if (data[0][0][0] == 1) {
-					document.getElementById("voteButton").children[0].src = "images/icons/voted.png";
-					document.getElementById("voteButton").children[1].innerHTML = "Enriched"
-				}
-			});
+	function jump(id){
+		var divid = document.getElementById(id);
+		divid.style.display = 'block';
+		divid.scrollIntoView(true);
+		return false;
+	}
+	function hideSpinner() {
+		document.getElementById('indicator').style.display="none";
+	}
+	function showSpinner() {
+		document.getElementById('indicator').style.display="block";
+	}
+	function trim(s) {
+		return s.replace(/^\s*/, "").replace(/\s*$/, "");
+	}
+	function sendRequest(url, callback) {
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+			xmlhttp=new XMLHttpRequest();
 		}
-	});
+		xmlhttp.onreadystatechange=function(){
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				if (xmlhttp.responseText == "User already reported this idea") {
+					
+				}
+				else if (xmlhttp.responseText == "User already took this idea") {
+					
+				}
+				else if (xmlhttp.responseText == "Invalid user or password") {
+					bb.pushScreen('login.html', 'login');
+				}
+				else{
+					callback(JSON.parse(xmlhttp.responseText));}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}	
 	</script>
+	<div id="title" data-bb-type="title" data-bb-accent-text="" data-bb-img=""></div>
 	<div data-bb-type="title" data-bb-caption="Developer Profile"></div>
 	<div data-bb-type="action-bar" data-bb-back-caption ="Back"></div>
 	<div data-bb-type="round-panel"> 

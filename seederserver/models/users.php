@@ -1068,5 +1068,93 @@ class Users_Model{
 		//Return data
 		return $article;
 	}
+	
+	/*
+	 * @params[0] email
+	 */
+	public function sendMail($email, $key){
+
+		include_once (SERVER_ROOT . '/libraries/sendgrid-php/SendGrid_loader.php');
+		$sendgrid = new SendGrid(getenv('SENDGRID_USERNAME'), getenv('SENDGRID_PASSWORD'));
+		$mail = new SendGrid\Mail();
+		$mail->
+		  addTo($email)->
+		  setFrom('seederapp@gmail.com')->
+		  setSubject('Password recovery service')->
+		  setHtml('Your key is: <strong>'.$key.'</strong>. Please enter it on your BlackBerry device.');
+		  $sendgrid-> web-> send($mail);
+	}
+	
+	/*
+	 * @params[0] email
+	 */
+	public function getUserPasswordKey($params){
+		//Connect to database
+		$this->db->connect();
+		
+		//Prepare query
+		$this->db->prepare("SELECT passwordKey FROM User WHERE email = '".$params[0]."';");
+		
+		//Execute query
+		$this->db->query();
+		
+		//Fetch data
+		$article = $this->db->fetch('array');
+		
+		//Return data
+		return $article;
+	}
+	
+	/*
+	 * @params[0] email
+	 */
+	public function createUserPasswordKey($params){
+		
+		$key = rand(pow(10, 4), pow(10, 5)-1);
+		$this -> sendMail($params[0], $key);
+		//Connect to database
+		$this->db->connect();
+		//Prepare query
+		$this->db->prepare("UPDATE User SET passwordKey = '".$key."' WHERE email = '".$params[0]."';");
+		
+		//Execute query
+		return $this->db->query();
+	}
+	
+	private function resetUserPasswordKey($email){
+
+		//Connect to database
+		$this->db->connect();
+		//Prepare query
+		$this->db->prepare("UPDATE User SET passwordKey = 'NULL' WHERE email = '".$email."';");
+		
+		//Execute query
+		return $this->db->query();
+	}
+	
+	/*
+	 * @params[0] email
+	 * @params[1] salt
+	 * @params[2] hash
+	 * @params[3] passwordKey
+	 */
+	public function changeUserPassword($params){
+		
+		$userPasswordKeyDecoded = json_decode($this->getUserPasswordKey($params), true);
+		$userPasswordKey = $userPasswordKeyDecoded[0][0][0];
+		if (($userPasswordKey != $params[3]) || $userPasswordKey == 'NULL')
+			return "Invalid password key";
+	
+		//Connect to database
+		$this->db->connect();
+		//Prepare query
+		$this->db->prepare("UPDATE User SET salt = '".$params[1]."', hash = '".$params[2]."' WHERE email = '".$params[0]."';");
+		
+		//Execute query
+		if ($this->db->query())
+			return $this->resetUserPasswordKey($params[0]);
+		else
+			return "Failed to update user";
+	}
 }
 ?>

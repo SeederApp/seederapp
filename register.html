@@ -40,7 +40,7 @@
 	}
 	function validate() {
 		if (document.getElementById("developer").checked) {
-			if (!validateWebsite(document.getElementById("website").value)) {
+			if ((trim(document.getElementById("website").value) != "") && !validateWebsite(document.getElementById("website").value)) {
 				document.getElementById("website").value="";
 				document.getElementById("website").placeholder="Please enter a valid website";
 				document.getElementById("website").focus();

@@ -3,7 +3,7 @@
 	<script src="js/sha1.js"></script>
 	<script type="text/javascript">
 	bb.init({
-	  ondomready: function (element, id) {
+	  ondomready: function (element, id, params) {
 		if (localStorage.getItem("storedCategories") == null) {
 			localStorage.setItem(1,"Books");
 			localStorage.setItem(2,"Finance");
@@ -36,9 +36,16 @@
 			localStorage.setItem(28,"Other");
 			localStorage.setItem('storedCategories',"true");
 		}
+		if (id == 'loginPassChanged') {
+			document.getElementById("message").innerHTML = "Password changed successfully";
+			document.getElementById("message").style.display = 'block';
+			document.getElementById("email").value = params.userEmail;
+		}
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserEmail != null)){
+			document.getElementById('email').value = localUserEmail;
+			document.getElementById('password').value = localUserEmail;
 			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
 				localStorage.setItem('firstName',data[0][0]['firstName']);
 				localStorage.setItem('lastName',data[0][0]['lastName']);
@@ -54,6 +61,12 @@
 		}
 	  }
 	});
+	function jump(id){
+		var divid = document.getElementById(id);
+		divid.style.display = 'block';
+		divid.scrollIntoView(true);
+		return false;
+	}
 	function sendRequest(url, callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest)
@@ -76,6 +89,9 @@
 	}
 	function registerUser(){
 		bb.pushScreen('register.html', 'registerUser');
+	}
+	function forgotPassword(){
+		bb.pushScreen('forgotPassword.html', 'forgotPassword');
 	}
 	function authenticateUser(){
 		document.getElementById('indicator').style.visibility="visible";
@@ -123,9 +139,10 @@
 			</div>
 			<div>
 				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 20px 0;" onclick="validate()">Login</div>
-				<div data-bb-type="button" data-bb-style="stretch" style="margin:0;" onclick="registerUser()">Register</div>
+				<div data-bb-type="button" data-bb-style="stretch" style="margin:0 0 20px 0;" onclick="registerUser()">Register</div>
+				<div id = "forgot"><div data-bb-type="button" data-bb-style="stretch" style="margin:0;" onclick="forgotPassword()">Forgot Password</div></div>
 				<div id = "indicator" data-bb-type="activity-indicator" data-bb-size="small" style="display: none; visibility: hidden;"></div>
-				<div id="message" style="color: white"></div>
+				<div id = "message" style="color: white; margin-top: 20px"></div>
 			</div>
 	</div>
 </div>

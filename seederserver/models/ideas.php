@@ -411,27 +411,6 @@ class Ideas_Model{
 	}
 	
 	/*
-	 * @email email
-	 */
-	//Return user coin number
-	private function getUserCoinsByEmail($email){
-		//Connect to database
-		$this->db->connect();
-		
-		//Prepare query
-		$this->db->prepare("SELECT coins FROM User WHERE email = '".$email."';");
-		
-		//Execute query
-		$this->db->query();
-		
-		//Fetch query
-		$article = $this->db->fetch('array');
-		
-		//Return data
-		return $article;
-	}
-	
-	/*
 	 * @idIdea idIdea
 	 */
 	//Return an idea generated coin number (10 votes generates one coin)
