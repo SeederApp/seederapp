@@ -38,23 +38,24 @@
 		}
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
-		if ((localUserEmail != null) && (localUserHash != null)){
-			document.getElementById('email').value = localUserEmail;
-			document.getElementById('password').value = localUserHash;
-			sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
-				localStorage.setItem('firstName',data[0][0]['firstName']);
-				localStorage.setItem('lastName',data[0][0]['lastName']);
-				localStorage.setItem('isPrivate',data[0][0]['isPrivate']);
-				localStorage.setItem('gender',data[0][0]['gender']);
-				localStorage.setItem('photoURL',data[0][0]['photoURL']);
-				localStorage.setItem('isDeveloper',data[0][0]['isDeveloper']);
-			});
-			url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" + localUserEmail +"&hash=" + localUserHash;
-			sendRequest(url, function(data){
-				bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});
-			});
-		}
-		if (id == 'loginPassChanged') {
+		if (id !='loginPassChanged') {
+			if ((localUserEmail != null) && (localUserHash != null)){
+				document.getElementById('email').value = localUserEmail;
+				document.getElementById('password').value = localUserHash;
+				sendRequest("http://seederserver.aws.af.cm/index.php?users&command=getUserByEmail&values[]="+localUserEmail+"&hash="+localUserHash, function(data){
+					localStorage.setItem('firstName',data[0][0]['firstName']);
+					localStorage.setItem('lastName',data[0][0]['lastName']);
+					localStorage.setItem('isPrivate',data[0][0]['isPrivate']);
+					localStorage.setItem('gender',data[0][0]['gender']);
+					localStorage.setItem('photoURL',data[0][0]['photoURL']);
+					localStorage.setItem('isDeveloper',data[0][0]['isDeveloper']);
+				});
+				url = "http://seederserver.aws.af.cm/index.php?users&command=login&values[]=" + localUserEmail +"&hash=" + localUserHash;
+				sendRequest(url, function(data){
+					bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});
+				});
+			}
+		else {
 			document.getElementById("message").innerHTML = "Password changed successfully";
 			document.getElementById("message").style.display = 'block';
 			document.getElementById("email").value = params.userEmail;
