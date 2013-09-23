@@ -36,11 +36,6 @@
 			localStorage.setItem(28,"Other");
 			localStorage.setItem('storedCategories',"true");
 		}
-		if (id == 'loginPassChanged') {
-			document.getElementById("message").innerHTML = "Password changed successfully";
-			document.getElementById("message").style.display = 'block';
-			document.getElementById("email").value = params.userEmail;
-		}
 		localUserEmail = localStorage.getItem("userEmail");
 		localUserHash = localStorage.getItem("userHash");
 		if ((localUserEmail != null) && (localUserHash != null)){
@@ -58,6 +53,11 @@
 			sendRequest(url, function(data){
 				bb.pushScreen('all.html', 'allIdeas', {userEmail:localUserEmail, userHash:localUserHash});
 			});
+		}
+		if (id == 'loginPassChanged') {
+			document.getElementById("message").innerHTML = "Password changed successfully";
+			document.getElementById("message").style.display = 'block';
+			document.getElementById("email").value = params.userEmail;
 		}
 	  }
 	});
