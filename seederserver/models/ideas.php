@@ -140,13 +140,15 @@ class Ideas_Model{
 				//Get user id by email
 				$userIdDecoded = json_decode($this->getUserIdByEmail($params[0]), true);
 				$userId = $userIdDecoded[0][0][0];
-				
+				$title = $this->db->escape($params[2]);
+				$description = $this->db->escape($params[3]);
 				//Prepare query. Idea automatically receives one vote from the user
-				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date, votes, voteDate) VALUES (".$userId.", ".$params[1].", '".$params[2]."', '".$params[3]."', now(), 1, now());");
+				$this->db->prepare("INSERT INTO Idea (idUser, idCategory, title, description, date, votes, voteDate) VALUES (".$userId.", ".$params[1].", '".$title."', '".$description."', now(), 1, now());");
 				
 				//Execute query and return "true" or "false"
 				if ($this->db->query() == 1){
 					//Prepare query
+					
 					$this->db->prepare("INSERT INTO VotedIdeas (idUser, idIdea) VALUES (".$userId.", ".$this->db->fetchId().");");
 					
 					//Execute query and return "true" or "false"
@@ -749,12 +751,12 @@ class Ideas_Model{
 	/*
 	 * @params email
 	 */
-	public function getUserCoinsByEmail($params){
+	public function getUserCoinsByEmail($email){
 		//Connect to database
 		$this->db->connect();
 		
 		//Prepare query
-		$this->db->prepare("SELECT coins FROM User WHERE email = '".$params[0]."';");
+		$this->db->prepare("SELECT coins FROM User WHERE email = '".$email."';");
 		
 		//Execute query
 		$this->db->query();

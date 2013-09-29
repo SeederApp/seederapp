@@ -120,7 +120,7 @@ class Mysql_Driver extends Database_Library {
 	 * @param $data to be sanitized
 	 */
 	public function escape($data) {
-		return $this->connection->real_escape_string($data);
+		return mysql_real_escape_string($data);
 	}
   
    /**
