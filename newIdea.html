@@ -34,14 +34,20 @@
 		xmlhttp.onreadystatechange=function(){
 		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 			{
+			console.log(xmlhttp.responseText);
 				if (xmlhttp.responseText == "Failure to update user's coins number") {
 					document.getElementById('indicator').style.display="none";
 					document.getElementById('message').innerHTML="You do not have enough coins.";
 					jump('mesasge');
 				}
-				else if (xmlhttp.responseText == "User does not have enough coins to create idea" || xmlhttp.responseText == "Failure to insert idea") {
+				else if (xmlhttp.responseText == "Failure to insert idea") {
 					document.getElementById('indicator').style.display="none";
 					document.getElementById('message').innerHTML="Database error.";
+					jump('mesasge');
+				}
+				else if (xmlhttp.responseText == "User does not have enough coins to create idea") {
+					document.getElementById('indicator').style.display="none";
+					document.getElementById('message').innerHTML="Sorry, you don't have enough coins.";
 					jump('mesasge');
 				}
 				else{
