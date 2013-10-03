@@ -48,6 +48,9 @@
 	<feature id="blackberry.ui.toast"/>
 	<!-- Extra -->
 	<feature id="blackberry.bbm.platform"/>
+<rim:permissions>
+     <rim:permit>bbm_connect</rim:permit>
+</rim:permissions>
 	<feature id="blackberry.invoke"/>
 	<feature id="blackberry.invoke.card"/>
 	
